@@ -9,8 +9,8 @@
          </div>
      </div>
     <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Category Lists</h6>
-      <a href="{{route('category.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Category</a>
+      <h6 class="m-0 font-weight-bold text-danger float-left">Category Lists</h6>
+      <a href="{{route('category.create')}}" class=" btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Category</a>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -92,6 +92,19 @@
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
   <style>
+      .text-primary {
+          color: #8B0000 !important;
+      }
+
+      .btn-red {
+          background-color: #8B0000 !important;
+          border-color: #8B0000 !important;
+      }
+
+      .btn-red:hover {
+          background-color: #6A0000 !important; /* Darker shade for hover */
+          border-color: #6A0000 !important;
+      }
       div.dataTables_wrapper div.dataTables_paginate{
           display: none;
       }

@@ -3,7 +3,7 @@
 @section('title','E-SHOP || PRODUCT PAGE')
 
 @section('main-content')
-	
+
 		<!-- Breadcrumbs -->
 		<div class="breadcrumbs">
 			<div class="container">
@@ -11,7 +11,7 @@
 					<div class="col-12">
 						<div class="bread-inner">
 							<ul class="bread-list">
-								<li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
+								<li><a href="{{route('homeIN')}}">Home<i class="ti-arrow-right"></i></a></li>
 								<li class="active"><a href="javascript:void(0);">Shop List</a></li>
 							</ul>
 						</div>
@@ -22,13 +22,24 @@
 		<!-- End Breadcrumbs -->
 		<form action="{{route('shop.filter')}}" method="POST">
 		@csrf
+            <input type="hidden" name="car_brand" value="{{ request('car_brand') }}">
+            <input type="hidden" name="model" value="{{ request('model') }}">
+            <input type="hidden" name="year" value="{{ request('year') }}">
+            <input type="hidden" name="width" value="{{ request('width') }}">
+            <input type="hidden" name="aspect_ratio" value="{{ request('aspect_ratio') }}">
+            <input type="hidden" name="diameter" value="{{ request('diameter') }}">
 			<!-- Product Style 1 -->
 			<section class="product-area shop-sidebar shop-list shop section">
 				<div class="container">
 					<div class="row">
 						<div class="col-lg-3 col-md-4 col-12">
 							<div class="shop-sidebar">
+
                                 <!-- Single Widget -->
+                                <div class="single-widget">
+                                    <h3 class="title">{{$carName}}</h3>
+                                </div>
+
                                 <div class="single-widget category">
                                     <h3 class="title">Categories</h3>
                                     <ul class="categor-list">
@@ -61,25 +72,26 @@
                                     </ul>
                                 </div>
                                 <!--/ End Single Widget -->
+
                                 <!-- Shop By Price -->
 								<div class="single-widget range">
 									<h3 class="title">Shop by Price</h3>
 									<div class="price-filter">
 										<div class="price-filter-inner">
-											{{-- <div id="slider-range" data-min="10" data-max="2000" data-currency="%"></div>
-												<div class="price_slider_amount">
-												<div class="label-input">
-													<span>Range:</span>
-													<input type="text" id="amount" name="price_range" value='@if(!empty($_GET['price'])) {{$_GET['price']}} @endif' placeholder="Add Your Price"/>
-												</div>
-											</div> --}}
+{{--											--}}{{-- <div id="slider-range" data-min="10" data-max="2000" data-currency="%"></div>--}}
+{{--												<div class="price_slider_amount">--}}
+{{--												<div class="label-input">--}}
+{{--													<span>Range:</span>--}}
+{{--													<input type="text" id="amount" name="price_range" value='@if(!empty($_GET['price'])) {{$_GET['price']}} @endif' placeholder="Add Your Price"/>--}}
+{{--												</div>--}}
+{{--											</div> --}}
 											@php
 												$max=DB::table('products')->max('price');
 												// dd($max);
 											@endphp
 											<div id="slider-range" data-min="0" data-max="{{$max}}"></div>
 											<div class="product_filter">
-											<button type="submit" class="filter_button">Filter</button>
+											<button type="submit" class="filter-btn">Filter</button>
 											<div class="label-input">
 												<span>Range:</span>
 												<input style="" type="text" id="amount" readonly/>
@@ -88,26 +100,192 @@
 											</div>
 										</div>
 									</div>
-									{{-- <ul class="check-box-list">
+									 <ul class="check-box-list">
 										<li>
-											<label class="checkbox-inline" for="1"><input name="news" id="1" type="checkbox">$20 - $50<span class="count">(3)</span></label>
+											<label class="checkbox-inline" for="1"><input name="news" id="1" type="checkbox">$20 - $50</label>
 										</li>
 										<li>
-											<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox">$50 - $100<span class="count">(5)</span></label>
+											<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox">$50 - $100</label>
 										</li>
 										<li>
-											<label class="checkbox-inline" for="3"><input name="news" id="3" type="checkbox">$100 - $250<span class="count">(8)</span></label>
+											<label class="checkbox-inline" for="3"><input name="news" id="3" type="checkbox">$100 - $250</label>
 										</li>
-									</ul> --}}
+									</ul>
 								</div>
-								<!--/ End Shop By Price -->
+                                <!--/ End Shop By Price -->
+
+                                <!-- Additional Filter Options -->
+                                <div class="single-widget category options">
+                                    <h3 class="title" data-toggle="collapse" data-target="#filterOptions" aria-expanded="false" aria-controls="filterOptions">
+                                        FILTRE DE RECHERCHE <i class="fa fa-angle-down"></i>
+                                    </h3>
+                                    <div id="filterOptions" class="collapse">
+                                        <ul class="categor-list">
+                                            <!-- Vitesse -->
+                                            <li class="form-group row">
+                                                <label for="vitesse" class="col-sm-4 col-form-label">Vitesse</label>
+                                                <div class="col-sm-8">
+                                                    <select name="options[vitesse]" id="vitesse" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($vitesses as $option)
+                                                            <option value="{{ $option->value }}">{{ $option->value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </li>
+
+                                            <!-- Lettrage -->
+                                            <li class="form-group row">
+                                                <label for="lettrage" class="col-sm-4 col-form-label">Lettrage</label>
+                                                <div class="col-sm-8">
+                                                    <select name="options[lettrage]" id="lettrage" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($lettrages as $option)
+                                                            <option value="{{ $option->value }}">{{ $option->value }}</option>
+                                                        @endforeach
+                                                    </select>
+
+                                                </div>
+                                            </li>
+
+                                            <!-- Catégorie -->
+                                            <li class="form-group row">
+                                                <label for="category" class="col-sm-4 col-form-label">Catégorie</label>
+                                                <div class="col-sm-8">
+                                                    <select name="category" id="category" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($categories as $option)
+                                                            @php
+                                                                // Get the IDs of the current category and its child categories
+                                                                $categoryIds = \App\Models\Category::where('id', $option->id)
+                                                                    ->orWhere('parent_id', $option->id) // Include child categories if applicable
+                                                                    ->pluck('id')
+                                                                    ->toArray();
+
+                                                                // Count the number of products that belong to these categories
+                                                                $productCount = \App\Models\Product::where('cat_id', $categoryIds)
+                                                                    ->where('status', 'active')
+                                                                    ->count();
+                                                            @endphp
+                                                            <option value="{{ $option->slug }}">
+                                                                {{ $option->title }} ({{ $productCount }})
+                                                            </option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
+
+
+
+                                            </li>
+
+                                            <!-- Charge -->
+                                            <li class="form-group row">
+                                                <label for="charge" class="col-sm-4 col-form-label">Charge</label>
+                                                <div class="col-sm-8">
+                                                    <select name="options[charge]" id="charge" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($charges as $option)
+                                                            <option value="{{ $option->value }}">{{ $option->value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </li>
+
+                                            <!-- Runflat -->
+                                            <li class="form-group">
+                                                <label for="runflat">Runflat</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'runflat')
+                                                        ->where('product_options.is_boolean', 1)  // Assuming value is stored in pivot table
+                                                        ->where('products.status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+
+                                                <input type="checkbox" name="options[runflat]" id="runflat" value="1">
+                                                Runflat ({{ $productCount }})
+                                            </li>
+
+                                            <!-- XL/Renforcés -->
+                                            <li class="form-group">
+                                                <label for="xl_renforces">XL / Renforcés</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'xl_renforces')
+                                                        ->where('product_options.is_boolean', 1)
+                                                        ->where('products.status', 'active') // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[xl_renforces]" id="xl_renforces" value="1">
+                                                XL / Renforcés ({{ $productCount }})
+                                            </li>
+
+                                            <!-- Cloutable -->
+                                            <li class="form-group">
+                                                <label for="cloutable">Cloutable</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'cloutable')
+                                                        ->where('product_options.is_boolean', 1)
+                                                        ->where('products.status', 'active') // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[cloutable]" id="cloutable" value="1">
+                                                Cloutable ({{ $productCount }})
+                                            </li>
+
+                                            <!-- Choix de l'équipe -->
+                                            <li class="form-group">
+                                                <label for="choix_equipe">Choix de l'équipe</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->where('is_featured', 1)
+                                                        ->where('status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[choix_equipe]" id="choix_equipe" value="1">
+                                                Choix de l'équipe ({{ $productCount }})
+                                            </li>
+
+                                            <!-- En Solde -->
+                                            <li class="form-group">
+                                                <label for="en_solde">En Solde</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->where('discount', '>', 0)
+                                                        ->where('status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[en_solde]" id="en_solde" value="1">
+                                                En Solde ({{ $productCount }})
+                                            </li>
+
+
+
+
+                                            <!-- Filter Button -->
+                                            <li class="form-group">
+                                                <button type="submit" class="filter-btn">Filter</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!--/ End Additional Filter Options -->
+
                                 <!-- Single Widget -->
                                 <div class="single-widget recent-post">
                                     <h3 class="title">Recent post</h3>
-                                    {{-- {{dd($recent_products)}} --}}
+{{--                                     {{dd($recent_products)}} --}}
                                     @foreach($recent_products as $product)
                                         <!-- Single Post -->
-                                        @php 
+                                        @php
                                             $photo=explode(',',$product->photo);
                                         @endphp
                                         <div class="single-post first">
@@ -119,22 +297,23 @@
                                                 @php
                                                     $org=($product->price-($product->price*$product->discount)/100);
                                                 @endphp
-                                                <p class="price"><del class="text-muted">${{number_format($product->price,2)}}</del>   ${{number_format($org,2)}}  </p>                                                
+                                                <p class="price"><del class="text-muted">${{number_format($product->price,2)}}</del>   ${{number_format($org,2)}}  </p>
                                             </div>
                                         </div>
                                         <!-- End Single Post -->
                                     @endforeach
                                 </div>
                                 <!--/ End Single Widget -->
+
                                 <!-- Single Widget -->
                                 <div class="single-widget category">
                                     <h3 class="title">Brands</h3>
                                     <ul class="categor-list">
                                         @php
-                                            $brands=DB::table('brands')->orderBy('title','ASC')->where('status','active')->get();
+                                            $brands=DB::table('brands')->orderBy('car_brand','ASC')->where('status','active')->get();
                                         @endphp
                                         @foreach($brands as $brand)
-                                            <li><a href="{{route('product-brand',$brand->slug)}}">{{$brand->title}}</a></li>
+                                            <li><a href="{{route('product-brand',$brand->slug)}}">{{$brand->car_brand}}{{$brand->car_model}}{{$brand->car_year}}</a></li>
                                         @endforeach
                                     </ul>
                                 </div>
@@ -179,7 +358,7 @@
 							<div class="row">
 								@if(count($products))
 									@foreach($products as $product)
-									 	{{-- {{$product}} --}}
+
 										<!-- Start Single List -->
 										<div class="col-12">
 											<div class="row">
@@ -187,7 +366,7 @@
 													<div class="single-product">
 														<div class="product-img">
 															<a href="{{route('product-detail',$product->slug)}}">
-															@php 
+															@php
 																$photo=explode(',',$product->photo);
 															@endphp
 															<img class="default-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
@@ -239,7 +418,7 @@
 					</div>
 				</div>
 			</section>
-			<!--/ End Product Style 1  -->	
+			<!--/ End Product Style 1  -->
 		</form>
 		<!-- Modal -->
 		@if($products)
@@ -256,7 +435,7 @@
 											<!-- Product Slider -->
 												<div class="product-gallery">
 													<div class="quickview-slider-active">
-														@php 
+														@php
 															$photo=explode(',',$product->photo);
 														// dd($photo);
 														@endphp
@@ -287,7 +466,7 @@
 															@for($i=1; $i<=5; $i++)
 																@if($rate>=$i)
 																	<i class="yellow fa fa-star"></i>
-																@else 
+																@else
 																<i class="fa fa-star"></i>
 																@endif
 															@endfor
@@ -297,7 +476,7 @@
 													<div class="quickview-stock">
 														@if($product->stock >0)
 														<span><i class="fa fa-check-circle-o"></i> {{$product->stock}} in stock</span>
-														@else 
+														@else
 														<span><i class="fa fa-times-circle-o text-danger"></i> {{$product->stock}} out stock</span>
 														@endif
 													</div>
@@ -313,7 +492,7 @@
 													<div class="size">
 														<h4>Size</h4>
 														<ul>
-															@php 
+															@php
 																$sizes=explode(',',$product->size);
 																// dd($sizes);
 															@endphp
@@ -324,7 +503,7 @@
 													</div>
 												@endif
 												<form action="{{route('single-add-to-cart')}}" method="POST">
-													@csrf 
+													@csrf
 													<div class="quantity">
 														<!-- Input Order -->
 														<div class="input-group">
@@ -367,14 +546,112 @@
 	 .pagination{
         display:inline-flex;
     }
-	.filter_button{
-        /* height:20px; */
-        text-align: center;
-        background:#F7941D;
-        padding:8px 16px;
-        margin-top:10px;
-        color: white;
-    }
+     .filter-btn {
+         margin: 10px 5px;
+         padding: 10px 15px;
+         background-color: #ff0000; /* Red color */
+         color: white;
+         border: none;
+         border-radius: 5px;
+         transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+     }
+
+     .filter-btn.active {
+         background-color: #ff0000; /* Active button should be red */
+         color: white; /* Text color should be white */
+     }
+     .filter-btn:hover {
+         background-color: #b30000; /* Darker red on active/hover */
+         color: #fff;
+         transform: scale(1.05); /* Slightly enlarge the button on hover */
+     }
+     form li {
+         list-style-type: none;
+         margin-bottom: 15px;
+     }
+
+     form li label {
+         display: block;
+         margin-bottom: 5px;
+         font-weight: bold;
+     }
+
+     form .form-control {
+         width: 100%;
+         padding: 8px;
+         margin-bottom: 5px;
+     }
+
+     form li input[type="checkbox"] {
+         margin-right: 10px;
+     }
+
+     form li label input[type="checkbox"] {
+         display: inline-block;
+         margin-top: 3px;
+     }
+
+     .options {
+         padding: 15px;
+         background-color: #f9f9f9;
+         border-radius: 5px;
+         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+     }
+
+     .options h4 {
+         margin-bottom: 15px;
+         font-size: 18px;
+         color: #333;
+     }
+
+     .options select {
+         width: 100%;
+         padding: 8px;
+         margin-bottom: 5px;
+     } form li {
+           list-style-type: none;
+           margin-bottom: 15px;
+       }
+
+     form li label {
+         display: block;
+         margin-bottom: 5px;
+         font-weight: bold;
+     }
+
+     form .form-control {
+         width: 100%;
+         padding: 8px;
+         margin-bottom: 5px;
+     }
+
+     form li input[type="checkbox"] {
+         margin-right: 10px;
+     }
+
+     form li label input[type="checkbox"] {
+         display: inline-block;
+         margin-top: 3px;
+     }
+
+     .options {
+         padding: 15px;
+         background-color: #f9f9f9;
+         border-radius: 5px;
+         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+     }
+
+     .options h4 {
+         margin-bottom: 15px;
+         font-size: 18px;
+         color: #333;
+     }
+
+     .options select {
+         width: 100%;
+         padding: 8px;
+         margin-bottom: 5px;
+     }
 </style>
 @endpush
 @push('scripts')
@@ -405,7 +682,7 @@
 					else{
                         swal('error',response.msg,'error').then(function(){
 							// document.location.href=document.location.href;
-						}); 
+						});
                     }
                 }
             })
@@ -424,7 +701,7 @@
             if($("#price_range").length > 0 && $("#price_range").val()){
                 price_range = $("#price_range").val().trim();
             }
-            
+
             let price = price_range.split('-');
             $("#slider-range").slider({
                 range: true,
