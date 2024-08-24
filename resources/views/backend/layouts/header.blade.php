@@ -10,7 +10,11 @@
     <a href="{{route('cache.clear')}}"  class="btn btn-outline-danger btn-sm mr-3">
       Cache Clear
     </a>
-
+<style>
+    #sidebarToggleTop {
+        color: #8B0000 !important;
+    }
+</style>
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 

@@ -6,6 +6,10 @@
 <link rel="icon" type="image/png" href="images/favicon.png">
 <!-- Web Font -->
 <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <!-- StyleSheet -->
 <link rel="manifest" href="/manifest.json">
@@ -36,7 +40,6 @@
 <link rel="stylesheet" href="{{asset('frontend/css/reset.css')}}">
 <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
 <link rel="stylesheet" href="{{asset('frontend/css/responsive.css')}}">
-<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5f2e5abf393162001291e431&product=inline-share-buttons' async='async'></script>
 <style>
     /* Multilevel dropdown */
     .dropdown-submenu {
@@ -47,7 +50,7 @@
     content: "\f0da";
     float: right;
     border: none;
-    font-family: 'FontAwesome';
+        font-family: 'FontAwesome', sans-serif;
     }
 
     .dropdown-submenu>.dropdown-menu {

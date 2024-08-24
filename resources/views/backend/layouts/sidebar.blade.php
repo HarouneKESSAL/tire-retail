@@ -1,4 +1,4 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav  sidebar sidebar-dark accordion " id="accordionSidebar" style="background-color: #8B0000;">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin')}}">
@@ -28,12 +28,13 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <!-- Nav Item - Charts -->
+{{--  file-manager  --}}
     <li class="nav-item">
         <a class="nav-link" href="{{route('file-manager')}}">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Media Manager</span></a>
     </li>
-
+{{--Banner--}}
     <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
         <i class="fas fa-image"></i>
@@ -82,18 +83,33 @@
           </div>
         </div>
     </li>
+{{--Product Options--}}
 
-    {{-- Brands --}}
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#productOptionCollapse" aria-expanded="true" aria-controls="productOptionCollapse">
+          <i class="fas fa-cube"></i>
+          <span>Product Options</span>
+        </a>
+        <div id="productOptionCollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Product Options:</h6>
+            <a class="collapse-item" href="{{route('product-options.index')}}">Product Options</a>
+            <a class="collapse-item" href="{{route('product-options.create')}}">Add Product Options</a>
+          </div>
+        </div>
+    </li>
+
+{{--     Brands --}}
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#brandCollapse" aria-expanded="true" aria-controls="brandCollapse">
           <i class="fas fa-table"></i>
-          <span>Brands</span>
+          <span>Cars</span>
         </a>
         <div id="brandCollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Brand Options:</h6>
-            <a class="collapse-item" href="{{route('brand.index')}}">Brands</a>
-            <a class="collapse-item" href="{{route('brand.create')}}">Add Brand</a>
+            <h6 class="collapse-header">Car Options:</h6>
+            <a class="collapse-item" href="{{route('brand.index')}}">Cars</a>
+            <a class="collapse-item" href="{{route('brand.create')}}">Add Cars</a>
           </div>
         </div>
     </li>
@@ -127,12 +143,12 @@
             <i class="fas fa-comments"></i>
             <span>Reviews</span></a>
     </li>
-    
 
-    <!-- Divider -->
+
+{{--    <!-- Divider -->--}}
     <hr class="sidebar-divider">
 
-    <!-- Heading -->
+{{--    <!-- Heading -->--}}
     <div class="sidebar-heading">
       Posts
     </div>
@@ -197,6 +213,7 @@
     <div class="sidebar-heading">
         General Settings
     </div>
+{{--    coupon  --}}
     <li class="nav-item">
       <a class="nav-link" href="{{route('coupon.index')}}">
           <i class="fas fa-table"></i>

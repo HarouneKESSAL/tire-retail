@@ -1,6 +1,7 @@
 <?php
 
-    use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductOptionController;
+use Illuminate\Support\Facades\Route;
     use Illuminate\Support\Facades\Artisan;
     use App\Http\Controllers\AdminController;
     use App\Http\Controllers\FrontendController;
@@ -49,7 +50,7 @@
     Route::get('user/register', [FrontendController::class, 'register'])->name('register.form');
     Route::post('user/register', [FrontendController::class, 'registerSubmit'])->name('register.submit');
 // Reset password
-    Route::post('password-reset', [FrontendController::class, 'showResetForm'])->name('password.reset');
+    Route::get('password-reset', [FrontendController::class, 'showResetForm'])->name('password.reset');
 // Socialite
     Route::get('login/{provider}/', [LoginController::class, 'redirect'])->name('login.redirect');
     Route::get('login/{provider}/callback/', [LoginController::class, 'Callback'])->name('login.callback');
@@ -57,12 +58,17 @@
     Route::get('/', [FrontendController::class, 'home'])->name('home');
 
 // Frontend Routes
-    Route::get('/home', [FrontendController::class, 'index']);
+    Route::get('/home', [FrontendController::class, 'index'])->name('homeIN');
     Route::get('/about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
     Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
     Route::post('/contact/message', [MessageController::class, 'store'])->name('contact.store');
     Route::get('product-detail/{slug}', [FrontendController::class, 'productDetail'])->name('product-detail');
-    Route::post('/product/search', [FrontendController::class, 'productSearch'])->name('product.search');
+    Route::post('/filter-results', [FrontendController::class, 'filterResults'])->name('filter.results');
+    Route::post('/product/search', [FrontendController::class, 'productView'])->name('product.search');
+
+Route::get('/categories', [CategoryController::class, 'show']);
+
+
     Route::get('/product-cat/{slug}', [FrontendController::class, 'productCat'])->name('product-cat');
     Route::get('/product-sub-cat/{slug}/{sub_slug}', [FrontendController::class, 'productSubCat'])->name('product-sub-cat');
     Route::get('/product-brand/{slug}', [FrontendController::class, 'productBrand'])->name('product-brand');
@@ -86,9 +92,9 @@
     Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])->name('order.pdf');
     Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.order.income');
 // Route::get('/user/chart',[AdminController::class, 'userPieChart'])->name('user.piechart');
-    Route::get('/product-grids', [FrontendController::class, 'productGrids'])->name('product-grids');
-    Route::get('/product-lists', [FrontendController::class, 'productLists'])->name('product-lists');
-    Route::match(['get', 'post'], '/filter', [FrontendController::class, 'productFilter'])->name('shop.filter');
+    Route::get('/product-grids', [FrontendController::class, 'productView'])->name('product-grids');
+    Route::get('/product-lists', [FrontendController::class, 'productView'])->name('product-lists');
+    Route::match(['get', 'post'], '/filter', [FrontendController::class, 'productView'])->name('shop.filter');
 // Order Track
     Route::get('/product/track', [OrderController::class, 'orderTrack'])->name('order.track');
     Route::post('product/track/order', [OrderController::class, 'productTrackOrder'])->name('product.track.order');
@@ -138,6 +144,9 @@
         Route::resource('/category', 'CategoryController');
         // Product
         Route::resource('/product', 'ProductController');
+        // Product Option
+        Route::resource('product-options', 'ProductOptionController');
+
         // Ajax for sub category
         Route::post('/category/{id}/child', 'CategoryController@getChildByParent');
         // POST category
