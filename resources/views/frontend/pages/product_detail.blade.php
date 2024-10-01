@@ -1,316 +1,592 @@
 @extends('frontend.layouts.master')
 
 @section('meta')
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name='copyright' content=''>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="keywords" content="online shop, purchase, cart, ecommerce site, best online shopping">
-	<meta name="description" content="{{$product_detail->summary}}">
-	<meta property="og:url" content="{{route('product-detail',$product_detail->slug)}}">
-	<meta property="og:type" content="article">
-	<meta property="og:title" content="{{$product_detail->title}}">
-	<meta property="og:image" content="{{$product_detail->photo}}">
-	<meta property="og:description" content="{{$product_detail->description}}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name='copyright' content=''>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content="online shop, purchase, cart, ecommerce site, best online shopping">
+    <meta name="description" content="{{$product_detail->summary}}">
+    <meta property="og:url" content="{{route('product-detail',$product_detail->slug)}}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{$product_detail->title}}">
+    <meta property="og:image" content="{{$product_detail->photo}}">
+    <meta property="og:description" content="{{$product_detail->description}}">
 @endsection
 @section('title','E-SHOP || PRODUCT DETAIL')
 @section('main-content')
 
-		<!-- Breadcrumbs -->
-		<div class="breadcrumbs">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<div class="bread-inner">
-							<ul class="bread-list">
-								<li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-								<li class="active"><a href="">Shop Details</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Breadcrumbs -->
-				
-		<!-- Shop Single -->
-		<section class="shop single section">
-					<div class="container">
-						<div class="row"> 
-							<div class="col-12">
-								<div class="row">
-									<div class="col-lg-6 col-12">
-										<!-- Product Slider -->
-										<div class="product-gallery">
-											<!-- Images slider -->
-											<div class="flexslider-thumbnails">
-												<ul class="slides">
-													@php 
-														$photo=explode(',',$product_detail->photo);
-													// dd($photo);
-													@endphp
-													@foreach($photo as $data)
-														<li data-thumb="{{$data}}" rel="adjustX:10, adjustY:">
-															<img src="{{$data}}" alt="{{$data}}">
-														</li>
-													@endforeach
-												</ul>
-											</div>
-											<!-- End Images slider -->
-										</div>
-										<!-- End Product slider -->
-									</div>
-									<div class="col-lg-6 col-12">
-										<div class="product-des">
-											<!-- Description -->
-											<div class="short">
-												<h4>{{$product_detail->title}}</h4>
-												<div class="rating-main">
-													<ul class="rating">
-														@php
-															$rate=ceil($product_detail->getReview->avg('rate'))
-														@endphp
-															@for($i=1; $i<=5; $i++)
-																@if($rate>=$i)
-																	<li><i class="fa fa-star"></i></li>
-																@else 
-																	<li><i class="fa fa-star-o"></i></li>
-																@endif
-															@endfor
-													</ul>
-													<a href="#" class="total-review">({{$product_detail['getReview']->count()}}) Review</a>
-                                                </div>
-                                                @php 
-                                                    $after_discount=($product_detail->price-(($product_detail->price*$product_detail->discount)/100));
-                                                @endphp
-												<p class="price"><span class="discount">${{number_format($after_discount,2)}}</span><s>${{number_format($product_detail->price,2)}}</s> </p>
-												<p class="description">{!!($product_detail->summary)!!}</p>
-											</div>
-											<!--/ End Description -->
-											<!-- Color -->
-											{{-- <div class="color">
-												<h4>Available Options <span>Color</span></h4>
-												<ul>
-													<li><a href="#" class="one"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="two"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="three"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="four"><i class="ti-check"></i></a></li>
-												</ul>
-											</div> --}}
-											<!--/ End Color -->
-											<!-- Size -->
-											@if($product_detail->size)
-												<div class="size mt-4">
-													<h4>Size</h4>
-													<ul>
-														@php 
-															$sizes=explode(',',$product_detail->size);
-															// dd($sizes);
-														@endphp
-														@foreach($sizes as $size)
-														<li><a href="#" class="one">{{$size}}</a></li>
-														@endforeach
-													</ul>
-												</div>
-											@endif
-											<!--/ End Size -->
-											<!-- Product Buy -->
-											<div class="product-buy">
-												<form action="{{route('single-add-to-cart')}}" method="POST">
-													@csrf 
-													<div class="quantity">
-														<h6>Quantity :</h6>
-														<!-- Input Order -->
-														<div class="input-group">
-															<div class="button minus">
-																<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-																	<i class="ti-minus"></i>
-																</button>
-															</div>
-															<input type="hidden" name="slug" value="{{$product_detail->slug}}">
-															<input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
-															<div class="button plus">
-																<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
-																	<i class="ti-plus"></i>
-																</button>
-															</div>
-														</div>
-													<!--/ End Input Order -->
-													</div>
-													<div class="add-to-cart mt-4">
-														<button type="submit" class="btn">Add to cart</button>
-														<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
-													</div>
-												</form>
-
-												<p class="cat">Category :<a href="{{route('product-cat',$product_detail->cat_info['slug'])}}">{{$product_detail->cat_info['title']}}</a></p>
-												@if($product_detail->sub_cat_info)
-												<p class="cat mt-1">Sub Category :<a href="{{route('product-sub-cat',[$product_detail->cat_info['slug'],$product_detail->sub_cat_info['slug']])}}">{{$product_detail->sub_cat_info['title']}}</a></p>
-												@endif
-												<p class="availability">Stock : @if($product_detail->stock>0)<span class="badge badge-success">{{$product_detail->stock}}</span>@else <span class="badge badge-danger">{{$product_detail->stock}}</span>  @endif</p>
-											</div>
-											<!--/ End Product Buy -->
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-12">
-										<div class="product-info">
-											<div class="nav-main">
-												<!-- Tab Nav -->
-												<ul class="nav nav-tabs" id="myTab" role="tablist">
-													<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a></li>
-													<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews</a></li>
-												</ul>
-												<!--/ End Tab Nav -->
-											</div>
-											<div class="tab-content" id="myTabContent">
-												<!-- Description Tab -->
-												<div class="tab-pane fade show active" id="description" role="tabpanel">
-													<div class="tab-single">
-														<div class="row">
-															<div class="col-12">
-																<div class="single-des">
-																	<p>{!! ($product_detail->description) !!}</p>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<!--/ End Description Tab -->
-												<!-- Reviews Tab -->
-												<div class="tab-pane fade" id="reviews" role="tabpanel">
-													<div class="tab-single review-panel">
-														<div class="row">
-															<div class="col-12">
-																
-																<!-- Review -->
-																<div class="comment-review">
-																	<div class="add-review">
-																		<h5>Add A Review</h5>
-																		<p>Your email address will not be published. Required fields are marked</p>
-																	</div>
-																	<h4>Your Rating <span class="text-danger">*</span></h4>
-																	<div class="review-inner">
-																			<!-- Form -->
-																@auth
-																<form class="form" method="post" action="{{route('review.store',$product_detail->slug)}}">
-                                                                    @csrf
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12 col-12">
-                                                                            <div class="rating_box">
-                                                                                  <div class="star-rating">
-                                                                                    <div class="star-rating__wrap">
-                                                                                      <input class="star-rating__input" id="star-rating-5" type="radio" name="rate" value="5">
-                                                                                      <label class="star-rating__ico fa fa-star-o" for="star-rating-5" title="5 out of 5 stars"></label>
-                                                                                      <input class="star-rating__input" id="star-rating-4" type="radio" name="rate" value="4">
-                                                                                      <label class="star-rating__ico fa fa-star-o" for="star-rating-4" title="4 out of 5 stars"></label>
-                                                                                      <input class="star-rating__input" id="star-rating-3" type="radio" name="rate" value="3">
-                                                                                      <label class="star-rating__ico fa fa-star-o" for="star-rating-3" title="3 out of 5 stars"></label>
-                                                                                      <input class="star-rating__input" id="star-rating-2" type="radio" name="rate" value="2">
-                                                                                      <label class="star-rating__ico fa fa-star-o" for="star-rating-2" title="2 out of 5 stars"></label>
-                                                                                      <input class="star-rating__input" id="star-rating-1" type="radio" name="rate" value="1">
-																					  <label class="star-rating__ico fa fa-star-o" for="star-rating-1" title="1 out of 5 stars"></label>
-																					  @error('rate')
-																						<span class="text-danger">{{$message}}</span>
-																					  @enderror
-                                                                                    </div>
-                                                                                  </div>
-                                                                            </div>
-                                                                        </div>
-																		<div class="col-lg-12 col-12">
-																			<div class="form-group">
-																				<label>Write a review</label>
-																				<textarea name="review" rows="6" placeholder="" ></textarea>
-																			</div>
-																		</div>
-																		<div class="col-lg-12 col-12">
-																			<div class="form-group button5">	
-																				<button type="submit" class="btn">Submit</button>
-																			</div>
-																		</div>
-																	</div>
-																</form>
-																@else 
-																<p class="text-center p-5">
-																	You need to <a href="{{route('login.form')}}" style="color:rgb(54, 54, 204)">Login</a> OR <a style="color:blue" href="{{route('register.form')}}">Register</a>
-
-																</p>
-																<!--/ End Form -->
-																@endauth
-																	</div>
-																</div>
-															
-																<div class="ratting-main">
-																	<div class="avg-ratting">
-																		{{-- @php 
-																			$rate=0;
-																			foreach($product_detail->rate as $key=>$rate){
-																				$rate +=$rate
-																			}
-																		@endphp --}}
-																		<h4>{{ceil($product_detail->getReview->avg('rate'))}} <span>(Overall)</span></h4>
-																		<span>Based on {{$product_detail->getReview->count()}} Comments</span>
-																	</div>
-																	@foreach($product_detail['getReview'] as $data)
-																	<!-- Single Rating -->
-																	<div class="single-rating">
-																		<div class="rating-author">
-																			@if($data->user_info['photo'])
-																			<img src="{{$data->user_info['photo']}}" alt="{{$data->user_info['photo']}}">
-																			@else 
-																			<img src="{{asset('backend/img/avatar.png')}}" alt="Profile.jpg">
-																			@endif
-																		</div>
-																		<div class="rating-des">
-																			<h6>{{$data->user_info['name']}}</h6>
-																			<div class="ratings">
-
-																				<ul class="rating">
-																					@for($i=1; $i<=5; $i++)
-																						@if($data->rate>=$i)
-																							<li><i class="fa fa-star"></i></li>
-																						@else 
-																							<li><i class="fa fa-star-o"></i></li>
-																						@endif
-																					@endfor
-																				</ul>
-																				<div class="rate-count">(<span>{{$data->rate}}</span>)</div>
-																			</div>
-																			<p>{{$data->review}}</p>
-																		</div>
-																	</div>
-																	<!--/ End Single Rating -->
-																	@endforeach
-																</div>
-																
-																<!--/ End Review -->
-																
-															</div>
-														</div>
-													</div>
-												</div>
-												<!--/ End Reviews Tab -->
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-		</section>
-		<!--/ End Shop Single -->
-		
-		<!-- Start Most Popular -->
-	<div class="product-area most-popular related-product section">
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
         <div class="container">
             <div class="row">
-				<div class="col-12">
-					<div class="section-title">
-						<h2>Related Products</h2>
-					</div>
-				</div>
+                <div class="col-12">
+                    <div class="bread-inner">
+                        <ul class="bread-list">
+                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="">Shop Details</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+
+        <!-- Product Style 1 -->
+        <section class="product-area shop-sidebar shop-list shop section">
+            <div class="container">
+                <div class="row">
+
+                    <div class="content-wrapper">
+                        <div class="row">
+                            <!-- Sidebar Navigation (Nav-Pills) -->
+                            <div class="col-lg-3 col-md-4 col-12">
+                                <div class="nav-pills">
+                                    <div class="single-widget">
+
+                                        <ul class="nav nav-pills nav-stacked" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="presentation-tab" data-toggle="tab"
+                                                   href="#presentation" role="tab" aria-controls="presentation"
+                                                   aria-selected="true">
+                                                    <i class="fa fa-eye"></i> Présentation
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="specifications-tab" data-toggle="tab"
+                                                   href="#specifications" role="tab" aria-controls="specifications"
+                                                   aria-selected="false">
+                                                    <i class="fa fa-cogs"></i> Spécifications
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="avis-client-tab" data-toggle="tab"
+                                                   href="#avis-client"
+                                                   role="tab" aria-controls="avis-client" aria-selected="false">
+                                                    <i class="fa fa-comment"></i> Avis client
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Main Product Content -->
+                            <div class="col-lg-9 col-md-8 col-12">
+                                <div class="tab-content">
+                                    <!-- Presentation Tab Content -->
+                                    <div class="tab-pane fade show active" id="presentation" role="tabpanel"
+                                         aria-labelledby="presentation-tab">
+                                        <div class="product-container">
+                                            <div class="row">
+                                                <!-- Tire Image Section -->
+                                                <div class="col-md-5">
+                                                    <div class="img-pneu text-center">
+                                                        <img
+                                                            src="https://d2raphc8m6em86.cloudfront.net/27582/conversions/rotalla-s130-medium.jpg"
+                                                            itemprop="image" alt="Rotalla S130 Pneu d'hiver"
+                                                            class="img-responsive" style="width:300px">
+
+                                                        <form action="{{route('single-add-to-cart')}}" method="POST">
+                                                            @csrf
+                                                            <div class="quantity">
+
+                                                                <!-- Input Order -->
+                                                                <div class="input-group">
+                                                                    <div class="button minus">
+                                                                        <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                                                            <i class="ti-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                    <input type="hidden" name="slug" value="{{$product_detail->slug}}">
+                                                                    <input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
+                                                                    <div class="button plus">
+                                                                        <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+                                                                            <i class="ti-plus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!--/ End Input Order -->
+                                                            </div>
+                                                            <div class="add-to-cart mt-4">
+                                                                <button type="submit" class="btn-red">Add to cart</button>
+                                                                <a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
+                                                            </div>
+                                                        </form>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- Product Information Section -->
+                                                <div class="col-md-7">
+                                                    <div class="information-supp">
+                                                        <h1 class="brand-title">{{$product_detail->brand}}</h1>
+                                                        <div class="tire-info">
+                                                            <div class="tire-dimension">
+                                                                <h3>Dimension</h3>
+                                                                <p>{{$product_detail->width}}
+                                                                    /{{$product_detail->aspect_ratio}}
+                                                                    R{{$product_detail->diameter}} - 91V</p>
+                                                            </div>
+                                                            <div class="price">
+                                                                {{$product_detail->price}}<sup>95$</sup>
+                                                                <span class="availability">En stock</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="features">
+                                                            {!! $product_detail->summary !!}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Product Description -->
+                                            <div class="description">
+                                                <p>{!! $product_detail->description !!}</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Specifications Tab Content -->
+
+                                    <div class="tab-pane fade" id="specifications" role="tabpanel"
+                                         aria-labelledby="specifications-tab">
+                                        <h3>Spécifications</h3>
+                                        <div class="row" >
+                                            <div class="col-md-6">
+                                                <table class="table specification-pneu">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Manufacturier</td>
+                                                        <td>{{$product_detail->brand}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Cloutable</td>
+                                                        <td>{{ $specifications['Cloutable'] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Saison</td>
+                                                        <td>{{$product_detail->season}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Code produit</td>
+                                                        <td>{{$product_detail->code}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Largeur du pneu</td>
+                                                        <td>{{$product_detail->width}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Ratio du pneu</td>
+                                                        <td>{{$product_detail->aspect_ratio}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Diamètre du pneu</td>
+                                                        <td>{{$product_detail->diameter}}</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Indice de charge</td>
+                                                        <td>91</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Indice de vitesse</td>
+                                                        <td>V</td>
+                                                    </tr>
+
+                                                    <tr class="specification-pneu-mobile">
+                                                        <td>Flancs porteurs (Runflat)</td>
+                                                        <td>{{ $specifications['Flancs porteurs (Runflat)'] }}</td>
+                                                    </tr>
+                                                    <tr class="specification-pneu-mobile">
+                                                        <td>Pneu renforcé</td>
+                                                        <td>{{ $specifications['Pneu renforcé'] }}</td>
+                                                    </tr>
+                                                    <tr class="specification-pneu-mobile">
+                                                        <td>Extra Load</td>
+                                                        <td>{{ $specifications['Extra Load'] }}</td>
+                                                    </tr>
+
+
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <table class="table specification-pneu specification-route">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Flancs porteurs (Runflat)</td>
+                                                        <td>{{ $specifications['Flancs porteurs (Runflat)'] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Pneu renforcé</td>
+                                                        <td>{{ $specifications['Pneu renforcé'] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Extra Load</td>
+                                                        <td>{{ $specifications['Extra Load'] }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Avis Client Tab Content -->
+
+                                    <!-- Reviews Tab -->
+                                    <div class="tab-pane fade" id="avis-client" role="tabpanel"
+                                         aria-labelledby="avis-client-tab">
+                                        <h3>Avis Client</h3>
+                                        <div class="tab-single review-panel">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <!-- Review Section -->
+                                                    <div class="comment-review">
+                                                        <div class="add-review mb-4">
+                                                            <h5>Add A Review</h5>
+                                                            <p>Your email address will not be published. Required fields
+                                                                are marked.</p>
+                                                        </div>
+                                                        <h4>Your Rating <span class="text-danger">*</span></h4>
+                                                        <div class="review-inner">
+                                                            @auth
+                                                                <form class="form" method="post"
+                                                                      action="{{route('review.store',$product_detail->slug)}}">
+                                                                    @csrf
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12 col-12 mb-3">
+                                                                            <div class="rating_box">
+                                                                                <div class="star-rating">
+                                                                                    <div class="star-rating__wrap">
+                                                                                        @for($i = 5; $i >= 1; $i--)
+                                                                                            <input
+                                                                                                class="star-rating__input"
+                                                                                                id="star-rating-{{ $i }}"
+                                                                                                type="radio" name="rate"
+                                                                                                value="{{ $i }}">
+                                                                                            <label
+                                                                                                class="star-rating__ico fa fa-star-o"
+                                                                                                for="star-rating-{{ $i }}"
+                                                                                                title="{{ $i }} out of 5 stars"></label>
+                                                                                        @endfor
+                                                                                        @error('rate')
+                                                                                        <span
+                                                                                            class="text-danger">{{ $message }}</span>
+                                                                                        @enderror
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-12 mb-3">
+                                                                            <div class="form-group">
+                                                                                <label>Write a review</label>
+                                                                                <textarea name="review" rows="6"
+                                                                                          class="form-control"
+                                                                                          placeholder="Share your thoughts..."></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-12">
+                                                                            <div class="form-group">
+                                                                                <button type="submit" class="btn-red">
+                                                                                    Submit
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            @else
+                                                                <p class="text-center p-5">
+                                                                    You need to <a href="{{ route('login.form') }}"
+                                                                                   style="color:rgb(54, 54, 204)">Login</a>
+                                                                    OR <a style="color:blue"
+                                                                          href="{{ route('register.form') }}">Register</a>
+                                                                </p>
+                                                            @endauth
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="ratting-main mt-4">
+                                                        <div class="avg-ratting mb-4">
+                                                            <h4>{{ ceil($product_detail->getReview->avg('rate')) }}
+                                                                <span>(Overall)</span></h4>
+                                                            <span>Based on {{ $product_detail->getReview->count() }} Comments</span>
+                                                        </div>
+                                                        @foreach($product_detail['getReview'] as $data)
+                                                            <!-- Single Rating -->
+                                                            <div class="single-rating mb-3">
+                                                                <div class="rating-author">
+                                                                    @if($data->user_info['photo'])
+                                                                        <img src="{{ $data->user_info['photo'] }}"
+                                                                             alt="{{ $data->user_info['name'] }}"
+                                                                             class="rounded-circle" width="50">
+                                                                    @else
+                                                                        <img src="{{ asset('backend/img/avatar.png') }}"
+                                                                             alt="Profile.jpg" class="rounded-circle"
+                                                                             width="50">
+                                                                    @endif
+                                                                </div>
+                                                                <div class="rating-des">
+                                                                    <h6>{{ $data->user_info['name'] }}</h6>
+                                                                    <div class="ratings">
+                                                                        <ul class="rating">
+                                                                            @for($i = 1; $i <= 5; $i++)
+                                                                                @if($data->rate >= $i)
+                                                                                    <li>
+                                                                                        <i class="fa fa-star text-warning"></i>
+                                                                                    </li>
+                                                                                @else
+                                                                                    <li><i class="fa fa-star-o"></i>
+                                                                                    </li>
+                                                                                @endif
+                                                                            @endfor
+                                                                        </ul>
+                                                                        <div class="rate-count">
+                                                                            (<span>{{ $data->rate }}</span>)
+                                                                        </div>
+                                                                    </div>
+                                                                    <p>{{ $data->review }}</p>
+                                                                </div>
+                                                            </div>
+                                                            <!--/ End Single Rating -->
+                                                        @endforeach
+                                                    </div>
+                                                    <!--/ End Review -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add your CSS Styles here -->
+                                    <style>
+                                        /* Enhancements for the "Avis Client" (Customer Reviews) Section */
+
+                                        /* Review panel container */
+                                        .review-panel {
+                                            background-color: #f9f9f9;
+                                            padding: 20px;
+                                            border-radius: 10px;
+                                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                            margin-bottom: 20px;
+                                        }
+
+                                        /* Review title */
+                                        .review-panel h3 {
+                                            font-size: 24px;
+                                            font-weight: bold;
+                                            color: #333;
+                                            margin-bottom: 20px;
+                                            border-bottom: 2px solid #c30000;
+                                            padding-bottom: 10px;
+                                        }
+
+                                        /* Review box */
+                                        .single-rating {
+                                            background-color: #fff;
+                                            padding: 20px;
+                                            border-radius: 10px;
+                                            margin-bottom: 20px;
+                                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                                            transition: box-shadow 0.3s ease;
+                                        }
+
+                                        .single-rating:hover {
+                                            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+                                        }
+
+                                        /* Review author image */
+                                        .rating-author img {
+                                            border-radius: 50%;
+                                            border: 2px solid #ddd;
+                                            width: 60px;
+                                            height: 60px;
+                                            object-fit: cover;
+                                        }
+
+                                        /* Review author name and rating */
+                                        .rating-des h6 {
+                                            font-size: 18px;
+                                            font-weight: bold;
+                                            margin-bottom: 5px;
+                                            color: #333;
+                                        }
+
+                                        .ratings {
+                                            display: flex;
+                                            align-items: center;
+                                        }
+
+                                        .ratings ul.rating {
+                                            list-style-type: none;
+                                            padding: 0;
+                                            display: flex;
+                                            margin: 0;
+                                        }
+
+                                        .ratings ul.rating li {
+                                            color: #f39c12;
+                                            font-size: 1.5rem;
+                                            margin-right: 2px;
+                                        }
+
+                                        .ratings .fa-star-o {
+                                            color: #ddd;
+                                        }
+
+                                        /* Review content */
+                                        .single-rating p {
+                                            font-size: 16px;
+                                            color: #555;
+                                            line-height: 1.6;
+                                            margin-top: 10px;
+                                        }
+
+                                        /* Review submission form */
+                                        .add-review {
+                                            background-color: #fff;
+                                            padding: 20px;
+                                            border-radius: 10px;
+                                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+                                            margin-bottom: 20px;
+                                        }
+
+                                        .add-review h5 {
+                                            font-size: 20px;
+                                            font-weight: bold;
+                                            color: #333;
+                                            margin-bottom: 10px;
+                                        }
+
+                                        .add-review p {
+                                            color: #555;
+                                            font-size: 14px;
+                                            margin-bottom: 15px;
+                                        }
+
+                                        .add-review label {
+                                            font-size: 16px;
+                                            font-weight: bold;
+                                            color: #333;
+                                            margin-bottom: 5px;
+                                            display: block;
+                                        }
+
+                                        .add-review textarea {
+                                            width: 100%;
+                                            padding: 10px;
+                                            border-radius: 8px;
+                                            border: 1px solid #ddd;
+                                            font-size: 16px;
+                                            resize: none;
+                                            height: 120px;
+                                        }
+
+                                        .add-review .btn-red {
+                                            margin-top: 10px;
+                                            width: 150px;
+                                        }
+
+                                        /* Star rating */
+                                        .star-rating__ico {
+                                            cursor: pointer;
+                                            color: #ddd; /* default unselected star color */
+                                            transition: color 0.2s ease-in-out;
+                                        }
+                                        .star-rating__ico:hover,
+                                        .star-rating__ico:hover ~ .star-rating__ico,
+                                        .star-rating__input:checked ~ .star-rating__ico {
+                                            color: #ffc107; /* color when hovering or selected */
+                                        }
+                                        .star-rating__ico:hover {
+                                            color: #e67e22;
+                                        }
+
+                                        .star-rating__wrap {
+                                            display: flex;
+                                            font-size: 2rem;
+                                            margin-bottom: 10px;
+                                            direction: rtl; /* reverse the star order */
+                                        }
+                                        .star-rating__input {
+                                            display: none; /* hide the radio buttons */
+                                        }
+                                        /* Average rating */
+                                        .avg-ratting {
+                                            text-align: center;
+                                            margin-bottom: 20px;
+                                        }
+
+                                        .avg-ratting h4 {
+                                            font-size: 40px;
+                                            font-weight: bold;
+                                            color: #c30000;
+                                        }
+
+                                        .avg-ratting span {
+                                            font-size: 16px;
+                                            color: #666;
+                                        }
+
+                                        /* Comments count */
+                                        .avg-ratting span {
+                                            color: #555;
+                                        }
+
+                                        /* Mobile responsiveness */
+                                        @media only screen and (max-width: 768px) {
+                                            .single-rating {
+                                                padding: 15px;
+                                            }
+
+                                            .rating-author img {
+                                                width: 50px;
+                                                height: 50px;
+                                            }
+
+                                            .ratings ul.rating li {
+                                                font-size: 1.2rem;
+                                            }
+
+                                            .single-rating p {
+                                                font-size: 14px;
+                                            }
+                                        }
+
+                                    </style>
+
+                                    <!--/ End Reviews Tab -->
+                                </div>
+                            </div>
+
+                            <!-- Add your CSS Styles here -->
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            </div>
+        </section>
+
+
+
+
+    <!-- Start Most Popular -->
+    <div class="product-area most-popular related-product section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title">
+                        <h2>Related Products</h2>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 {{-- {{$product_detail->rel_prods}} --}}
@@ -321,18 +597,21 @@
                                 <!-- Start Single Product -->
                                 <div class="single-product">
                                     <div class="product-img">
-										<a href="{{route('product-detail',$data->slug)}}">
-											@php 
-												$photo=explode(',',$data->photo);
-											@endphp
+                                        <a href="{{route('product-detail',$data->slug)}}">
+                                            @php
+                                                $photo=explode(',',$data->photo);
+                                            @endphp
                                             <img class="default-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
                                             <img class="hover-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
                                             <span class="price-dec">{{$data->discount}} % Off</span>
-                                                                    {{-- <span class="out-of-stock">Hot</span> --}}
+                                            {{-- <span class="out-of-stock">Hot</span> --}}
                                         </a>
+
+
                                         <div class="button-head">
                                             <div class="product-action">
-                                                <a data-toggle="modal" data-target="#modelExample" title="Quick View" href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
+                                                <a data-toggle="modal" data-target="#modelExample" title="Quick View"
+                                                   href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
                                                 <a title="Wishlist" href="#"><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
                                                 <a title="Compare" href="#"><i class="ti-bar-chart-alt"></i><span>Add to Compare</span></a>
                                             </div>
@@ -344,17 +623,17 @@
                                     <div class="product-content">
                                         <h3><a href="{{route('product-detail',$data->slug)}}">{{$data->title}}</a></h3>
                                         <div class="product-price">
-                                            @php 
+                                            @php
                                                 $after_discount=($data->price-(($data->discount*$data->price)/100));
                                             @endphp
                                             <span class="old">${{number_format($data->price,2)}}</span>
                                             <span>${{number_format($after_discount,2)}}</span>
                                         </div>
-                                      
+
                                     </div>
                                 </div>
                                 <!-- End Single Product -->
-                                	
+
                             @endif
                         @endforeach
                     </div>
@@ -362,20 +641,20 @@
             </div>
         </div>
     </div>
-	<!-- End Most Popular Area -->
-	
+    <!-- End Most Popular Area -->
 
-  <!-- Modal -->
-  <div class="modal fade" id="modelExample" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ti-close" aria-hidden="true"></span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row no-gutters">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <!-- Product Slider -->
+    <div class="modal fade" id="modelExample" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ti-close"
+                                                                                                      aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row no-gutters">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <!-- Product Slider -->
                             <div class="product-gallery">
                                 <div class="quickview-slider-active">
                                     <div class="single-slider">
@@ -392,82 +671,88 @@
                                     </div>
                                 </div>
                             </div>
-                        <!-- End Product slider -->
-                    </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <div class="quickview-content">
-                            <h2>Flared Shift Dress</h2>
-                            <div class="quickview-ratting-review">
-                                <div class="quickview-ratting-wrap">
-                                    <div class="quickview-ratting">
-                                        <i class="yellow fa fa-star"></i>
-                                        <i class="yellow fa fa-star"></i>
-                                        <i class="yellow fa fa-star"></i>
-                                        <i class="yellow fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                            <!-- End Product slider -->
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="quickview-content">
+                                <h2>Flared Shift Dress</h2>
+                                <div class="quickview-ratting-review">
+                                    <div class="quickview-ratting-wrap">
+                                        <div class="quickview-ratting">
+                                            <i class="yellow fa fa-star"></i>
+                                            <i class="yellow fa fa-star"></i>
+                                            <i class="yellow fa fa-star"></i>
+                                            <i class="yellow fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                        <a href="#"> (1 customer review)</a>
                                     </div>
-                                    <a href="#"> (1 customer review)</a>
-                                </div>
-                                <div class="quickview-stock">
-                                    <span><i class="fa fa-check-circle-o"></i> in stock</span>
-                                </div>
-                            </div>
-                            <h3>$29.00</h3>
-                            <div class="quickview-peragraph">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia iste laborum ad impedit pariatur esse optio tempora sint ullam autem deleniti nam in quos qui nemo ipsum numquam.</p>
-                            </div>
-                            <div class="size">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12">
-                                        <h5 class="title">Size</h5>
-                                        <select>
-                                            <option selected="selected">s</option>
-                                            <option>m</option>
-                                            <option>l</option>
-                                            <option>xl</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-6 col-12">
-                                        <h5 class="title">Color</h5>
-                                        <select>
-                                            <option selected="selected">orange</option>
-                                            <option>purple</option>
-                                            <option>black</option>
-                                            <option>pink</option>
-                                        </select>
+                                    <div class="quickview-stock">
+                                        <span><i class="fa fa-check-circle-o"></i> in stock</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="quantity">
-                                <!-- Input Order -->
-                                <div class="input-group">
-                                    <div class="button minus">
-                                        <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-                                            <i class="ti-minus"></i>
-                                        </button>
-									</div>
-                                    <input type="text" name="qty" class="input-number"  data-min="1" data-max="1000" value="1">
-                                    <div class="button plus">
-                                        <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
-                                            <i class="ti-plus"></i>
-                                        </button>
+                                <h3>$29.00</h3>
+                                <div class="quickview-peragraph">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia iste laborum
+                                        ad impedit pariatur esse optio tempora sint ullam autem deleniti nam in quos qui
+                                        nemo ipsum numquam.</p>
+                                </div>
+                                <div class="size">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-12">
+                                            <h5 class="title">Size</h5>
+                                            <select>
+                                                <option selected="selected">s</option>
+                                                <option>m</option>
+                                                <option>l</option>
+                                                <option>xl</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6 col-12">
+                                            <h5 class="title">Color</h5>
+                                            <select>
+                                                <option selected="selected">orange</option>
+                                                <option>purple</option>
+                                                <option>black</option>
+                                                <option>pink</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <!--/ End Input Order -->
-                            </div>
-                            <div class="add-to-cart">
-                                <a href="#" class="btn">Add to cart</a>
-                                <a href="#" class="btn min"><i class="ti-heart"></i></a>
-                                <a href="#" class="btn min"><i class="fa fa-compress"></i></a>
-                            </div>
-                            <div class="default-social">
-                                <h4 class="share-now">Share:</h4>
-                                <ul>
-                                    <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a class="youtube" href="#"><i class="fa fa-pinterest-p"></i></a></li>
-                                    <li><a class="dribbble" href="#"><i class="fa fa-google-plus"></i></a></li>
-                                </ul>
+                                <div class="quantity">
+                                    <!-- Input Order -->
+                                    <div class="input-group">
+                                        <div class="button minus">
+                                            <button type="button" class="btn btn-primary btn-number" disabled="disabled"
+                                                    data-type="minus" data-field="quant[1]">
+                                                <i class="ti-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" name="qty" class="input-number" data-min="1" data-max="1000"
+                                               value="1">
+                                        <div class="button plus">
+                                            <button type="button" class="btn btn-primary btn-number" data-type="plus"
+                                                    data-field="quant[1]">
+                                                <i class="ti-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!--/ End Input Order -->
+                                </div>
+                                <div class="add-to-cart">
+                                    <a href="#" class="btn">Add to cart</a>
+                                    <a href="#" class="btn min"><i class="ti-heart"></i></a>
+                                    <a href="#" class="btn min"><i class="fa fa-compress"></i></a>
+                                </div>
+                                <div class="default-social">
+                                    <h4 class="share-now">Share:</h4>
+                                    <ul>
+                                        <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                                        <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                                        <li><a class="youtube" href="#"><i class="fa fa-pinterest-p"></i></a></li>
+                                        <li><a class="dribbble" href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -475,61 +760,389 @@
             </div>
         </div>
     </div>
-</div>
-<!-- Modal end -->
 
 @endsection
+
+
+
 @push('styles')
-	<style>
-		/* Rating */
-		.rating_box {
-		display: inline-flex;
-		}
+    <style>
+        /* Align the button and input field horizontally */
+        .d-flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+        }
 
-		.star-rating {
-		font-size: 0;
-		padding-left: 10px;
-		padding-right: 10px;
-		}
+        .justify-content-between {
+            justify-content: space-between;
+        }
 
-		.star-rating__wrap {
-		display: inline-block;
-		font-size: 1rem;
-		}
+        .align-items-center {
+            align-items: center;
+        }
 
-		.star-rating__wrap:after {
-		content: "";
-		display: table;
-		clear: both;
-		}
+        .form-control.qty-input {
+            max-width: 80px; /* Slightly increased width */
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px; /* Added rounded corners */
+            border: 1px solid #ddd; /* Subtle border */
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
 
-		.star-rating__ico {
-		float: right;
-		padding-left: 2px;
-		cursor: pointer;
-		color: #F7941D;
-		font-size: 16px;
-		margin-top: 5px;
-		}
+        .btn-red {
+            background-color: #c30000;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: inline-block;
+            border-radius: 8px; /* Added border radius */
+            transition: background-color 0.3s ease;
+        }
 
-		.star-rating__ico:last-child {
-		padding-left: 0;
-		}
+        .btn-red:hover {
+            background-color: #a80000;
+        }
 
-		.star-rating__input {
-		display: none;
-		}
+        /* Centering image inside its div */
+        .img-pneu img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+            transition: transform 0.3s ease; /* Add hover effect */
+        }
 
-		.star-rating__ico:hover:before,
-		.star-rating__ico:hover ~ .star-rating__ico:before,
-		.star-rating__input:checked ~ .star-rating__ico:before {
-		content: "\F005";
-		}
+        .img-pneu img:hover {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
 
-	</style>
+        /* Make sure everything is responsive */
+        @media only screen and (max-width: 768px) {
+            .d-flex {
+                flex-direction: column;
+            }
+
+            .form-control.qty-input {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .btn-red {
+                width: 100%;
+            }
+        }
+
+        /* General Reset and Navigation Styling */
+        .single-widget .nav-link {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 8px;
+            background-color: #f1f1f1; /* Light grey background */
+            color: #333333; /* Dark text color */
+            font-weight: bold;
+            padding: 10px 20px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            width: 15rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Active and Hover Styles for Navigation Links */
+        .nav-link.active {
+            background-color: #c30000 !important;
+            color: #fff; /* White text for contrast */
+        }
+
+        .nav-link:hover {
+            color: #555555; /* Darker grey on hover */
+        }
+
+        /* Button Styling */
+        .btn-red {
+            background-color: #c30000;
+            border: 0;
+            border-bottom: 4px solid #6e0000;
+            border-radius: 8px;
+            color: #fff;
+            font-family: "Arial", sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 12px 20px;
+            text-align: center;
+            text-transform: uppercase;
+            max-width: 300px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            top: 0;
+        }
+
+        .btn-red:hover {
+            background-color: #a80000;
+            border-bottom-color: #580000;
+            top: -2px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-red:active {
+            background-color: #8e0000;
+            border-bottom-color: #400000;
+            top: 2px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Button Adjustments */
+        @media only screen and (max-width: 990px) {
+            .btn-red {
+                font-size: 10px;
+                width: 77%;
+            }
+        }
+
+        @media only screen and (max-width: 1200px) {
+            .btn-red {
+                font-size: 13px;
+                width: 78%;
+            }
+        }
+
+        /* Product Container Styles */
+        .product-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .product-container:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Product title */
+        .product-container h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch; /* Equal height columns */
+        }
+
+        .col-md-5,
+        .col-md-7 {
+            padding: 20px;
+        }
+
+        /* Image and Text Section Styling */
+        .img-pneu {
+            text-align: center;
+        }
+
+        .img-pneu img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .img-pneu img:hover {
+            transform: scale(1.05);
+        }
+
+        .information-supp {
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-title {
+            color: #333;
+            font-size: 2.5rem;
+        }
+
+        .tire-info {
+            margin-bottom: 20px;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            color: #c30000;
+        }
+
+        .availability {
+            font-size: 0.9rem;
+            background-color: #5ca331;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+        }
+
+        /* Features and Icons */
+        .features {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .features li {
+            background-color: grey;
+            color: black;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li::before {
+            content: '\2714'; /* Unicode character for a checkmark */
+            margin-right: 10px;
+            font-weight: bold;
+            color: #4CAF50; /* A green color for the checkmark */
+        }
+
+        .icon-set img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Description Section */
+        .description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        #presentation h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        /* Specifications Section */
+        #specifications {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        /* Unified box-shadow for all sections (Avis Client, Specifications, Presentation) */
+        .product-container, .specification-pneu, .review-panel {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Consistent shadow */
+            margin-bottom: 30px;
+        }
+        .tab-pane h3, .product-container h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #c30000; /* Red underline for consistency */
+        }
+        #specifications h3 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #c30000;
+            padding-bottom: 10px;
+        }
+
+        /* Specification tables */
+        .specification-pneu {
+            width: 100%;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .specification-pneu th,
+        .specification-pneu td {
+            padding: 12px;
+            font-size: 1.2rem;
+            color: #444;
+        }
+
+        .specification-pneu td:first-child {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .specification-pneu td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .specification-pneu tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Alternating row colors */
+        .specification-pneu tr:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        .specification-pneu td {
+            transition: background-color 0.2s ease;
+        }
+
+        .specification-pneu td:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Align nav-pills with the product container */
+        .nav-pills {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        /* Mobile responsiveness */
+        @media only screen and (max-width: 768px) {
+            .specification-pneu {
+                font-size: 0.9rem;
+            }
+
+            #specifications h3 {
+                font-size: 1.8rem;
+            }
+        }
+
+    </style>
 @endpush
+
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     {{-- <script>
         $('.cart').click(function(){

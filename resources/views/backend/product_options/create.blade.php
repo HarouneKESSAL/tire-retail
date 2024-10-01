@@ -1,12 +1,12 @@
 @extends('backend.layouts.master')
 
 @section('main-content')
-
     <div class="card">
         <h5 class="card-header">Add Product Option</h5>
         <div class="card-body">
             <form method="post" action="{{ route('product-options.store') }}">
                 {{ csrf_field() }}
+
                 <div class="form-group">
                     <label for="name">Option Name <span class="text-danger">*</span></label>
                     <input id="name" type="text" name="name" placeholder="Enter option name" value="{{ old('name') }}" class="form-control">
@@ -48,12 +48,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             const isBooleanCheckbox = document.getElementById('is_boolean');
             const valueGroup = document.getElementById('value-group');
+            const valueInput = document.getElementById('value');
 
             function toggleValueField() {
                 if (isBooleanCheckbox.checked) {
-                    valueGroup.style.display = 'none';
+                    valueGroup.style.display = 'none'; // Hide value input when boolean is selected
+                    valueInput.value = ''; // Clear the value input when hidden
                 } else {
-                    valueGroup.style.display = 'block';
+                    valueGroup.style.display = 'block'; // Show value input otherwise
                 }
             }
 
@@ -61,18 +63,16 @@
             toggleValueField(); // Initial check
         });
     </script>
-
-
-
 @endsection
 
 @push('styles')
-    <link rel="stylesheet" href="{{asset('backend/summernote/summernote.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('backend/summernote/summernote.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 @endpush
+
 @push('scripts')
     <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
-    <script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
+    <script src="{{ asset('backend/summernote/summernote.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     <script>
@@ -94,13 +94,13 @@
             });
         });
 
-        $('#cat_id').change(function(){
+        $('#cat_id').change(function() {
             var cat_id = $(this).val();
             if (cat_id != null) {
                 $.ajax({
                     url: "/admin/category/" + cat_id + "/child",
                     data: {
-                        _token: "{{csrf_token()}}",
+                        _token: "{{ csrf_token() }}",
                         id: cat_id
                     },
                     type: "POST",
@@ -125,24 +125,5 @@
                 });
             }
         });
-
-        let optionIndex = 1;
-
-        $('#add-option').click(function () {
-            $('#options-container').append(`
-        <div class="option-row mb-3">
-            <input type="text" name="options[${optionIndex}][name]" class="form-control mb-2" placeholder="Option Name">
-            <input type="text" name="options[${optionIndex}][type]" class="form-control mb-2" placeholder="Option Type">
-            <input type="text" name="options[${optionIndex}][value]" class="form-control mb-2" placeholder="Option Value">
-            <button type="button" class="btn btn-danger remove-option">Remove</button>
-        </div>
-    `);
-            optionIndex++;
-        });
-
-        $(document).on('click', '.remove-option', function () {
-            $(this).closest('.option-row').remove();
-        });
-
     </script>
 @endpush

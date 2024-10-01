@@ -12,7 +12,8 @@ class Product extends Model
     protected $fillable = [
         'title', 'slug', 'summary', 'description', 'cat_id', 'child_cat_id', 'price',
         'brand_id', 'discount', 'status', 'photo', 'size', 'stock', 'is_featured',
-        'condition', 'width', 'aspect_ratio', 'diameter', 'season','choix_equipe'
+        'condition', 'width', 'aspect_ratio', 'diameter', 'season', 'choix_equipe',
+        'code', 'brand', 'model'  // Added new fields
     ];
 
     /**
@@ -53,8 +54,10 @@ class Product extends Model
     public function options()
     {
         return $this->belongsToMany(ProductOption::class, 'product_option_product', 'product_id', 'product_option_id')
-            ->withTimestamps();
+            ->withTimestamps();  // No need for withPivot('value') here.
     }
+
+
 
     public function cat_info()
     {

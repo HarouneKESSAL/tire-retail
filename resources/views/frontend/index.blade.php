@@ -4,71 +4,154 @@
 
 @section('main-content')
 
+    <div class="search-container">
 
-    <div class="filter-box">
-        <div class="filter-options text-center mb-4">
-            <button type="button" id="pneu-btn" class="filter-btn active">Pneu</button>
-            <button type="button" id="pneu-jantes-btn" class="filter-btn">Pneu/Jantes</button>
-            <button type="button" id="roues-jantes-btn" class="filter-btn">Roues/Jantes</button>
+        <noscript>
+            <p>Cette application nécessite JavaScript pour fonctionner correctement. Veuillez activer JavaScript dans
+                votre navigateur.</p>
+        </noscript>
+        <div class="tab-navigation" role="tablist">
+            <button class="tab active" data-target="pneu" role="tab" aria-selected="true">RECHERCHE PNEUS</button>
+            <button class="tab" data-target="pneu-jantes" role="tab" aria-selected="false">ENSEMBLE DE PNEUS/JANTES
+            </button>
+            <button class="tab" data-target="remorque-vtt" role="tab" aria-selected="false">PNEUS DE REMORQUE/VTT <span
+                    class="new-label">NOUVEAU</span></button>
+        </div>
+        <br>
+
+        <!-- PNEU Content -->
+        <div id="pneu" class="tab-content active">
+            <div class="search-type-toggle">
+
+                <button class="toggle active" data-target="dimensions-search">
+                    <i class="icon-pneu"></i>
+                    Par dimensions
+                </button>
+                <button class="toggle" data-target="vehicle-search">
+                    <i class="fa fa-car"></i>
+                    Par véhicule
+                </button>
+                <div class="slider"></div>
+            </div>
+
+            <div id="dimensions-search" class="search-content active">
+                <form id="dimensions-form" method="POST" action="{{ route('product.search') }}">
+                    @csrf
+                    <input type="hidden" name="category_slug" value="pneu">
+
+                    <!-- The main dimension selection row -->
+                    <div class="form-row">
+                        <div class="col">
+                            <select name="width" class="form-control">
+                                <option value="">Largeur</option>
+                                @foreach($pneuDimensions['widths'] as $width)
+                                    <option value="{{ $width->width }}">{{ $width->width }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select name="aspect_ratio" class="form-control">
+                                <option value="">Rapport</option>
+                                @foreach($pneuDimensions['aspect_ratios'] as $aspect_ratio)
+                                    <option
+                                        value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select name="diameter" class="form-control">
+                                <option value="">Diametre</option>
+                                @foreach($pneuDimensions['diameters'] as $diameter)
+                                    <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Season toggle after the selects -->
+                    <div class="season-toggle">
+                        <label class="radio-label">
+                            <input type="radio" name="season" value="winter" checked> Pneus d'hiver
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="season" value="summer"> Pneus d'été/4 saisons
+                        </label>
+                    </div>
+
+                    <!-- Search button -->
+                    <button type="submit" class="search-button">LANCER LA RECHERCHE</button>
+                </form>
+            </div>
+
+
+            <div id="vehicle-search" class="search-content">
+                <form id="vehicle-form" method="post" action="{{ route('filter.results') }}">
+                    @csrf
+                    <input type="hidden" name="category_slug" value="pneujantes">
+                    <div class="form-row">
+                        <div class="col">
+                            <select name="year" class="form-control">
+                                <option value="">Sélectionner l'année</option>
+
+                                @foreach($pneuYears as $year)
+                                    <option value="{{ $year->car_year }}">{{ $year->car_year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select name="car_brand" class="form-control">
+                                <option value="">Sélectionner la marque</option>
+
+                                @foreach($pneuCar_brands as $car_brand)
+                                    <option value="{{ $car_brand->car_brand }}">{{ $car_brand->car_brand }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <select name="model" class="form-control">
+                                <option value="">Sélectionner le modèle</option>
+
+                                @foreach($pneuModels as $model)
+                                    <option value="{{ $model->car_model }}">{{ $model->car_model }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select name="option" class="form-control">
+                                <option value="">Sélectionner l'option</option>
+                                @foreach($pneuOptions as $option)
+                                    <option value="{{ $option->name }}">{{ $option->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="season-toggle">
+                        <label class="radio-label">
+                            <input type="radio" name="season" value="winter" checked> Pneus d'hiver
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="season" value="summer"> Pneus d'été/4 saisons
+                        </label>
+                    </div>
+                    <button type="submit" class="search-button">LANCER LA RECHERCHE</button>
+                </form>
+            </div>
         </div>
 
-        <!-- PNEU Form -->
-        <div id="pneu-filter" class="filter-content active">
-            <form id="pneu-form" method="POST" action="{{ route('product.search') }}" class="filter-form">
-                @csrf
-                <input type="hidden" name="category_slug" value="pneu">
-                <div class="form-row mb-3">
-                    <div class="col">
-                        <select name="width" class="form-control">
-                            <option value="">Largeur</option>
-                            @foreach($pneuDimensions['widths'] as $width)
-                                <option value="{{ $width->width }}">{{ $width->width }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col">
-                        <select name="aspect_ratio" class="form-control">
-                            <option value="">Rapport</option>
-                            @foreach($pneuDimensions['aspect_ratios'] as $aspect_ratio)
-                                <option value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col">
-                        <select name="diameter" class="form-control">
-                            <option value="">Diametre</option>
-                            @foreach($pneuDimensions['diameters'] as $diameter)
-                                <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row mb-3">
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>
-            </form>
-        </div>
-
-        <!-- PNEU/JANTES Form -->
-        <div id="pneu-jantes-filter" class="filter-content">
+        <!-- ENSEMBLE DE PNEUS/JANTES Content -->
+        <div id="pneu-jantes" class="tab-content">
             <form id="pneu-jantes-form" method="post" action="{{ route('filter.results') }}" class="filter-form">
                 @csrf
                 <input type="hidden" name="category_slug" value="pneujantes">
-                <div class="form-row mb-3">
+                <div class="form-row">
                     <div class="col">
                         <select name="year" class="form-control">
                             <option value="">Select Year</option>
-                            @foreach($years as $year)
+                            @foreach($pneuJantesYears as $year)
                                 <option value="{{ $year->car_year }}">{{ $year->car_year }}</option>
                             @endforeach
                         </select>
@@ -76,53 +159,48 @@
                     <div class="col">
                         <select name="car_brand" class="form-control">
                             <option value="">Select Make</option>
-                            @foreach($car_brands as $car_brand)
+                            @foreach($pneuJantesCar_brands as $car_brand)
                                 <option value="{{ $car_brand->car_brand }}">{{ $car_brand->car_brand }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-
-                <div class="form-row mb-3">
+                <div class="form-row">
                     <div class="col">
                         <select name="model" class="form-control">
                             <option value="">Select Model</option>
-                            @foreach($models as $model)
+                            @foreach($pneuJantesModels as $model)
                                 <option value="{{ $model->car_model }}">{{ $model->car_model }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col">
-                        <select name="option" class="form-control mb-2">
+                        <select name="option" class="form-control">
                             <option value="">Select Option</option>
-                            @foreach($options as $option)
+                            @foreach($pneuJantesOptions as $option)
                                 <option value="{{ $option->name }}">{{ $option->name }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-
-                <div class="form-row mb-3">
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>
-                    </div>
+                <div class="season-toggle">
+                    <label class="radio-label">
+                        <input type="radio" name="season" value="winter" checked> Pneus d'hiver
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="season" value="summer"> Pneus d'été/4 saisons
+                    </label>
                 </div>
-                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>
+                <button type="submit" class="search-button">LANCER LA RECHERCHE</button>
             </form>
         </div>
 
-        <!-- ROUES/JANTES Form -->
-        <div id="roues-jantes-filter" class="filter-content">
-            <form id="roues-jantes-form" method="GET" action="{{ route('filter.results') }}" class="filter-form">
+        <!-- PNEUS DE REMORQUE/VTT Content -->
+        <div id="remorque-vtt" class="tab-content">
+            <form id="remorque-vtt-form" method="POST" action="{{ route('product.search') }}" class="filter-form">
                 @csrf
-                <input type="hidden" name="category_slug" value="rouesjantes">
-                <div class="form-row mb-3">
+                <input type="hidden" name="category_slug" value="pneu">
+                <div class="form-row">
                     <div class="col">
                         <select name="width" class="form-control">
                             <option value="">Largeur</option>
@@ -135,7 +213,8 @@
                         <select name="aspect_ratio" class="form-control">
                             <option value="">Rapport</option>
                             @foreach($rouesJantesDimensions['aspect_ratios'] as $aspect_ratio)
-                                <option value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>
+                                <option
+                                    value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -148,24 +227,463 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-row mb-3">
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>
-                    </div>
-                    <div class="col">
-                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>
-                    </div>
+                <div class="season-toggle">
+                    <label class="radio-label">
+                        <input type="radio" name="season" value="winter" checked> Pneus d'hiver
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="season" value="summer"> Pneus d'été/4 saisons
+                    </label>
                 </div>
-                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>
+                <button type="submit" class="search-button">LANCER LA RECHERCHE</button>
             </form>
         </div>
     </div>
 
 
+    {{--        <div class="filter-box">--}}
+    {{--        <div class="filter-options text-center mb-4">--}}
+    {{--            <button type="button" id="pneu-btn" class="filter-btn active">Pneu</button>--}}
+    {{--            <button type="button" id="pneu-jantes-btn" class="filter-btn">Pneu/Jantes</button>--}}
+    {{--            <button type="button" id="roues-jantes-btn" class="filter-btn">Roues/Jantes</button>--}}
+    {{--        </div>--}}
+
+    {{--        <!-- PNEU Form -->--}}
+    {{--        <div id="pneu-filter" class="filter-content active">--}}
+    {{--            <form id="pneu-form" method="POST" action="{{ route('product.search') }}" class="filter-form">--}}
+    {{--                @csrf--}}
+    {{--                <input type="hidden" name="category_slug" value="pneu">--}}
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="width" class="form-control">--}}
+    {{--                            <option value="">Largeur</option>--}}
+    {{--                            @foreach($pneuDimensions['widths'] as $width)--}}
+    {{--                                <option value="{{ $width->width }}">{{ $width->width }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="aspect_ratio" class="form-control">--}}
+    {{--                            <option value="">Rapport</option>--}}
+    {{--                            @foreach($pneuDimensions['aspect_ratios'] as $aspect_ratio)--}}
+    {{--                                <option--}}
+    {{--                                    value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="diameter" class="form-control">--}}
+    {{--                            <option value="">Diametre</option>--}}
+    {{--                            @foreach($pneuDimensions['diameters'] as $diameter)--}}
+    {{--                                <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
+    {{--            </form>--}}
+    {{--        </div>--}}
+
+    {{--        <!-- PNEU/JANTES Form -->--}}
+    {{--        <div id="pneu-jantes-filter" class="filter-content">--}}
+    {{--            <form id="pneu-jantes-form" method="post" action="{{ route('filter.results') }}" class="filter-form">--}}
+    {{--                @csrf--}}
+    {{--                <input type="hidden" name="category_slug" value="pneujantes">--}}
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="year" class="form-control">--}}
+    {{--                            <option value="">Select Year</option>--}}
+    {{--                            @foreach($years as $year)--}}
+    {{--                                <option value="{{ $year->car_year }}">{{ $year->car_year }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="car_brand" class="form-control">--}}
+    {{--                            <option value="">Select Make</option>--}}
+    {{--                            @foreach($car_brands as $car_brand)--}}
+    {{--                                <option value="{{ $car_brand->car_brand }}">{{ $car_brand->car_brand }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="model" class="form-control">--}}
+    {{--                            <option value="">Select Model</option>--}}
+    {{--                            @foreach($models as $model)--}}
+    {{--                                <option value="{{ $model->car_model }}">{{ $model->car_model }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="option" class="form-control mb-2">--}}
+    {{--                            <option value="">Select Option</option>--}}
+    {{--                            @foreach($options as $option)--}}
+    {{--                                <option value="{{ $option->name }}">{{ $option->name }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
+    {{--            </form>--}}
+    {{--        </div>--}}
+
+    {{--        <!-- ROUES/JANTES Form -->--}}
+    {{--        <div id="roues-jantes-filter" class="filter-content">--}}
+    {{--            <form id="roues-jantes-form" method="GET" action="{{ route('filter.results') }}" class="filter-form">--}}
+    {{--                @csrf--}}
+    {{--                <input type="hidden" name="category_slug" value="rouesjantes">--}}
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="width" class="form-control">--}}
+    {{--                            <option value="">Largeur</option>--}}
+    {{--                            @foreach($rouesJantesDimensions['widths'] as $width)--}}
+    {{--                                <option value="{{ $width->width }}">{{ $width->width }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="aspect_ratio" class="form-control">--}}
+    {{--                            <option value="">Rapport</option>--}}
+    {{--                            @foreach($rouesJantesDimensions['aspect_ratios'] as $aspect_ratio)--}}
+    {{--                                <option--}}
+    {{--                                    value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <select name="diameter" class="form-control">--}}
+    {{--                            <option value="">Diametre</option>--}}
+    {{--                            @foreach($rouesJantesDimensions['diameters'] as $diameter)--}}
+    {{--                                <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>--}}
+    {{--                            @endforeach--}}
+    {{--                        </select>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+    {{--                <div class="form-row mb-3">--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="col">--}}
+    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
+    {{--            </form>--}}
+    {{--        </div>--}}
+    {{--    </div>--}}
+
+
     <!-- Filter Section End -->
+    <style>
+        @media (max-width: 768px) {
+            .search-container {
+                top: 60%;
+                width: 70%;
+                right: 50%;
+                transform: translate(50%, -50%);
+            }
+        }
+        @media (max-width: 768px) {
+            .form-control {
+                font-size: 14px; /* Smaller font size on mobile */
+                padding: 8px;
+            }
+        }
+        @media (max-width: 768px) {
+            .search-container {
+                width: 90%; /* Further reduce width on smaller devices */
+                top: 60%; /* Ensure the container remains visible */
+                right: 50%;
+                transform: translate(50%, -50%);
+            }
+
+            .form-row {
+                flex-direction: column; /* Stack form elements vertically */
+            }
+
+            .col {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            }
+
+        .search-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto;
+            position: absolute;
+            top: 50%;
+            right: 5rem;
+            transform: translateY(-50%);
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 40%;
+            height: auto; /* Dynamic height based on content */
+            max-height: 100%; /* Ensure it doesn't overflow the banner */
+            overflow-y: visible; /* Avoid cutting off content */
+        }
+
+
+
+        .search-header {
+            text-align: center;
+            border-bottom: 1px solid white;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .tab {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .tab:hover {
+            background-color: #444;
+        }
+
+        .tab.active {
+            background-color: #555;
+        }
+
+        .new-label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            margin-left: 5px;
+            text-transform: uppercase;
+        }
+
+        .search-type-toggle {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toggle {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: #444;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle.active {
+            background-color: #ffa500;
+        }
+
+        .slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background-color: #ffa500;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .search-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .search-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        #vehicle-search {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        #vehicle-search.active {
+            transform: translateX(0);
+        }
+
+        #dimensions-search {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        #dimensions-search.active {
+            transform: translateX(0);
+        }
+
+        .toggle.active {
+            background-color: #ffa500;
+        }
+
+        .search-content, .tab-content {
+            display: none;
+        }
+
+        .search-content.active, .tab-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .col {
+            flex: 1;
+            margin-right: 10px;
+            min-width: 0; /* Allow shrinking below content size */
+        }
+
+        .col:last-child {
+            margin-right: 0;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        select.form-control {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .form-control:focus {
+            outline: 2px solid #ffa500;
+        }
+
+        .add-dimension {
+            color: #ffa500;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .season-toggle {
+            margin-bottom: 20px;
+        }
+
+        .radio-label {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .search-button, .btn-black {
+            width: 100%;
+            padding: 15px;
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .search-button:hover, .btn-black:hover {
+            background-color: #ff0000;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabButtons = document.querySelectorAll('.tab-navigation .tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const toggleButtons = document.querySelectorAll('.search-type-toggle .toggle');
+            const searchContents = document.querySelectorAll('.search-content');
+            const slider = document.querySelector('.slider');
+
+            function setActiveTab(target) {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                document.querySelector(`.tab[data-target="${target}"]`).classList.add('active');
+                document.getElementById(target).classList.add('active');
+            }
+
+            function setActiveToggle(target) {
+                toggleButtons.forEach(btn => btn.classList.remove('active'));
+                searchContents.forEach(content => content.classList.remove('active'));
+
+                const activeToggle = document.querySelector(`.toggle[data-target="${target}"]`);
+                activeToggle.classList.add('active');
+                document.getElementById(target).classList.add('active');
+
+                // Move the slider
+                if (target === 'vehicle-search') {
+                    slider.style.transform = 'translateX(100%)';
+                } else {
+                    slider.style.transform = 'translateX(0)';
+                }
+            }
+
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    setActiveTab(this.getAttribute('data-target'));
+                });
+            });
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    setActiveToggle(this.getAttribute('data-target'));
+                });
+            });
+
+
+        });
+    </script>
 
     <!-- Modal for Displaying Filter Result -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -204,14 +722,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const filterBtns = document.querySelectorAll('.filter-btn');
             const filterContents = document.querySelectorAll('.filter-content');
-            const filterForms = document.querySelectorAll('.filter-form');
             const filterModal = new bootstrap.Modal(document.getElementById('filterModal'));
 
             filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     filterBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     const targetId = this.id.replace('-btn', '-filter');
@@ -224,27 +741,29 @@
                 });
             });
 
-            filterForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-                    fetch(this.action, {
-                        method: this.method,
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
+            document.getElementById('pneu-jantes-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: this.method,
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('filterResults').innerHTML = data;
+                        filterModal.show();
                     })
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('filterResults').innerHTML = data;
-                            filterModal.show();
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
+                    .catch(error => console.error('Error:', error));
             });
+
+            // No custom JavaScript handling for the "Pneu" and "Roues/Jantes" forms,
+            // so they will redirect as usual upon submission.
         });
+
     </script>
     <!-- Slider Area -->
     @if(count($banners) > 0)
@@ -278,7 +797,7 @@
         </section>
     @endif
 
-    <!-- Start Small Banner  -->
+
     <section class="small-banner section">
         <div class="container-fluid">
             <div class="row">
@@ -309,9 +828,7 @@
             </div>
         </div>
     </section>
-    <!-- End Small Banner -->
 
-    <!-- Start Product Area -->
     <div class="product-area section">
         <div class="container">
             <div class="row">
@@ -373,7 +890,8 @@
                                                     <div class="product-action">
                                                         <a data-toggle="modal" data-target="#{{$product->id}}"
                                                            title="Quick View" href="#"><i class="ti-eye"></i><span>Quick Shop</span></a>
-                                                        <a title="Wishlist" href="{{route('add-to-wishlist', $product->slug)}}"><i
+                                                        <a title="Wishlist"
+                                                           href="{{route('add-to-wishlist', $product->slug)}}"><i
                                                                 class="ti-heart"></i><span>Add to Wishlist</span></a>
                                                     </div>
                                                     <div class="product-action-2">
@@ -392,7 +910,8 @@
                                                         $after_discount = ($product->price - ($product->price * $product->discount) / 100);
                                                     @endphp
                                                     <span>${{number_format($after_discount, 2)}}</span>
-                                                    <del style="padding-left:4%;">${{number_format($product->price, 2)}}</del>
+                                                    <del style="padding-left:4%;">
+                                                        ${{number_format($product->price, 2)}}</del>
                                                 </div>
                                             </div>
                                         </div>
@@ -438,7 +957,7 @@
     {{--    </section>--}}
     <!-- End Midium Banner -->
 
-    <!-- Start Most Popular -->
+    <!-- Start Most Popular Area -->
     <div class="product-area most-popular section">
         <div class="container">
             <div class="row">
@@ -467,8 +986,12 @@
                                         </a>
                                         <div class="button-head">
                                             <div class="product-action">
-                                                <a data-toggle="modal" data-target="#{{$product->id}}" title="Quick View" href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
-                                                <a title="Wishlist" href="{{route('add-to-wishlist',$product->slug)}}" ><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
+                                                <a data-toggle="modal" data-target="#{{$product->id}}"
+                                                   title="Quick View" href="#"><i
+                                                        class=" ti-eye"></i><span>Quick Shop</span></a>
+                                                <a title="Wishlist"
+                                                   href="{{route('add-to-wishlist',$product->slug)}}"><i
+                                                        class=" ti-heart "></i><span>Add to Wishlist</span></a>
                                             </div>
                                             <div class="product-action-2">
                                                 <a href="{{route('add-to-cart',$product->slug)}}">Add to cart</a>
@@ -476,7 +999,8 @@
                                         </div>
                                     </div>
                                     <div class="product-content">
-                                        <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h3>
+                                        <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a>
+                                        </h3>
                                         <div class="product-price">
                                             <span class="old">${{number_format($product->price,2)}}</span>
                                             @php
@@ -496,7 +1020,7 @@
     </div>
     <!-- End Most Popular Area -->
 
-    <!-- Start Shop Home List  -->
+    <!-- Start Shop Home List  !-->
     <section class="shop-home-list section">
         <div class="container">
             <div class="row">
@@ -530,7 +1054,9 @@
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-12 no-padding">
                                             <div class="content">
-                                                <h4 class="title"><a href="#">{{$product->title}}</a></h4>
+                                                <h4 class="title"><a
+                                                        href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a>
+                                                </h4>
                                                 <p class="price with-discount">
                                                     ${{number_format($product->discount,2)}}</p>
                                             </div>
@@ -758,7 +1284,7 @@
                                         </form>
                                         <div class="default-social">
                                             <!-- ShareThis BEGIN -->
-                                                <div class="sharethis-inline-share-buttons"></div><!-- ShareThis END -->
+                                            <div class="sharethis-inline-share-buttons"></div><!-- ShareThis END -->
                                         </div>
                                     </div>
                                 </div>
@@ -775,16 +1301,17 @@
 
 @push('styles')
     <style>
-        /* Banner Sliding */
+
         #Gslider .carousel-inner {
             background: #000000;
-            color:black;
+            color: black;
         }
 
-        #Gslider .carousel-inner{
+        #Gslider .carousel-inner {
             height: 550px;
         }
-        #Gslider .carousel-inner img{
+
+        #Gslider .carousel-inner img {
             width: 100% !important;
             opacity: .8;
         }
@@ -797,7 +1324,7 @@
             font-size: 50px;
             font-weight: bold;
             line-height: 100%;
-            color: red;
+
         }
 
         #Gslider .carousel-inner .carousel-caption p {
@@ -814,7 +1341,7 @@
         /* General Styles for Filter Box */
         .filter-box {
             position: absolute;
-            top: 50%;
+            top: 70%;
             right: 5rem;
             transform: translateY(-50%);
             z-index: 10;
@@ -908,12 +1435,12 @@
             background-color: #ff0000; /* Active button should be red */
             color: white; /* Text color should be white */
         }
+
         .filter-btn:hover {
             background-color: #b30000; /* Darker red on active/hover */
             color: #fff;
             transform: scale(1.05); /* Slightly enlarge the button on hover */
         }
-
 
 
         .form-row {
@@ -926,6 +1453,7 @@
             width: 48%;
             color: #ff0000;
         }
+
         .form-control:hover {
 
             color: #b30000;
@@ -956,17 +1484,17 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('pneu-jantes-form');
             if (form) {
-                form.addEventListener('submit', function(event) {
+                form.addEventListener('submit', function (event) {
                     submitForm(event, 'pneu-jantes-form');
                 });
             }
 
             var filterModal = new bootstrap.Modal(document.getElementById('filterModal'));
 
-            window.submitForm = function(event, formId) {
+            window.submitForm = function (event, formId) {
                 event.preventDefault();
                 const form = document.getElementById(formId);
                 const formData = new FormData(form);

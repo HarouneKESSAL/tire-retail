@@ -653,10 +653,10 @@ Version:1.0
     color: #fff;
 }
 
-.header.shop {
-    background: #fff;
-}
+.header.shop{
+    background:#fff;
 
+}
 .header.shop .nav-inner {
     margin: 0;
     float: left;
@@ -1931,7 +1931,6 @@ Version:1.0
     text-align: center;
     position: absolute;
     text-transform: uppercase;
-    border-radius: 30px;
     height: 26px;
     line-height: 25px;
 }
@@ -1948,7 +1947,6 @@ Version:1.0
     text-align: center;
     position: absolute;
     text-transform: uppercase;
-    border-radius: 30px;
     height: 26px;
     line-height: 24px;
 }
@@ -1965,7 +1963,6 @@ Version:1.0
     text-align: center;
     position: absolute;
     text-transform: uppercase;
-    border-radius: 30px;
     height: 26px;
     line-height: 24px;
 }
@@ -1982,7 +1979,6 @@ Version:1.0
     text-align: center;
     position: absolute;
     text-transform: uppercase;
-    border-radius: 30px;
     height: 26px;
     line-height: 24px;
 }
@@ -2890,7 +2886,6 @@ Version:1.0
 }
 .shop-home-list .shop-section-title h1 {
     font-size: 22px;
-    margin-bottom: 0;
     text-transform: capitalize;
     position: relative;
     color: #2c2d3f;
@@ -2993,264 +2988,11 @@ Version:1.0
     padding: 2px 18px;
     border-radius: 30px;
     font-size: 14px;
-    font-weight: 500;
 }
 /*======================================
    End Shop Home List CSS
 ========================================*/
-/*======================================
-   Start Shopping Cart CSS
-========================================*/
-.table.shopping-summery {
-    background: #fff;
-}
-.shopping-cart {
-    background: #f6f6f6;
-    padding: 50px 0;
-}
-.shopping-summery thead .main-hading{
-    padding:0px 50px;
-}
-.shopping-summery thead {
-    background: #ff0000; /* Changed to red */
-    color: #fff;
-}
-.shopping-summery thead tr th {
-    border: none;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-}
-.shopping-summery tbody tr {
-    border-bottom: 1px solid #ff0000; /* Changed to red */
-    margin-top: 20px;
-}
-.shopping-summery tbody tr img {
-    border-radius: 0;
-    width: 80px;
-    height: 80px;
-}
-.shopping-summery tbody tr:last-child{
-    border:none;
-}
-.shopping-summery tbody .product-name a {
-    font-weight: 600;
-    color: #282828;
-    font-weight: 600;
-    font-size: 17px;
-}
-.shopping-cart .table p {
-    font-size: 14px;
-    color: #666;
-}
-.shopping-summery tbody .product-name a:hover{
-    color:#ff0000; /* Changed to red */
-}
-.shopping-summery tbody .product img {
-    max-width: 70px;
-    border-radius: 100%;
-    max-height: 65px;
-    border: 1px solid #e6e6e6;
-    padding: 4px;
-}
-.shopping-summery tbody .product:hover img{
-    border-color:#ff0000; /* Changed to red */
-    -webkit-transform:rotate(360deg);
-    -moz-transform:rotate(360deg);
-    transform:rotate(360deg);
-}
-.shopping-cart .border{
 
-}
-.shopping-cart .table .remove-icon{
-    font-size:16px;
-}
-.shopping-cart .table td {
-    vertical-align: middle;
-    border-top: 1px solid #eee;
-    padding: 30px;
-}
-.shopping-summery tbody .price {
-    text-align: center;
-}
-.shopping-summery tbody .price span{}
-.shopping-cart tbody .qty .input-group {
-    width: 175px;
-    display: inline-block;
-}
-.shopping-cart .qty .button {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-}
-.shopping-cart .qty .button.minus{
-    left:0;
-    border-radius:0;
-    overflow:hidden;
-}
-.shopping-cart .qty .button.plus {
-    right: 0;
-    border-radius:0;
-    overflow:hidden;
-}
-.shopping-cart .qty .button .btn {
-    padding: 0;
-    width: 44px;
-    height: 47px;
-    line-height: 50px;
-    border-radius: 0px;
-    background: transparent;
-    color: #282828;
-    border: none;
-    font-size: 12px;
-}
-.shopping-cart .qty .button .btn:hover{
-    color:#ff0000; /* Changed to red */
-}
-.shopping-cart .qty .input-number {
-    border: 1px solid #eceded;
-    width: 100%;
-    text-align: center;
-    height: 47px;
-    border-radius:0;
-    overflow: hidden;
-    padding: 0px 45px;
-}
-.shopping-summery tbody .total-amount {
-    text-align: center;
-}
-.shopping-summery tbody .total-amount span{}
-.shopping-summery tbody .action {
-    text-align: center;
-}
-.shopping-summery tbody .action a:hover{
-    color:#ff0000; /* Changed to red */
-}
-.shopping-cart .total-amount{
-    margin-top:50px;
-}
-.shopping-cart .total-amount .left{}
-.shopping-cart .total-amount .left .coupon{}
-.shopping-cart .total-amount .left .coupon form{}
-.shopping-cart .total-amount .left .coupon form input {
-    width: 220px;
-    display: inline-block;
-    height: 48px;
-    color: #333;
-    padding: 0px 20px;
-    border: none;
-    box-shadow: 0px 0px 5px #0000000a;
-}
-.shopping-cart .total-amount .left .coupon form .btn {
-    display: inline-block;
-    height: 48px;
-    border: navajowhite;
-    margin-left: 4px;
-    background: transparent;
-    color: #333;
-    box-shadow: 0px 0px 5px #00000012;
-}
-.shopping-cart .total-amount .left .coupon form .btn:hover{
-    background:#fff;
-    color:#ff0000; /* Changed to red */
-}
-.shopping-cart .total-amount .left label{
-    font-size:22px;
-    font-weight:500;
-    color:#333;
-}
-.shopping-cart .total-amount .left .checkbox {
-    text-align: left;
-    margin: 0;
-    margin-top: 20px;
-}
-.shopping-cart .total-amount .left .checkbox label {
-    font-size: 15px;
-    font-weight: 400;
-    color: #333;
-    position: relative;
-    padding-left: 30px;
-}
-.shopping-cart .total-amount .left .checkbox label:hover{
-    cursor:pointer;
-}
-.shopping-cart .total-amount .left .checkbox label input{
-    display:none;
-}
-.shopping-cart .total-amount .left .checkbox label::before {
-    position: absolute;
-    content: "";
-    left: 0;
-    top: 4px;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #555555;
-    border-radius: 0px;
-}
-.shopping-cart .total-amount .left .checkbox label::after {
-    position: absolute;
-    content: "\f00c";
-    font-family: "Fontawesome", sans-serif;
-    left: 0;
-    top: 0;
-    width: 22px;
-    height: 22px;
-    line-height: 24px;
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0);
-    -webkit-transition: all 0.4s ease;
-    -moz-transition: all 0.4s ease;
-    transition: all 0.4s ease;
-    display: block;
-    font-size: 11px;
-}
-.shopping-cart .total-amount .left .checkbox label.checked::after{
-    opacity:1;
-    visibility:visible;
-    transform:scale(1);
-}
-.shopping-cart .total-amount .right {
-    padding-left: 100px;
-}
-.shopping-cart .total-amount .right ul{
-
-}
-.shopping-cart .total-amount .right ul li {
-    font-size: 15px;
-    font-weight: 400;
-    color: #333;
-    margin-bottom: 12px;
-}
-.shopping-cart .total-amount .right ul li.last {
-    padding-top: 12px;
-    border-top: 1px solid #c8c8c8;
-    color: #333;
-    font-size: 15px;
-    font-weight: 400;
-}
-.shopping-cart .total-amount .right ul li span{
-    display:inline-block;
-    float:right;
-}
-.shopping-cart .total-amount .right .button5 .btn {
-    text-align: center;
-    border-radius: 0;
-    width: 100%;
-    margin-top: 10px;
-    height: 46px;
-    line-height: 18px;
-    font-size: 13px;
-    color: #fff;
-    background: #333;
-}
-.shopping-cart .total-amount .right .button5 .btn:hover{
-    background: #ff0000; /* Changed to red */
-    color: #fff;
-}
-/*======================================
-   End Shopping Cart CSS
-========================================*/
 /*======================================
    Start Checkout Form CSS
 ========================================*/
@@ -3312,7 +3054,7 @@ Version:1.0
     line-height: 50px;
     margin-bottom: 25px;
     background: #F6F7FB;
-    border-radius: 0px;
+    border-radius: 0;
     border:none;
 }
 .shop.checkout .nice-select .list {
@@ -3364,11 +3106,10 @@ Version:1.0
     position:relative;
     font-size: 15px;
     font-weight: 600;
-    padding: 10px 30px;
     line-height: 24px;
     text-transform: uppercase;
     color: #333;
-    padding-bottom: 5px;
+    padding: 10px 30px 5px;
 }
 .shop.checkout .single-widget h2:before{
     position:absolute;
@@ -3384,7 +3125,7 @@ Version:1.0
 }
 .shop.checkout .single-widget .content ul li {
     display: block;
-    padding: 0px 30px;
+    padding: 0 30px;
     font-size: 15px;
     font-weight: 400;
     color: #333;
@@ -3405,7 +3146,7 @@ Version:1.0
 .shop.checkout .single-widget .checkbox {
     text-align: left;
     margin: 0;
-    padding: 0px 30px;
+    padding: 0 30px;
     margin-top:30px;
 }
 
@@ -3416,7 +3157,7 @@ Version:1.0
 }
 .shop.checkout .single-widget.get-button {
     text-align: center;
-    padding:0px 35px;
+    padding:0 35px;
 }
 .shop.checkout .single-widget.get-button .btn {
     height: 46px;

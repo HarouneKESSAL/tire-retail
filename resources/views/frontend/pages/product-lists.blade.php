@@ -22,6 +22,7 @@
 		<!-- End Breadcrumbs -->
 		<form action="{{route('shop.filter')}}" method="POST">
 		@csrf
+            <input type="hidden" name="viewType" value="list">
             <input type="hidden" name="car_brand" value="{{ request('car_brand') }}">
             <input type="hidden" name="model" value="{{ request('model') }}">
             <input type="hidden" name="year" value="{{ request('year') }}">
@@ -36,39 +37,37 @@
 							<div class="shop-sidebar">
 
                                 <!-- Single Widget -->
-                                <div class="single-widget">
-                                    <h3 class="title">{{$carName}}</h3>
-                                </div>
+                                @if($carName == "  ")
+                                @else
+                                    <div class="single-widget">
+                                        <h3 class="title">{{ $carName }}</h3>
+                                    </div>
+                                @endif
 
                                 <div class="single-widget category">
                                     <h3 class="title">Categories</h3>
                                     <ul class="categor-list">
 										@php
-											// $category = new Category();
 											$menu=App\Models\Category::getAllParentWithChild();
 										@endphp
 										@if($menu)
-										<li>
-											@foreach($menu as $cat_info)
-													@if($cat_info->child_cat->count()>0)
-														<li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
-															<ul>
-																@foreach($cat_info->child_cat as $sub_menu)
-																	<li><a href="{{route('product-sub-cat',[$cat_info->slug,$sub_menu->slug])}}">{{$sub_menu->title}}</a></li>
-																@endforeach
-															</ul>
-														</li>
-													@else
-														<li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a></li>
-													@endif
-											@endforeach
-										</li>
+                                            <li>
+                                                @foreach($menu as $cat_info)
+                                                        @if($cat_info->child_cat->count()>0)
+                                                            <li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
+                                                                <ul>
+                                                                    @foreach($cat_info->child_cat as $sub_menu)
+                                                                        <li><a href="{{route('product-sub-cat',[$cat_info->slug,$sub_menu->slug])}}">{{$sub_menu->title}}</a></li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </li>
+                                                        @else
+                                                            <li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a></li>
+                                                        @endif
+                                                @endforeach
+                                            </li>
 										@endif
-                                        {{-- @foreach(Helper::productCategoryList('products') as $cat)
-                                            @if($cat->is_parent==1)
-												<li><a href="{{route('product-cat',$cat->slug)}}">{{$cat->title}}</a></li>
-											@endif
-                                        @endforeach --}}
+
                                     </ul>
                                 </div>
                                 <!--/ End Single Widget -->
@@ -78,13 +77,7 @@
 									<h3 class="title">Shop by Price</h3>
 									<div class="price-filter">
 										<div class="price-filter-inner">
-{{--											--}}{{-- <div id="slider-range" data-min="10" data-max="2000" data-currency="%"></div>--}}
-{{--												<div class="price_slider_amount">--}}
-{{--												<div class="label-input">--}}
-{{--													<span>Range:</span>--}}
-{{--													<input type="text" id="amount" name="price_range" value='@if(!empty($_GET['price'])) {{$_GET['price']}} @endif' placeholder="Add Your Price"/>--}}
-{{--												</div>--}}
-{{--											</div> --}}
+
 											@php
 												$max=DB::table('products')->max('price');
 												// dd($max);
@@ -95,25 +88,15 @@
 											<div class="label-input">
 												<span>Range:</span>
 												<input style="" type="text" id="amount" readonly/>
-												<input type="hidden" name="price_range" id="price_range" value="@if(!empty($_GET['price'])){{$_GET['price']}}@endif"/>
+												<input type="hidden" name="price" id="price_range" value="@if(!empty($_GET['price'])){{$_GET['price']}}@endif"/>
 											</div>
 											</div>
 										</div>
 									</div>
-									 <ul class="check-box-list">
-										<li>
-											<label class="checkbox-inline" for="1"><input name="news" id="1" type="checkbox">$20 - $50</label>
-										</li>
-										<li>
-											<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox">$50 - $100</label>
-										</li>
-										<li>
-											<label class="checkbox-inline" for="3"><input name="news" id="3" type="checkbox">$100 - $250</label>
-										</li>
-									</ul>
+
 								</div>
                                 <!--/ End Shop By Price -->
-
+                                @if($charges && $vitesses && $lettrages && $categories )
                                 <!-- Additional Filter Options -->
                                 <div class="single-widget category options">
                                     <h3 class="title" data-toggle="collapse" data-target="#filterOptions" aria-expanded="false" aria-controls="filterOptions">
@@ -278,7 +261,8 @@
                                     </div>
                                 </div>
                                 <!--/ End Additional Filter Options -->
-
+                                @else
+                                @endif
                                 <!-- Single Widget -->
                                 <div class="single-widget recent-post">
                                     <h3 class="title">Recent post</h3>
@@ -347,10 +331,10 @@
 												</select>
 											</div>
 										</div>
-										<ul class="view-mode">
-											<li><a href="{{route('product-grids')}}"><i class="fa fa-th-large"></i></a></li>
-											<li class="active"><a href="javascript:void(0)"><i class="fa fa-th-list"></i></a></li>
-										</ul>
+                                        <ul class="view-mode">
+                                            <li><a href="{{route('product-grids')}}"><i class="fa fa-th-large"></i></a></li>
+                                            <li class="active"><a href="javascript:void(0)"><i class="fa fa-th-list"></i></a></li>
+                                        </ul>
 									</div>
 									<!--/ End Shop Top -->
 								</div>

@@ -158,7 +158,29 @@
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
+                <div class="form-group">
+                    <label for="code" class="col-form-label">Code <span class="text-danger">*</span></label>
+                    <input id="code" type="text" name="code" placeholder="Enter tire code" value="{{$product->code}}" class="form-control">
+                    @error('code')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
 
+                <div class="form-group">
+                    <label for="model" class="col-form-label">Model <span class="text-danger">*</span></label>
+                    <input id="model" type="text" name="model" placeholder="Enter tire model" value="{{$product->model}}" class="form-control">
+                    @error('model')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="brand" class="col-form-label">Brand <span class="text-danger">*</span></label>
+                    <input id="brand" type="text" name="brand" placeholder="Enter tire brand" value="{{$product->brand}}" class="form-control">
+                    @error('brand')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
                 <!-- Options Section -->
                 <div class="form-group">
                     <label>Options</label>

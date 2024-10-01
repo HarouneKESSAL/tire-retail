@@ -60,6 +60,9 @@ class ProductController extends Controller
             'options' => 'nullable|array',
             'options.*.id' => 'required_with:options|exists:product_options,id',
             'options.*.value' => 'required_with:options|string',
+            'code' => 'nullable|string',  // New field
+            'brand' => 'nullable|string',  // New field
+            'model' => 'nullable|string',  // New field
         ]);
 
         $data = $request->all();
@@ -102,8 +105,6 @@ class ProductController extends Controller
     }
 
 
-
-
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
@@ -131,6 +132,9 @@ class ProductController extends Controller
             'options' => 'nullable|array',
             'options.*.option_id' => 'required_with:options|exists:product_options,id',
             'options.*.value' => 'required_with:options|string',
+            'code' => 'nullable|string',  // New field
+            'brand' => 'nullable|string',  // New field
+            'model' => 'nullable|string',  // New field
         ]);
 
         // Prepare data for saving
