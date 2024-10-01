@@ -9,7 +9,8 @@
                 {{csrf_field()}}
                 <div class="form-group">
                     <label for="inputTitle" class="col-form-label">Title <span class="text-danger">*</span></label>
-                    <input id="inputTitle" type="text" name="title" placeholder="Enter title"  value="{{old('title')}}" class="form-control">
+                    <input id="inputTitle" type="text" name="title" placeholder="Enter title" value="{{old('title')}}"
+                           class="form-control">
                     @error('title')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
@@ -30,7 +31,35 @@
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
+                <!-- Code Field -->
+                <div class="form-group">
+                    <label for="code" class="col-form-label">Product Code <span class="text-danger">*</span></label>
+                    <input id="code" type="text" name="code" placeholder="Enter product code" value="{{old('code')}}"
+                           class="form-control">
+                    @error('code')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
 
+                <!-- Brand Field -->
+                <div class="form-group">
+                    <label for="brand" class="col-form-label">Brand <span class="text-danger">*</span></label>
+                    <input id="brand" type="text" name="brand" placeholder="Enter product brand"
+                           value="{{old('brand')}}" class="form-control">
+                    @error('brand')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
+
+                <!-- Model Field -->
+                <div class="form-group">
+                    <label for="model" class="col-form-label">Model <span class="text-danger">*</span></label>
+                    <input id="model" type="text" name="model" placeholder="Enter product model"
+                           value="{{old('model')}}" class="form-control">
+                    @error('model')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
                 <div class="form-group">
                     <label for="is_featured">Is Featured</label><br>
                     <input type="checkbox" name='is_featured' id='is_featured' value='1' checked> Yes
@@ -61,7 +90,8 @@
 
                 <div class="form-group">
                     <label for="price" class="col-form-label">Price(NRS) <span class="text-danger">*</span></label>
-                    <input id="price" type="number" name="price" placeholder="Enter price"  value="{{old('price')}}" class="form-control">
+                    <input id="price" type="number" name="price" placeholder="Enter price" value="{{old('price')}}"
+                           class="form-control">
                     @error('price')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
@@ -69,7 +99,8 @@
 
                 <div class="form-group">
                     <label for="discount" class="col-form-label">Discount(%)</label>
-                    <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter discount"  value="{{old('discount')}}" class="form-control">
+                    <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter discount"
+                           value="{{old('discount')}}" class="form-control">
                     @error('discount')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
@@ -77,7 +108,7 @@
 
                 <div class="form-group">
                     <label for="size">Size</label>
-                    <select name="size[]" class="form-control selectpicker"  multiple data-live-search="true">
+                    <select name="size[]" class="form-control selectpicker" multiple data-live-search="true">
                         <option value="">--Select any size--</option>
                         <option value="S">Small (S)</option>
                         <option value="M">Medium (M)</option>
@@ -91,7 +122,8 @@
                     <select name="brand_id" class="form-control">
                         <option value="">--Select Car--</option>
                         @foreach($brands as $brand)
-                            <option value="{{$brand->id}}">{{$brand->car_brand . ' ' . $brand->car_model . ' ' . $brand->car_year}}</option>
+                            <option
+                                value="{{$brand->id}}">{{$brand->car_brand . ' ' . $brand->car_model . ' ' . $brand->car_year}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -108,7 +140,8 @@
 
                 <div class="form-group">
                     <label for="stock">Quantity <span class="text-danger">*</span></label>
-                    <input id="quantity" type="number" name="stock" min="0" placeholder="Enter quantity"  value="{{old('stock')}}" class="form-control">
+                    <input id="quantity" type="number" name="stock" min="0" placeholder="Enter quantity"
+                           value="{{old('stock')}}" class="form-control">
                     @error('stock')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
@@ -144,23 +177,28 @@
                 <!-- Tire-specific fields -->
                 <div class="form-group">
                     <label for="width" class="col-form-label">Width (mm) <span class="text-danger">*</span></label>
-                    <input id="width" type="number" name="width" placeholder="Enter width" value="{{old('width')}}" class="form-control">
+                    <input id="width" type="number" name="width" placeholder="Enter width" value="{{old('width')}}"
+                           class="form-control">
                     @error('width')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="aspect_ratio" class="col-form-label">Aspect Ratio <span class="text-danger">*</span></label>
-                    <input id="aspect_ratio" type="number" name="aspect_ratio" placeholder="Enter aspect ratio" value="{{old('aspect_ratio')}}" class="form-control">
+                    <label for="aspect_ratio" class="col-form-label">Aspect Ratio <span
+                            class="text-danger">*</span></label>
+                    <input id="aspect_ratio" type="number" name="aspect_ratio" placeholder="Enter aspect ratio"
+                           value="{{old('aspect_ratio')}}" class="form-control">
                     @error('aspect_ratio')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="diameter" class="col-form-label">Diameter (inch) <span class="text-danger">*</span></label>
-                    <input id="diameter" type="number" name="diameter" placeholder="Enter diameter" value="{{old('diameter')}}" class="form-control">
+                    <label for="diameter" class="col-form-label">Diameter (inch) <span
+                            class="text-danger">*</span></label>
+                    <input id="diameter" type="number" name="diameter" placeholder="Enter diameter"
+                           value="{{old('diameter')}}" class="form-control">
                     @error('diameter')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
@@ -170,13 +208,14 @@
                     <label>Options</label>
                     <div id="options-container">
                         <div class="option-row mb-3">
-                            <select name="options[0][id]" class="form-control mb-2">
+                            <select name="options[0][id]" class="form-control mb-2 option-select">
                                 <option value="">--Select Option--</option>
                                 @foreach($options as $option)
-                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                    <option value="{{ $option->id }}" data-is-boolean="{{ $option->is_boolean }}">{{ $option->name }}</option>
                                 @endforeach
+
                             </select>
-                            <input type="text" name="options[0][value]" class="form-control mb-2" placeholder="Enter Option Value">
+                            <input type="text" name="options[0][value]" class="form-control mb-2 option-value" placeholder="Enter Option Value">
                             <button type="button" class="btn btn-danger remove-option">Remove</button>
                         </div>
                     </div>
@@ -189,7 +228,8 @@
                     <label for="season" class="col-form-label">Season <span class="text-danger">*</span></label>
                     <select name="season" class="form-control">
                         <option value="summer" {{ old('season') == 'summer' ? 'selected' : '' }}>Summer</option>
-                        <option value="all-season" {{ old('season') == 'all-season' ? 'selected' : '' }}>All-Season</option>
+                        <option value="all-season" {{ old('season') == 'all-season' ? 'selected' : '' }}>All-Season
+                        </option>
                         <option value="winter" {{ old('season') == 'winter' ? 'selected' : '' }}>Winter</option>
                     </select>
                     @error('season')
@@ -209,7 +249,15 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{asset('backend/summernote/summernote.min.css')}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
+    <style>
+        .btn-secondary[disabled] {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+    </style>
 @endpush
 @push('scripts')
     <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
@@ -219,7 +267,7 @@
     <script>
         $('#lfm').filemanager('image');
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#summary').summernote({
                 placeholder: "Write short description.....",
                 tabsize: 2,
@@ -227,7 +275,7 @@
             });
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#description').summernote({
                 placeholder: "Write detail description.....",
                 tabsize: 2,
@@ -235,7 +283,7 @@
             });
         });
 
-        $('#cat_id').change(function(){
+        $('#cat_id').change(function () {
             var cat_id = $(this).val();
             if (cat_id != null) {
                 $.ajax({
@@ -245,8 +293,8 @@
                         id: cat_id
                     },
                     type: "POST",
-                    success: function(response) {
-                        if (typeof(response) != 'object') {
+                    success: function (response) {
+                        if (typeof (response) != 'object') {
                             response = $.parseJSON(response)
                         }
                         var html_option = "<option value=''>----Select sub category----</option>"
@@ -254,7 +302,7 @@
                             var data = response.data;
                             if (data) {
                                 $('#child_cat_div').removeClass('d-none');
-                                $.each(data, function(id, title) {
+                                $.each(data, function (id, title) {
                                     html_option += "<option value='" + id + "'>" + title + "</option>"
                                 });
                             }
@@ -267,7 +315,7 @@
             }
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             let optionIndex = 1;
 
             $('#add-option').click(function () {
@@ -308,6 +356,76 @@
         });
 
 
+    </script>
+    <script>
+
+        $(document).ready(function() {
+            let optionIndex = 1;
+
+            // Add new option row
+            $('#add-option').off('click').on('click', function () {
+                $('#options-container').append(`
+            <div class="option-row mb-3">
+                <select name="options[${optionIndex}][id]" class="form-control mb-2 option-select">
+                    <option value="">--Select Option--</option>
+                    @foreach($options as $option)
+                <option value="{{ $option->id }}" data-is-boolean="{{ $option->is_boolean }}">{{ $option->name }}</option>
+                    @endforeach
+                </select>
+                <input type="text" name="options[${optionIndex}][value]" class="form-control mb-2 option-value" placeholder="Enter Option Value">
+                <button type="button" class="btn btn-danger remove-option">Remove</button>
+            </div>
+        `);
+                optionIndex++;
+            });
+
+            // Handle option type change
+            $(document).on('change', '.option-select', function () {
+                let selectedOption = $(this).find('option:selected');
+                let isBoolean = selectedOption.data('is-boolean');  // Get the data-is-boolean attribute of the selected option
+
+                // Find the corresponding value input
+                let valueInput = $(this).closest('.option-row').find('.option-value');
+
+                // If the option is boolean, hide the value input and set value to 1
+                if (isBoolean === 1) {  // Checking if is_boolean is true
+                    valueInput.val('1');  // Set value to 1 for boolean options
+                    valueInput.hide();    // Hide the input field
+                } else {
+                    valueInput.val('');   // Clear the value if not boolean
+                    valueInput.show();    // Show the input field for non-boolean
+                }
+            });
+
+            // Remove an option row but ensure that at least one option remains
+            $(document).on('click', '.remove-option', function () {
+                const optionRows = $('.option-row');
+
+                // If more than one option-row, remove the selected row
+                if (optionRows.length > 1) {
+                    $(this).closest('.option-row').remove();
+                }
+
+                // After removing an option, ensure the last option's "Remove" button is disabled
+                toggleRemoveButtons();
+            });
+
+            // Disable "Remove" button for the last remaining option row
+            function toggleRemoveButtons() {
+                const optionRows = $('.option-row');
+
+                // If there is only one option-row, disable the "Remove" button and change its style
+                if (optionRows.length === 1) {
+                    optionRows.find('.remove-option').attr('disabled', true).removeClass('btn-danger').addClass('btn-secondary');
+                } else {
+                    // Enable the "Remove" button for all option-rows and restore its original style
+                    optionRows.find('.remove-option').attr('disabled', false).removeClass('btn-secondary').addClass('btn-danger');
+                }
+            }
+
+            // Initialize the buttons on page load
+            toggleRemoveButtons();
+        });
 
     </script>
 @endpush

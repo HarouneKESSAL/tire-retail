@@ -32,6 +32,9 @@
                             <th>Width (mm)</th>
                             <th>Aspect Ratio</th>
                             <th>Diameter (inch)</th>
+                            <th>Code</th> <!-- New field -->
+                            <th>Model</th> <!-- New field -->
+                            <th>Brand</th> <!-- New field -->
                             <th>Option</th>
                             <th>Season</th>
                             <th>Action</th>
@@ -52,6 +55,9 @@
                             <th>Width (mm)</th>
                             <th>Aspect Ratio</th>
                             <th>Diameter (inch)</th>
+                            <th>Code</th> <!-- New field -->
+                            <th>Model</th> <!-- New field -->
+                            <th>Brand</th> <!-- New field -->
                             <th>Option</th>
                             <th>Season</th>
                             <th>Action</th>
@@ -98,6 +104,9 @@
                                 <td>{{$product->width}}</td>
                                 <td>{{$product->aspect_ratio}}</td>
                                 <td>{{$product->diameter}}</td>
+                                <td>{{$product->code}}</td> <!-- New field -->
+                                <td>{{$product->model}}</td> <!-- New field -->
+                                <td>{{$product->brand}}</td> <!-- New field -->
                                 <td>
                                     <ul>
                                         @foreach($product->options as $option)

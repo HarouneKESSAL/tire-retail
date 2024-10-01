@@ -24,12 +24,14 @@
     <form action="{{ route('shop.filter') }}" method="POST">
         @csrf
         <!-- Hidden input fields to retain filters -->
+        <input type="hidden" name="viewType" value="grid">
         <input type="hidden" name="car_brand" value="{{ request('car_brand') }}">
         <input type="hidden" name="model" value="{{ request('model') }}">
         <input type="hidden" name="year" value="{{ request('year') }}">
         <input type="hidden" name="width" value="{{ request('width') }}">
         <input type="hidden" name="aspect_ratio" value="{{ request('aspect_ratio') }}">
         <input type="hidden" name="diameter" value="{{ request('diameter') }}">
+
 
         <section class="product-area shop-sidebar shop section">
             <div class="container">
@@ -38,91 +40,249 @@
                         <div class="shop-sidebar">
 
                             <!-- Car Name -->
-                            <div class="single-widget">
-                                <h3 class="title">{{ $carName }}</h3>
-                            </div>
+                            @if($carName == "  ")
+                            @else
+                                <div class="single-widget">
+                                    <h3 class="title">{{ $carName }}</h3>
+                                </div>
+                            @endif
 
-                            <!-- Categories -->
+
+
+                            <!-- Single Widget -->
                             <div class="single-widget category">
                                 <h3 class="title">Categories</h3>
                                 <ul class="categor-list">
+                                    @php
+                                        // $category = new Category();
+                                        $menu=App\Models\Category::getAllParentWithChild();
+                                    @endphp
                                     @if($menu)
+                                        <li>
                                         @foreach($menu as $cat_info)
-                                            <li>
-                                                <a href="{{ route('product-cat', $cat_info->slug) }}">{{ $cat_info->title }}</a>
-                                                @if($cat_info->child_cat->count() > 0)
+                                            @if($cat_info->child_cat->count()>0)
+                                                <li>
+                                                    <a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
                                                     <ul>
                                                         @foreach($cat_info->child_cat as $sub_menu)
-                                                            <li><a href="{{ route('product-sub-cat', [$cat_info->slug, $sub_menu->slug]) }}">{{ $sub_menu->title }}</a></li>
+                                                            <li>
+                                                                <a href="{{route('product-sub-cat',[$cat_info->slug,$sub_menu->slug])}}">{{$sub_menu->title}}</a>
+                                                            </li>
                                                         @endforeach
                                                     </ul>
+                                                </li>
+                                            @else
+                                                <li>
+                                                    <a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
+                                                </li>
                                                 @endif
-                                            </li>
-                                        @endforeach
-                                    @endif
+                                                @endforeach
+                                                </li>
+                                            @endif
+                                            {{-- @foreach(Helper::productCategoryList('products') as $cat)
+                                                @if($cat->is_parent==1)
+                                                    <li><a href="{{route('product-cat',$cat->slug)}}">{{$cat->title}}</a></li>
+                                                @endif
+                                            @endforeach --}}
                                 </ul>
                             </div>
+                            <!--/ End Single Widget -->
 
                             <!-- Price Filter -->
                             <div class="single-widget range">
                                 <h3 class="title">Shop by Price</h3>
                                 <div class="price-filter">
                                     <div class="price-filter-inner">
+
                                         @php
-                                            $max = DB::table('products')->max('price');
+                                            $max=DB::table('products')->max('price');
+                                            // dd($max);
                                         @endphp
-                                        <div id="slider-range" data-min="0" data-max="{{ $max }}"></div>
+                                        <div id="slider-range" data-min="0" data-max="{{$max}}"></div>
                                         <div class="product_filter">
                                             <button type="submit" class="filter-btn">Filter</button>
                                             <div class="label-input">
                                                 <span>Range:</span>
                                                 <input style="" type="text" id="amount" readonly/>
-                                                <input type="hidden" name="price" id="price_range" value="{{ request('price') }}"/>
+                                                <input type="hidden" name="price" id="price_range"
+                                                       value="@if(!empty($_GET['price'])){{$_GET['price']}}@endif"/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Additional Filter Options -->
-                            <div class="single-widget category options">
-                                <h3 class="title" data-toggle="collapse" data-target="#filterOptions" aria-expanded="false" aria-controls="filterOptions">
-                                    FILTRE DE RECHERCHE <i class="fa fa-angle-down"></i>
-                                </h3>
-                                <div id="filterOptions" class="collapse">
-                                    <ul class="categor-list">
-                                        <!-- Dynamic filters -->
-                                        @foreach(['vitesse', 'lettrage', 'charge'] as $option)
+                            </div>
+                            @if($charges && $vitesses && $lettrages && $categories )
+                                <!-- Additional Filter Options -->
+                                <div class="single-widget category options">
+                                    <h3 class="title" data-toggle="collapse" data-target="#filterOptions"
+                                        aria-expanded="false" aria-controls="filterOptions">
+                                        FILTRE DE RECHERCHE <i class="fa fa-angle-down"></i>
+                                    </h3>
+                                    <div id="filterOptions" class="collapse">
+                                        <ul class="categor-list">
+                                            <!-- Vitesse -->
                                             <li class="form-group row">
-                                                <label for="{{ $option }}" class="col-sm-4 col-form-label">{{ ucfirst($option) }}</label>
+                                                <label for="vitesse" class="col-sm-4 col-form-label">Vitesse</label>
                                                 <div class="col-sm-8">
-                                                    <select name="options[{{ $option }}]" id="{{ $option }}" class="form-control">
+                                                    <select name="options[vitesse]" id="vitesse" class="form-control">
                                                         <option value="">Optional</option>
-                                                        @foreach(${$option.'s'} as $option_value)
-                                                            <option value="{{ $option_value->value }}">{{ $option_value->value }}</option>
+                                                        @foreach($vitesses as $option)
+                                                            <option
+                                                                value="{{ $option->value }}">{{ $option->value }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </li>
-                                        @endforeach
 
-                                        <!-- Checkbox filters -->
-                                        @foreach(['runflat' => 'Runflat', 'xl_renforces' => 'XL / Renforcés', 'cloutable' => 'Cloutable', 'choix_equipe' => 'Choix de l\'équipe', 'en_solde' => 'En Solde'] as $key => $label)
-                                            <li class="form-group">
-                                                <label for="{{ $key }}">{{ $label }}</label>
-                                                <input type="checkbox" name="options[{{ $key }}]" id="{{ $key }}" value="1" @if(request()->has("options.$key")) checked @endif>
-                                                {{ $label }} ({{ $$key }})
+                                            <!-- Lettrage -->
+                                            <li class="form-group row">
+                                                <label for="lettrage" class="col-sm-4 col-form-label">Lettrage</label>
+                                                <div class="col-sm-8">
+                                                    <select name="options[lettrage]" id="lettrage" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($lettrages as $option)
+                                                            <option
+                                                                value="{{ $option->value }}">{{ $option->value }}</option>
+                                                        @endforeach
+                                                    </select>
+
+                                                </div>
                                             </li>
-                                        @endforeach
 
-                                        <!-- Filter Button -->
-                                        <li class="form-group">
-                                            <button type="submit" class="filter-btn">Filter</button>
-                                        </li>
-                                    </ul>
+                                            <!-- Catégorie -->
+                                            <li class="form-group row">
+                                                <label for="category" class="col-sm-4 col-form-label">Catégorie</label>
+                                                <div class="col-sm-8">
+                                                    <select name="category" id="category" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($categories as $option)
+                                                            @php
+                                                                // Get the IDs of the current category and its child categories
+                                                                $categoryIds = \App\Models\Category::where('id', $option->id)
+                                                                    ->orWhere('parent_id', $option->id) // Include child categories if applicable
+                                                                    ->pluck('id')
+                                                                    ->toArray();
+
+                                                                // Count the number of products that belong to these categories
+                                                                $productCount = \App\Models\Product::where('cat_id', $categoryIds)
+                                                                    ->where('status', 'active')
+                                                                    ->count();
+                                                            @endphp
+                                                            <option value="{{ $option->slug }}">
+                                                                {{ $option->title }} ({{ $productCount }})
+                                                            </option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
+
+
+                                            </li>
+
+                                            <!-- Charge -->
+                                            <li class="form-group row">
+                                                <label for="charge" class="col-sm-4 col-form-label">Charge</label>
+                                                <div class="col-sm-8">
+                                                    <select name="options[charge]" id="charge" class="form-control">
+                                                        <option value="">Optional</option>
+                                                        @foreach($charges as $option)
+                                                            <option
+                                                                value="{{ $option->value }}">{{ $option->value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </li>
+
+                                            <!-- Runflat -->
+                                            <li class="form-group">
+                                                <label for="runflat">Runflat</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'runflat')
+                                                        ->where('product_options.is_boolean', 1)  // Assuming value is stored in pivot table
+                                                        ->where('products.status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+
+                                                <input type="checkbox" name="options[runflat]" id="runflat" value="1">
+                                                Runflat ({{ $productCount }})
+                                            </li>
+
+                                            <!-- XL/Renforcés -->
+                                            <li class="form-group">
+                                                <label for="xl_renforces">XL / Renforcés</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'xl_renforces')
+                                                        ->where('product_options.is_boolean', 1)
+                                                        ->where('products.status', 'active') // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[xl_renforces]" id="xl_renforces"
+                                                       value="1">
+                                                XL / Renforcés ({{ $productCount }})
+                                            </li>
+
+                                            <!-- Cloutable -->
+                                            <li class="form-group">
+                                                <label for="cloutable">Cloutable</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
+                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
+                                                        ->where('product_options.name', 'cloutable')
+                                                        ->where('product_options.is_boolean', 1)
+                                                        ->where('products.status', 'active') // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[cloutable]" id="cloutable"
+                                                       value="1">
+                                                Cloutable ({{ $productCount }})
+                                            </li>
+
+                                            <!-- Choix de l'équipe -->
+                                            <li class="form-group">
+                                                <label for="choix_equipe">Choix de l'équipe</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->where('is_featured', 1)
+                                                        ->where('status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[choix_equipe]" id="choix_equipe"
+                                                       value="1">
+                                                Choix de l'équipe ({{ $productCount }})
+                                            </li>
+
+                                            <!-- En Solde -->
+                                            <li class="form-group">
+                                                <label for="en_solde">En Solde</label>
+                                                @php
+                                                    $productCount = DB::table('products')
+                                                        ->where('discount', '>', 0)
+                                                        ->where('status', 'active')  // Only count active products
+                                                        ->count();
+                                                @endphp
+                                                <input type="checkbox" name="options[en_solde]" id="en_solde" value="1">
+                                                En Solde ({{ $productCount }})
+                                            </li>
+
+
+                                            <!-- Filter Button -->
+                                            <li class="form-group">
+                                                <button type="submit" class="filter-btn">Filter</button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-
+                            @else
+                            @endif
+                            <!--/ End Additional Filter Options -->
                             <!-- Recent Posts -->
                             <div class="single-widget recent-post">
                                 <h3 class="title">Recent post</h3>
@@ -135,7 +295,9 @@
                                             <img src="{{ $photo[0] }}" alt="{{ $product->title }}">
                                         </div>
                                         <div class="content">
-                                            <h5><a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a></h5>
+                                            <h5>
+                                                <a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
+                                            </h5>
                                             <p class="price">
                                                 <del class="text-muted">${{ number_format($product->price, 2) }}</del>
                                                 ${{ number_format(($product->price - ($product->price * $product->discount) / 100), 2) }}
@@ -145,15 +307,21 @@
                                 @endforeach
                             </div>
 
-                            <!-- Brands -->
+                            <!-- Single Widget -->
                             <div class="single-widget category">
                                 <h3 class="title">Brands</h3>
                                 <ul class="categor-list">
+                                    @php
+                                        $brands=DB::table('brands')->orderBy('car_brand','ASC')->where('status','active')->get();
+                                    @endphp
                                     @foreach($brands as $brand)
-                                        <li><a href="{{ route('product-brand', $brand->slug) }}">{{ $brand->car_brand }} {{ $brand->car_model }} {{ $brand->car_year }}</a></li>
+                                        <li>
+                                            <a href="{{route('product-brand',$brand->slug)}}">{{$brand->car_brand}}{{$brand->car_model}}{{$brand->car_year}}</a>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
+                            <!--/ End Single Widget -->
 
                         </div>
                     </div>
@@ -162,32 +330,36 @@
                     <div class="col-lg-9 col-md-8 col-12">
                         <div class="row">
                             <div class="col-12">
+                                <!-- Shop Top -->
                                 <div class="shop-top">
                                     <div class="shop-shorter">
                                         <div class="single-shorter">
                                             <label>Show :</label>
                                             <select class="show" name="show" onchange="this.form.submit();">
                                                 <option value="">Default</option>
-                                                @foreach([9, 15, 21, 30] as $show)
-                                                    <option value="{{ $show }}" @if(request('show') == $show) selected @endif>{{ $show }}</option>
-                                                @endforeach
+                                                <option value="9" @if(!empty($_GET['show']) && $_GET['show']=='9') selected @endif>09</option>
+                                                <option value="15" @if(!empty($_GET['show']) && $_GET['show']=='15') selected @endif>15</option>
+                                                <option value="21" @if(!empty($_GET['show']) && $_GET['show']=='21') selected @endif>21</option>
+                                                <option value="30" @if(!empty($_GET['show']) && $_GET['show']=='30') selected @endif>30</option>
                                             </select>
                                         </div>
                                         <div class="single-shorter">
                                             <label>Sort By :</label>
                                             <select class='sortBy' name='sortBy' onchange="this.form.submit();">
                                                 <option value="">Default</option>
-                                                @foreach(['price', 'category', 'brand'] as $sortBy)
-                                                    <option value="{{ $sortBy }}" @if(request('sortBy') == $sortBy) selected @endif>{{ ucfirst($sortBy) }}</option>
-                                                @endforeach
+                                                <option value="title" @if(!empty($_GET['sortBy']) && $_GET['sortBy']=='title') selected @endif>Name</option>
+                                                <option value="price" @if(!empty($_GET['sortBy']) && $_GET['sortBy']=='price') selected @endif>Price</option>
+                                                <option value="category" @if(!empty($_GET['sortBy']) && $_GET['sortBy']=='category') selected @endif>Category</option>
+                                                <option value="brand" @if(!empty($_GET['sortBy']) && $_GET['sortBy']=='brand') selected @endif>Brand</option>
                                             </select>
                                         </div>
                                     </div>
                                     <ul class="view-mode">
-                                        <li class="active"><a href="javascript:void(0)"><i class="fa fa-th-large"></i></a></li>
-                                        <li><a href="{{ route('product-lists') }}"><i class="fa fa-th-list"></i></a></li>
+                                        <li class="active"><a href="{{route('product-grids')}}"><i class="fa fa-th-large"></i></a></li>
+                                        <li><a href="{{route('product-lists')}}"><i class="fa fa-th-list"></i></a></li>
                                     </ul>
                                 </div>
+                                <!--/ End Shop Top -->
                             </div>
                         </div>
                         <div class="row">
@@ -200,29 +372,40 @@
                                                     @php
                                                         $photo = explode(',', $product->photo);
                                                     @endphp
-                                                    <img class="default-img" src="{{ $photo[0] }}" alt="{{ $product->title }}">
-                                                    <img class="hover-img" src="{{ $photo[0] }}" alt="{{ $product->title }}">
+                                                    <img class="default-img" src="{{ $photo[0] }}"
+                                                         alt="{{ $product->title }}">
+                                                    <img class="hover-img" src="{{ $photo[0] }}"
+                                                         alt="{{ $product->title }}">
                                                     @if($product->discount)
                                                         <span class="price-dec">{{ $product->discount }}% Off</span>
                                                     @endif
                                                 </a>
                                                 <div class="button-head">
                                                     <div class="product-action">
-                                                        <a data-toggle="modal" data-target="#product-{{ $product->id }}" title="Quick View" href="#"><i class="ti-eye"></i><span>Quick Shop</span></a>
-                                                        <a title="Wishlist" href="{{ route('add-to-wishlist', $product->slug) }}" class="wishlist" data-id="{{ $product->id }}"><i class="ti-heart "></i><span>Add to Wishlist</span></a>
+                                                        <a data-toggle="modal" data-target="#product-{{ $product->id }}"
+                                                           title="Quick View" href="#"><i class="ti-eye"></i><span>Quick Shop</span></a>
+                                                        <a title="Wishlist"
+                                                           href="{{ route('add-to-wishlist', $product->slug) }}"
+                                                           class="wishlist" data-id="{{ $product->id }}"><i
+                                                                class="ti-heart "></i><span>Add to Wishlist</span></a>
                                                     </div>
                                                     <div class="product-action-2">
-                                                        <a title="Add to cart" href="{{ route('add-to-cart', $product->slug) }}">Add to cart</a>
+                                                        <a title="Add to cart"
+                                                           href="{{ route('add-to-cart', $product->slug) }}">Add to
+                                                            cart</a>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="product-content">
-                                                <h3><a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a></h3>
+                                                <h3>
+                                                    <a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
+                                                </h3>
                                                 @php
                                                     $after_discount = $product->price - ($product->price * $product->discount) / 100;
                                                 @endphp
                                                 <span>${{ number_format($after_discount, 2) }}</span>
-                                                <del style="padding-left:4%;">${{ number_format($product->price, 2) }}</del>
+                                                <del style="padding-left:4%;">
+                                                    ${{ number_format($product->price, 2) }}</del>
                                             </div>
                                         </div>
                                     </div>
@@ -250,7 +433,8 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ti-close" aria-hidden="true"></span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    class="ti-close" aria-hidden="true"></span></button>
                         </div>
                         <div class="modal-body">
                             <div class="row no-gutters">
@@ -273,6 +457,10 @@
                                         <div class="quickview-ratting-review">
                                             <div class="quickview-ratting-wrap">
                                                 <div class="quickview-ratting">
+                                                    @php
+                                                        $rate=DB::table('product_reviews')->where('product_id',$product->id)->avg('rate');
+                                                        $rate_count=DB::table('product_reviews')->where('product_id',$product->id)->count();
+                                                    @endphp
                                                     @for($i = 1; $i <= 5; $i++)
                                                         @if($rate >= $i)
                                                             <i class="yellow fa fa-star"></i>
@@ -291,7 +479,9 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <h3><small><del class="text-muted">${{ number_format($product->price, 2) }}</del></small> ${{ number_format($after_discount, 2) }}</h3>
+                                        <h3><small>
+                                                <del class="text-muted">${{ number_format($product->price, 2) }}</del>
+                                            </small> ${{ number_format($after_discount, 2) }}</h3>
                                         <div class="quickview-peragraph">
                                             <p>{!! html_entity_decode($product->summary) !!}</p>
                                         </div>
@@ -311,14 +501,18 @@
                                                 <div class="quantity">
                                                     <div class="input-group">
                                                         <div class="button minus">
-                                                            <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                                            <button type="button" class="btn btn-primary btn-number"
+                                                                    disabled="disabled" data-type="minus"
+                                                                    data-field="quant[1]">
                                                                 <i class="ti-minus"></i>
                                                             </button>
                                                         </div>
                                                         <input type="hidden" name="slug" value="{{ $product->slug }}">
-                                                        <input type="text" name="quant[1]" class="input-number" data-min="1" data-max="1000" value="1">
+                                                        <input type="text" name="quant[1]" class="input-number"
+                                                               data-min="1" data-max="1000" value="1">
                                                         <div class="button plus">
-                                                            <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+                                                            <button type="button" class="btn btn-primary btn-number"
+                                                                    data-type="plus" data-field="quant[1]">
                                                                 <i class="ti-plus"></i>
                                                             </button>
                                                         </div>
@@ -326,7 +520,8 @@
                                                 </div>
                                                 <button type="submit" class="btn">Add to cart</button>
                                             </form>
-                                            <a href="{{ route('add-to-wishlist', $product->slug) }}" class="btn min"><i class="ti-heart"></i></a>
+                                            <a href="{{ route('add-to-wishlist', $product->slug) }}" class="btn min"><i
+                                                    class="ti-heart"></i></a>
                                         </div>
                                         <div class="default-social">
                                             <div class="sharethis-inline-share-buttons"></div>
@@ -350,7 +545,7 @@
         }
 
         .filter-btn {
-            margin: 0 5px;
+            margin: 10px 5px;
             padding: 10px 20px;
             background-color: #ff0000; /* Red color */
             color: white;
@@ -363,6 +558,7 @@
             background-color: #ff0000; /* Active button should be red */
             color: white; /* Text color should be white */
         }
+
         .filter-btn:hover {
             background-color: #b30000; /* Darker red on active/hover */
             color: #fff;

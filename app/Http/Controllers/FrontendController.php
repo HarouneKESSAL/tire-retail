@@ -1,31 +1,35 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\PostTag;
 use App\Models\PostCategory;
 use App\Models\Post;
-use App\Models\Cart;
 use App\Models\Brand;
 use App\Models\ProductOption;
 use App\User;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Newsletter\Facades\Newsletter;
-
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+
+
 class FrontendController extends Controller
 {
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         return redirect()->route($request->user()->role);
     }
+
     public function home(Request $request)
     {
         // Log the entire incoming request
@@ -44,25 +48,36 @@ class FrontendController extends Controller
         $rouesJantes = Category::where('slug', 'rouesjantes')->first();
 
         // Fetch car details and product dimensions based on the category ID
-        $years = $this->fetchYears($pneuJantes->id);
-        $car_brands = $this->fetchBrands($pneuJantes->id);
-        $models = $this->fetchModels($pneuJantes->id);
-        $options = $this->fetchOptions($pneuJantes->id);
+        $pneuYears = $this->fetchYears($pneu->id);
+        $pneuCar_brands = $this->fetchBrands($pneu->id);
+        $pneuModels = $this->fetchModels($pneu->id);
+        $pneuOptions = $this->fetchOptions($pneu->id);
+
+        $pneuJantesYears = $this->fetchYears($pneuJantes->id);
+        $pneuJantesCar_brands = $this->fetchBrands($pneuJantes->id);
+        $pneuJantesModels = $this->fetchModels($pneuJantes->id);
+        $pneuJantesOptions = $this->fetchOptions($pneuJantes->id);
         $pneuDimensions = $this->fetchPneuDimensions($pneu->id);
         $rouesJantesDimensions = $this->fetchRouesJantesDimensions($rouesJantes->id);
 
         Log::info('Fetched Data:', [
-            'years' => $years->toArray(),
-            'car_brands' => $car_brands->toArray(),
-            'models' => $models->toArray(),
-            'options' => $options->toArray(),
+            'pneuYears' => $pneuYears,
+            'pneuCar_brands' => $pneuCar_brands,
+            'pneuModels' => $pneuModels,
+            'pneuOptions' => $pneuOptions,
+            'pneuJantesYears' => $pneuJantesYears,
+            'pneuJantesCar_brands' => $pneuJantesCar_brands,
+            'pneuJantesModels' => $pneuJantesModels,
+            'pneuJantesOptions' => $pneuJantesOptions,
             'pneuDimensions' => $pneuDimensions,
             'rouesJantesDimensions' => $rouesJantesDimensions,
         ]);
 
         return view('frontend.index', compact(
             'featured', 'posts', 'product_lists', 'banners', 'categories',
-            'years', 'car_brands', 'models', 'options', 'rouesJantesDimensions', 'pneuDimensions'
+            'pneuYears', 'pneuCar_brands', 'pneuModels', 'pneuOptions',
+            'pneuJantesYears', 'pneuJantesCar_brands', 'pneuJantesModels', 'pneuJantesOptions',
+            'pneuDimensions', 'rouesJantesDimensions'
         ));
     }
 
@@ -120,7 +135,6 @@ class FrontendController extends Controller
             ->distinct()
             ->get();
     }
-
 
 
     public function productSearch(Request $request)
@@ -241,33 +255,61 @@ class FrontendController extends Controller
 
         // Fetch categories and products
         $categories = Category::all();
-       //fetch products ith brand ,with options coming from request
+        //fetch products ith brand ,with options coming from request
         // Fetch products that match the brand and filter by the selected option
         $products = Product::join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
             ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
             ->where('products.brand_id', $brand->id)
-            ->when($option, function($query) use ($option) {
+            ->when($option, function ($query) use ($option) {
                 return $query->where('product_options.name', $option);
             })
             ->select('products.*')
             ->distinct()
             ->get();
-        return view('frontend.partials.filter-results', compact('carName', 'categories', 'products','option'));
+        return view('frontend.partials.filter-results', compact('carName', 'categories', 'products', 'option'));
     }
 
-    public function aboutUs(){
+    public function aboutUs()
+    {
         return view('frontend.pages.about-us');
     }
 
-    public function contact(){
+    public function contact()
+    {
         return view('frontend.pages.contact');
     }
 
-    public function productDetail($slug){
-        $product_detail= Product::getProductBySlug($slug);
-        // dd($product_detail);
-        return view('frontend.pages.product_detail')->with('product_detail',$product_detail);
+    public function productDetail($slug)
+    {
+        // Fetch product details by slug
+        $product_detail = Product::with('options')->where('slug', $slug)->firstOrFail();
+
+        // Fetch product options related to the product
+        $product_options = ProductOption::join('product_option_product', 'product_options.id', '=', 'product_option_product.product_option_id')
+            ->where('product_option_product.product_id', $product_detail->id)
+            ->select('product_options.*') // Fetch all columns from ProductOption
+            ->get();
+
+        // Prepare the full specification array
+        $specifications = [
+            'Manufacturier' => $product_detail->brand, // Assuming a relation to the brand table
+            'Cloutable' => optional($product_options->where('name', 'cloutable')->first())->value ?? 'non',
+            'Saison' => $product_detail->season ?? 'N/A',
+            'Code produit' => $product_detail->code ?? 'N/A',
+            'Largeur du pneu' => $product_detail->width ?? 'N/A',
+            'Ratio du pneu' => $product_detail->aspect_ratio ?? 'N/A',
+            'Diamètre du pneu' => $product_detail->diameter ?? 'N/A',
+            'Indice de charge' => optional($product_options->where('name', 'charge')->first())->value ?? 'N/A',
+            'Indice de vitesse' => optional($product_options->where('name', 'vitesse')->first())->value ?? 'N/A',
+            'Flancs porteurs (Runflat)' => optional($product_options->where('name', 'runflat')->first())->is_boolean == 1 ? 'oui' : 'non',
+            'Pneu renforcé' => optional($product_options->where('name', 'xl_renforces')->first())->is_boolean == 1 ? 'oui' : 'non',
+            'Extra Load' => optional($product_options->where('name', 'charge')->first())->value == 'XL' ? 'oui' : 'non',
+        ];
+
+        // Return the view with product details and specifications
+        return view('frontend.pages.product_detail', compact('product_detail', 'specifications'));
     }
+
 //    public function productGrids(){
 //        $products=Product::query();
 //
@@ -386,7 +428,7 @@ class FrontendController extends Controller
 //        return view('frontend.pages.product-lists')->with('products',$products)->with('recent_products',$recent_products);
 //    }
 
-    public function productView(Request $request, $viewType = 'list')
+    public function productViewL(Request $request, $viewType = 'grid')
     {
         // Start logging
         Log::info('Product view initiated', $request->all());
@@ -443,24 +485,13 @@ class FrontendController extends Controller
             $products->whereIn('brand_id', $brand_ids);
             Log::info('Brand filter applied', ['brands' => $slugs]);
         }
-
-        if(!empty($_GET['sortBy'])){
-            if($_GET['sortBy']=='title'){
-                $products=$products->where('status','active')->orderBy('title','ASC');
+        // Apply price range filter
+        if ($request->filled('price')) {
+            $price = explode('-', $request->price);
+            if (count($price) === 2) {
+                $products->whereBetween('price', [$price[0], $price[1]]);
+                Log::info('Price filter applied', ['price' => $price]);
             }
-            if($_GET['sortBy']=='price'){
-                $products=$products->orderBy('price','ASC');
-            }
-        }
-
-        if(!empty($_GET['price'])){
-            $price=explode('-',$_GET['price']);
-            // return $price;
-            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
-            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
-
-            $products->whereBetween('price',$price);
-            Log::info('Price filter applied', ['price' => $price]);
         }
 
         // Apply non-boolean product option filters
@@ -524,7 +555,7 @@ class FrontendController extends Controller
             'categories' => $categories,
             'lettrages' => $lettrages,
             'charges' => $charges,
-            'carName' => $carName ?? '',
+            'carName' => $carName ?? null,
             'width' => $request->width,
             'aspect_ratio' => $request->aspect_ratio,
             'diameter' => $request->diameter,
@@ -534,6 +565,292 @@ class FrontendController extends Controller
         ]);
     }
 
+    public function productViewG(Request $request, $viewType = 'grid')
+    {
+        // Start logging
+        Log::info('Product view initiated', $request->all());
+
+        // Start building the query
+        $products = Product::query();
+
+        // Handle dimensions (from pneu filters)
+        if ($request->filled('width')) {
+            $products->where('width', $request->width);
+            Log::info('Width filter applied', ['width' => $request->width]);
+        }
+        if ($request->filled('aspect_ratio')) {
+            $products->where('aspect_ratio', $request->aspect_ratio);
+            Log::info('Aspect Ratio filter applied', ['aspect_ratio' => $request->aspect_ratio]);
+        }
+        if ($request->filled('diameter')) {
+            $products->where('diameter', $request->diameter);
+            Log::info('Diameter filter applied', ['diameter' => $request->diameter]);
+        }
+
+        // Handle car info (from pneu/jantes filters)
+        if ($request->filled('year') || $request->filled('car_brand') || $request->filled('model')) {
+            $products->whereHas('brand', function ($q) use ($request) {
+                if ($request->filled('year')) {
+                    $q->where('car_year', $request->year);
+                }
+                if ($request->filled('car_brand')) {
+                    $q->where('car_brand', $request->car_brand);
+                }
+                if ($request->filled('model')) {
+                    $q->where('car_model', $request->model);
+                }
+            });
+            Log::info('Car info filter applied', [
+                'year' => $request->year,
+                'car_brand' => $request->car_brand,
+                'model' => $request->model
+            ]);
+        }
+        $carName = "{$request->year} {$request->car_brand} {$request->model}";
+        // Apply category filter
+        if ($request->filled('category')) {
+            $slug = explode(',', $request->get('category'));
+            $cat_ids = Category::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
+            $products->whereIn('cat_id', $cat_ids);
+            Log::info('Category filter applied', ['categories' => $slug]);
+        }
+
+        // Apply brand filter
+        if ($request->filled('brand')) {
+            $slugs = explode(',', $request->get('brand'));
+            $brand_ids = Brand::select('id')->whereIn('slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('brand_id', $brand_ids);
+            Log::info('Brand filter applied', ['brands' => $slugs]);
+        }
+        // Apply price range filter
+        if ($request->filled('price')) {
+            $price = explode('-', $request->price);
+            if (count($price) === 2) {
+                $products->whereBetween('price', [$price[0], $price[1]]);
+                Log::info('Price filter applied', ['price' => $price]);
+            }
+        }
+
+        // Apply non-boolean product option filters
+        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
+        foreach ($nonBooleanOptions as $optionName) {
+            if ($request->filled("options.$optionName")) {
+                $products->whereHas('options', function ($q) use ($optionName, $request) {
+                    $q->where('name', $optionName)->where('value', $request->input("options.$optionName"));
+                });
+                Log::info('Applying filter', ['option_name' => $optionName, 'value' => $request->input("options.$optionName")]);
+            }
+        }
+
+        // Apply boolean product option filters
+        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
+        foreach ($booleanOptions as $optionName) {
+            if ($request->has("options.$optionName")) {
+                $products->whereHas('options', function ($q) use ($optionName) {
+                    $q->where('name', $optionName)->where('is_boolean', 1);
+                });
+                Log::info('Applying filter', ['option_name' => $optionName, 'is_boolean' => true]);
+            }
+        }
+
+        // Apply discount filter
+        if ($request->has('options.en_solde')) {
+            $products->where('discount', '>', 0);
+            Log::info('Discount filter applied');
+        }
+
+        // Check for Choix de l'équipe
+        if ($request->has('options.choix_equipe')) {
+            $products->where('is_featured', 1);
+            Log::info('Choix de l\'équipe filter applied');
+        }
+
+        // Execute the query and log it
+        Log::info('Executing product query', ['query' => $products->toSql(), 'bindings' => $products->getBindings()]);
+
+        // Fetch recent products
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
+        // Fetch distinct options for filters
+        $categories = Category::select('slug', 'title')->whereIn('id', $products->pluck('cat_id'))->get();
+        $vitesses = ProductOption::select('value')->distinct()->where('name', 'vitesse')->get();
+        $lettrages = ProductOption::select('value')->distinct()->where('name', 'lettrage')->get();
+        $charges = ProductOption::select('value')->distinct()->where('name', 'charge')->get();
+
+        // Determine pagination and view type
+        $itemsPerPage = $request->get('show', $viewType === 'grid' ? 9 : 6);
+        $products = $products->where('status', 'active')->paginate($itemsPerPage);
+
+        // Determine the view to render
+        $view = $viewType === 'grid' ? 'frontend.pages.product-grids' : 'frontend.pages.product-lists';
+
+        // Return the view with the data
+        return view($view)->with([
+            'products' => $products,
+            'recent_products' => $recent_products,
+            'vitesses' => $vitesses,
+            'categories' => $categories,
+            'lettrages' => $lettrages,
+            'charges' => $charges,
+            'carName' => $carName ?? null,
+            'width' => $request->width,
+            'aspect_ratio' => $request->aspect_ratio,
+            'diameter' => $request->diameter,
+            'year' => $request->year,
+            'car_brand' => $request->car_brand,
+            'model' => $request->model,
+        ]);
+    }
+
+    public function productView(Request $request, $viewType = 'grid')
+    {
+        // Start logging
+        Log::info('Product view initiated', $request->all());
+
+        // Start building the query
+        $products = Product::query();
+
+        // Handle dimensions (from pneu filters)
+        if ($request->filled('width')) {
+            $products->where('width', $request->width);
+            Log::info('Width filter applied', ['width' => $request->width]);
+        }
+        if ($request->filled('aspect_ratio')) {
+            $products->where('aspect_ratio', $request->aspect_ratio);
+            Log::info('Aspect Ratio filter applied', ['aspect_ratio' => $request->aspect_ratio]);
+        }
+        if ($request->filled('diameter')) {
+            $products->where('diameter', $request->diameter);
+            Log::info('Diameter filter applied', ['diameter' => $request->diameter]);
+        }
+
+        // Handle car info (from pneu/jantes filters)
+        if ($request->filled('year') || $request->filled('car_brand') || $request->filled('model')) {
+            $products->whereHas('brand', function ($q) use ($request) {
+                if ($request->filled('year')) {
+                    $q->where('car_year', $request->year);
+                }
+                if ($request->filled('car_brand')) {
+                    $q->where('car_brand', $request->car_brand);
+                }
+                if ($request->filled('model')) {
+                    $q->where('car_model', $request->model);
+                }
+            });
+            Log::info('Car info filter applied', [
+                'year' => $request->year,
+                'car_brand' => $request->car_brand,
+                'model' => $request->model
+            ]);
+        }
+        $carName = "{$request->year} {$request->car_brand} {$request->model}";
+        // Apply category filter
+        if ($request->filled('category')) {
+            $slug = explode(',', $request->get('category'));
+            $cat_ids = Category::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
+            $products->whereIn('cat_id', $cat_ids);
+            Log::info('Category filter applied', ['categories' => $slug]);
+        }
+
+        // Apply brand filter
+        if ($request->filled('brand')) {
+            $slugs = explode(',', $request->get('brand'));
+            $brand_ids = Brand::select('id')->whereIn('slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('brand_id', $brand_ids);
+            Log::info('Brand filter applied', ['brands' => $slugs]);
+        }
+        // Apply price range filter
+        if ($request->filled('price')) {
+            $price = explode('-', $request->price);
+            if (count($price) === 2) {
+                $products->whereBetween('price', [$price[0], $price[1]]);
+                Log::info('Price filter applied', ['price' => $price]);
+            }
+        }
+
+        // Apply non-boolean product option filters
+        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
+        foreach ($nonBooleanOptions as $optionName) {
+            if ($request->filled("options.$optionName")) {
+                $products->whereHas('options', function ($q) use ($optionName, $request) {
+                    $q->where('name', $optionName)->where('value', $request->input("options.$optionName"));
+                });
+                Log::info('Applying filter', ['option_name' => $optionName, 'value' => $request->input("options.$optionName")]);
+            }
+        }
+
+        // Apply boolean product option filters
+        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
+        foreach ($booleanOptions as $optionName) {
+            if ($request->has("options.$optionName")) {
+                $products->whereHas('options', function ($q) use ($optionName) {
+                    $q->where('name', $optionName)->where('is_boolean', 1);
+                });
+                Log::info('Applying filter', ['option_name' => $optionName, 'is_boolean' => true]);
+            }
+        }
+
+        // Apply discount filter
+        if ($request->has('options.en_solde')) {
+            $products->where('discount', '>', 0);
+            Log::info('Discount filter applied');
+        }
+
+        // Check for Choix de l'équipe
+        if ($request->has('options.choix_equipe')) {
+            $products->where('is_featured', 1);
+            Log::info('Choix de l\'équipe filter applied');
+        }
+
+        //filter by name
+
+        if ($request->filled('search')) {
+            $products->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('slug', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%')
+                ->orWhere('summary', 'like', '%' . $request->search . '%')
+                ->orWhere('price', 'like', '%' . $request->search . '%')
+                ->orWhere('width', 'like', '%' . $request->search . '%')
+                ->orWhere('aspect_ratio', 'like', '%' . $request->search . '%')
+                ->orWhere('diameter', 'like', '%' . $request->search . '%');
+            Log::info('Search filter applied', ['search' => $request->search]);
+        }
+        // Execute the query and log it
+        Log::info('Executing product query', ['query' => $products->toSql(), 'bindings' => $products->getBindings()]);
+
+        // Fetch recent products
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
+        // Fetch distinct options for filters
+        $categories = Category::select('slug', 'title')->whereIn('id', $products->pluck('cat_id'))->get();
+        $vitesses = ProductOption::select('value')->distinct()->where('name', 'vitesse')->get();
+        $lettrages = ProductOption::select('value')->distinct()->where('name', 'lettrage')->get();
+        $charges = ProductOption::select('value')->distinct()->where('name', 'charge')->get();
+
+        // Determine pagination and view type
+        $itemsPerPage = $request->get('show', $viewType === 'grid' ? 9 : 6);
+        $products = $products->where('status', 'active')->paginate($itemsPerPage);
+
+        // Determine the view to render
+        $view = $viewType === 'grid' ? 'frontend.pages.product-grids' : 'frontend.pages.product-lists';
+
+        // Return the view with the data
+        return view($view)->with([
+            'products' => $products,
+            'recent_products' => $recent_products,
+            'vitesses' => $vitesses,
+            'categories' => $categories,
+            'lettrages' => $lettrages,
+            'charges' => $charges,
+            'carName' => $carName ?? null,
+            'width' => $request->width,
+            'aspect_ratio' => $request->aspect_ratio,
+            'diameter' => $request->diameter,
+            'year' => $request->year,
+            'car_brand' => $request->car_brand,
+            'model' => $request->model,
+        ]);
+    }
 
 //    public function productFilter(Request $request) {
 //        $data = $request->all();
@@ -593,7 +910,6 @@ class FrontendController extends Controller
 //    }
 
 
-
 //    public function productSearch(Request $request){
 //        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
 //        $products=Product::orwhere('title','like','%'.$request->search.'%')
@@ -615,216 +931,291 @@ class FrontendController extends Controller
 //        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products);
 //    }
 
-    public function productBrand(Request $request){
-        $products=Brand::getProductByBrand($request->slug);
-        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-        if(request()->is('e-shop.loc/product-grids')){
-            return view('frontend.pages.product-grids')->with('products',$products->products)->with('recent_products',$recent_products);
-        }
-        else{
-            return view('frontend.pages.product-lists')->with('products',$products->products)->with('recent_products',$recent_products);
+    public function productBrand(Request $request)
+    {
+        $products = Brand::getProductByBrand($request->slug);
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        if (request()->is('e-shop.loc/product-grids')) {
+            return view('frontend.pages.product-grids')->with('products', $products->products)->with('recent_products', $recent_products);
+        } else {
+            return view('frontend.pages.product-lists')->with('products', $products->products)->with('recent_products', $recent_products);
         }
 
     }
-    public function productCat(Request $request){
-        $products=Category::getProductByCat($request->slug);
+
+    public function productCat(Request $request)
+    {
+        $products = Category::getProductByCat($request->slug);
         // return $request->slug;
-        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-
-        if(request()->is('e-shop.loc/product-grids')){
-            return view('frontend.pages.product-grids')->with('products',$products->products)->with('recent_products',$recent_products);
-        }
-        else{
-            return view('frontend.pages.product-lists')->with('products',$products->products)->with('recent_products',$recent_products);
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        $carName = "  ";
+        $charges = "";
+        $categories = "";
+        $lettrages = "";
+        $vitesses = "";
+        if (request()->is('e-shop.loc/product-grids')) {
+            return view('frontend.pages.product-grids')->with('products', $products->products)->with('recent_products', $recent_products)->with('carName', $carName)->with('charges', $charges)->with('categories', $categories)->with('lettrages', $lettrages)->with('vitesses', $vitesses);
+        } else {
+            return view('frontend.pages.product-lists')
+                ->with('products', $products->products)->with('recent_products', $recent_products)->with('carName', $carName)->with('charges', $charges)->with('categories', $categories)->with('lettrages', $lettrages)->with('vitesses', $vitesses);
         }
 
     }
-    public function productSubCat(Request $request){
-        $products=Category::getProductBySubCat($request->sub_slug);
+
+    public function productSubCat(Request $request)
+    {
+        $products = Category::getProductBySubCat($request->sub_slug);
         // return $products;
-        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
 
-        if(request()->is('e-shop.loc/product-grids')){
-            return view('frontend.pages.product-grids')->with('products',$products->sub_products)->with('recent_products',$recent_products);
-        }
-        else{
-            return view('frontend.pages.product-lists')->with('products',$products->sub_products)->with('recent_products',$recent_products);
+        if (request()->is('e-shop.loc/product-grids')) {
+            return view('frontend.pages.product-grids')->with('products', $products->sub_products)->with('recent_products', $recent_products);
+        } else {
+            return view('frontend.pages.product-lists')->with('products', $products->sub_products)->with('recent_products', $recent_products);
         }
 
     }
 
-    public function blog(){
-        $post=Post::query();
+    public function blog()
+    {
+        $post = Post::query();
 
-        if(!empty($_GET['category'])){
-            $slug=explode(',',$_GET['category']);
+        if (!empty($_GET['category'])) {
+            $slug = explode(',', $_GET['category']);
             // dd($slug);
-            $cat_ids=PostCategory::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
+            $cat_ids = PostCategory::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
             return $cat_ids;
-            $post->whereIn('post_cat_id',$cat_ids);
+            $post->whereIn('post_cat_id', $cat_ids);
             // return $post;
         }
-        if(!empty($_GET['tag'])){
-            $slug=explode(',',$_GET['tag']);
+        if (!empty($_GET['tag'])) {
+            $slug = explode(',', $_GET['tag']);
             // dd($slug);
-            $tag_ids=PostTag::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
+            $tag_ids = PostTag::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
             // return $tag_ids;
-            $post->where('post_tag_id',$tag_ids);
+            $post->where('post_tag_id', $tag_ids);
             // return $post;
         }
 
-        if(!empty($_GET['show'])){
-            $post=$post->where('status','active')->orderBy('id','DESC')->paginate($_GET['show']);
-        }
-        else{
-            $post=$post->where('status','active')->orderBy('id','DESC')->paginate(9);
+        if (!empty($_GET['show'])) {
+            $post = $post->where('status', 'active')->orderBy('id', 'DESC')->paginate($_GET['show']);
+        } else {
+            $post = $post->where('status', 'active')->orderBy('id', 'DESC')->paginate(9);
         }
         // $post=Post::where('status','active')->paginate(8);
-        $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-        return view('frontend.pages.blog')->with('posts',$post)->with('recent_posts',$rcnt_post);
+        $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        return view('frontend.pages.blog')->with('posts', $post)->with('recent_posts', $rcnt_post);
     }
 
-    public function blogDetail($slug){
-        $post=Post::getPostBySlug($slug);
-        $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
+    public function blogDetail($slug)
+    {
+        $post = Post::getPostBySlug($slug);
+        $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
         // return $post;
-        return view('frontend.pages.blog-detail')->with('post',$post)->with('recent_posts',$rcnt_post);
+        return view('frontend.pages.blog-detail')->with('post', $post)->with('recent_posts', $rcnt_post);
     }
 
-    public function blogSearch(Request $request){
+    public function blogSearch(Request $request)
+    {
         // return $request->all();
-        $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-        $posts=Post::orwhere('title','like','%'.$request->search.'%')
-            ->orwhere('quote','like','%'.$request->search.'%')
-            ->orwhere('summary','like','%'.$request->search.'%')
-            ->orwhere('description','like','%'.$request->search.'%')
-            ->orwhere('slug','like','%'.$request->search.'%')
-            ->orderBy('id','DESC')
+        $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        $posts = Post::orwhere('title', 'like', '%' . $request->search . '%')
+            ->orwhere('quote', 'like', '%' . $request->search . '%')
+            ->orwhere('summary', 'like', '%' . $request->search . '%')
+            ->orwhere('description', 'like', '%' . $request->search . '%')
+            ->orwhere('slug', 'like', '%' . $request->search . '%')
+            ->orderBy('id', 'DESC')
             ->paginate(8);
-        return view('frontend.pages.blog')->with('posts',$posts)->with('recent_posts',$rcnt_post);
+        return view('frontend.pages.blog')->with('posts', $posts)->with('recent_posts', $rcnt_post);
     }
 
-    public function blogFilter(Request $request){
-        $data=$request->all();
+    public function blogFilter(Request $request)
+    {
+        $data = $request->all();
         // return $data;
-        $catURL="";
-        if(!empty($data['category'])){
-            foreach($data['category'] as $category){
-                if(empty($catURL)){
-                    $catURL .='&category='.$category;
-                }
-                else{
-                    $catURL .=','.$category;
+        $catURL = "";
+        if (!empty($data['category'])) {
+            foreach ($data['category'] as $category) {
+                if (empty($catURL)) {
+                    $catURL .= '&category=' . $category;
+                } else {
+                    $catURL .= ',' . $category;
                 }
             }
         }
 
-        $tagURL="";
-        if(!empty($data['tag'])){
-            foreach($data['tag'] as $tag){
-                if(empty($tagURL)){
-                    $tagURL .='&tag='.$tag;
-                }
-                else{
-                    $tagURL .=','.$tag;
+        $tagURL = "";
+        if (!empty($data['tag'])) {
+            foreach ($data['tag'] as $tag) {
+                if (empty($tagURL)) {
+                    $tagURL .= '&tag=' . $tag;
+                } else {
+                    $tagURL .= ',' . $tag;
                 }
             }
         }
         // return $tagURL;
-            // return $catURL;
-        return redirect()->route('blog',$catURL.$tagURL);
+        // return $catURL;
+        return redirect()->route('blog', $catURL . $tagURL);
     }
 
-    public function blogByCategory(Request $request){
-        $post=PostCategory::getBlogByCategory($request->slug);
-        $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-        return view('frontend.pages.blog')->with('posts',$post->post)->with('recent_posts',$rcnt_post);
+    public function blogByCategory(Request $request)
+    {
+        $post = PostCategory::getBlogByCategory($request->slug);
+        $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        return view('frontend.pages.blog')->with('posts', $post->post)->with('recent_posts', $rcnt_post);
     }
 
-    public function blogByTag(Request $request){
+    public function blogByTag(Request $request)
+    {
         // dd($request->slug);
-        $post=Post::getBlogByTag($request->slug);
+        $post = Post::getBlogByTag($request->slug);
         // return $post;
-        $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-        return view('frontend.pages.blog')->with('posts',$post)->with('recent_posts',$rcnt_post);
+        $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        return view('frontend.pages.blog')->with('posts', $post)->with('recent_posts', $rcnt_post);
     }
 
     // Login
-    public function login(){
+    public function login()
+    {
         return view('frontend.pages.login');
     }
-    public function loginSubmit(Request $request){
-        $data= $request->all();
-        if(Auth::attempt(['email' => $data['email'], 'password' => $data['password'],'status'=>'active'])){
-            Session::put('user',$data['email']);
-            request()->session()->flash('success','Successfully login');
+
+    public function loginSubmit(Request $request)
+    {
+        $data = $request->all();
+        if (Auth::attempt(['email' => $data['email'], 'password' => $data['password'], 'status' => 'active'])) {
+            Session::put('user', $data['email']);
+            request()->session()->flash('success', 'Successfully login');
             return redirect()->route('home');
-        }
-        else{
-            request()->session()->flash('error','Invalid email and password pleas try again!');
+        } else {
+            request()->session()->flash('error', 'Invalid email and password pleas try again!');
             return redirect()->back();
         }
     }
 
-    public function logout(){
+    public function logout()
+    {
         Session::forget('user');
         Auth::logout();
-        request()->session()->flash('success','Logout successfully');
+        request()->session()->flash('success', 'Logout successfully');
         return back();
     }
 
-    public function register(){
+    public function register()
+    {
         return view('frontend.pages.register');
     }
-    public function registerSubmit(Request $request){
-        // return $request->all();
-        $this->validate($request,[
-            'name'=>'string|required|min:2',
-            'email'=>'string|required|unique:users,email',
-            'password'=>'required|min:6|confirmed',
+
+    public function registerSubmit(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|required|min:2',
+            'email' => 'string|required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
         ]);
-        $data=$request->all();
-        // dd($data);
-        $check=$this->create($data);
-        Session::put('user',$data['email']);
-        if($check){
-            request()->session()->flash('success','Successfully registered');
-            return redirect()->route('home');
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-        else{
-            request()->session()->flash('error','Please try again!');
-            return back();
+
+        // Create the user instance
+        $user = $this->create($request->all());
+
+        // Debugging: Check if user was created
+        if ($user) {
+            Log::info('User created successfully.');
+        } else {
+            Log::error('User creation failed.');
         }
-    }
-    public function create(array $data){
-        return User::create([
-            'name'=>$data['name'],
-            'email'=>$data['email'],
-            'password'=>Hash::make($data['password']),
-            'status'=>'active'
-            ]);
-    }
-    // Reset password
-    public function showResetForm(){
-        return view('auth.passwords.old-reset');
+
+        // Check if the user instance implements the MustVerifyEmail interface
+        if ($user instanceof MustVerifyEmail) {
+            Log::info('User must verify email.');
+
+            // Send the email verification notification
+            $user->sendEmailVerificationNotification();
+
+            // Log out the user to enforce email verification
+            Auth::logout();
+
+            // Redirect to the verification notice route with a success message
+            return redirect()->route('verification.notice')->with('success', 'Successfully registered. Please check your email to verify your account.');
+        }
+
+        // Automatically log in the user if email verification is not required
+        Auth::login($user);
+
+        // Store the user's email in the session and redirect
+        Session::put('user', $user->email);
+        request()->session()->flash('success', 'Successfully registered');
+
+        // Debugging: Check if the user is being logged in
+        Log::info('User logged in.');
+
+        // Redirect to the home page or any other page after successful registration
+        return redirect()->route('verification.notice')->with('success', 'Successfully registered. Please check your email to verify your account.');
     }
 
-    public function subscribe(Request $request){
-        if(! Newsletter::isSubscribed($request->email)){
-                Newsletter::subscribePending($request->email);
-                if(Newsletter::lastActionSucceeded()){
-                    request()->session()->flash('success','Subscribed! Please check your email');
-                    return redirect()->route('home');
-                }
-                else{
-                    Newsletter::getLastError();
-                    return back()->with('error','Something went wrong! please try again');
-                }
+
+
+    public function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'status' => 'active'
+        ]);
+    }
+
+    // Reset password
+    public function showResetForm()
+    {
+        return view('auth.passwords.old-reset');
+    }
+    public function resetPassword(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+            'token' => 'required'
+        ]);
+
+        // Check if the token is valid
+        $user = \App\User::where('email', $request->email)->first();
+        if (!$user || !\Illuminate\Support\Facades\Password::tokenExists($user, $request->token)) {
+            return redirect()->back()->with('error', 'Invalid token or email.');
+        }
+
+        // Update the user's password
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->save();
+
+        // Optionally, you can delete the token after successful password reset
+        \Illuminate\Support\Facades\Password::deleteToken($user);
+
+        // Redirect to login page with success message
+        return redirect()->route('login.form')->with('success', 'Your password has been reset successfully.');
+    }
+    public function subscribe(Request $request)
+    {
+        if (!Newsletter::isSubscribed($request->email)) {
+            Newsletter::subscribePending($request->email);
+            if (Newsletter::lastActionSucceeded()) {
+                request()->session()->flash('success', 'Subscribed! Please check your email');
+                return redirect()->route('home');
+            } else {
+                Newsletter::getLastError();
+                return back()->with('error', 'Something went wrong! please try again');
             }
-            else{
-                request()->session()->flash('error','Already Subscribed');
-                return back();
-            }
+        } else {
+            request()->session()->flash('error', 'Already Subscribed');
+            return back();
+        }
     }
 
 }

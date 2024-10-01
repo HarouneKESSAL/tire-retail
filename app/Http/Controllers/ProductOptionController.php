@@ -23,14 +23,14 @@ class ProductOptionController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'value' => $request->has('is_boolean') ? 'nullable|string' : 'required|string',
             'is_boolean' => 'sometimes|boolean',
+            'value' => $request->has('is_boolean') ? 'nullable' : 'required|string', // Make value nullable if boolean
         ]);
 
         $productOption = new ProductOption([
             'name' => $request->input('name'),
             'type' => $request->input('type'),
-            'value' => $request->has('is_boolean') ? '' : $request->input('value'),
+            'value' => $request->has('is_boolean') ? '1' : $request->input('value'), // Set value to 1 if boolean
             'is_boolean' => $request->has('is_boolean') ? 1 : 0,
         ]);
 
@@ -38,6 +38,7 @@ class ProductOptionController extends Controller
 
         return redirect()->route('product-options.index')->with('success', 'Product option created successfully.');
     }
+
 
 
     public function edit(ProductOption $productOption)

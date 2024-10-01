@@ -23,7 +23,7 @@
                 <div class="login-form text-center">
                     <h2 class=" display-4  mb-2">
                         {{ __('Reset Password') }}
-                        <div class="w-25 mx-auto mt-2" style="border-top: 2px solid #FFA500;"></div>
+                        <div class="w-25 mx-auto mt-2" style="border-top: 2px solid #FF0000;"></div>
                     </h2>
                     <p class="login-subtitle text-muted mb-4">
                         {{ __('Please enter your email to reset your password') }}
@@ -51,7 +51,7 @@
                             </div>
 
                             <div class="form-group mb-0">
-                                <button type="submit" class="btn btn-primary btn-block font-weight-bold">
+                                <button type="submit" class="btn btn-danger btn-block font-weight-bold">
                                     {{ __('Send Password Reset Link') }}
                                 </button>
                             </div>
