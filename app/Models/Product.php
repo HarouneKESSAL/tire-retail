@@ -13,8 +13,8 @@ class Product extends Model
         'title', 'slug', 'summary', 'description', 'cat_id', 'child_cat_id', 'price',
         'brand_id', 'discount', 'status', 'photo', 'size', 'stock', 'is_featured',
         'condition', 'width', 'aspect_ratio', 'diameter', 'season', 'choix_equipe',
-        'code', 'brand', 'model'  // Added new fields
-    ];
+        'code', 'brand', 'model' ,'service_type', 'shipping_weight', 'speed_index', 'load_index'
+        ,'runflat', 'pneu_renforce', 'extra_load'];
 
     /**
      * Scope a query to only include active products.

@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('title','E-SHOP || Blog Page')
+@section('title','E-SHOP || Page de Blog')
 
 @section('main-content')
     <!-- Breadcrumbs -->
@@ -10,47 +10,47 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="javascript:void(0);">Blog Grid Sidebar</a></li>
+                            <li><a href="{{route('home')}}">Accueil<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="javascript:void(0);">Blog en Grille avec Sidebar</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Breadcrumbs -->
+    <!-- Fin Breadcrumbs -->
 
-    <!-- Start Blog Single -->
+    <!-- Début Blog Single -->
     <section class="blog-single shop-blog grid section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-12">
                     <div class="row">
                         @foreach($posts as $post)
-                        {{-- {{$post}} --}}
+                            {{-- {{$post}} --}}
                             <div class="col-lg-6 col-md-6 col-12">
-                                <!-- Start Single Blog  -->
+                                <!-- Début Single Blog  -->
                                 <div class="shop-single-blog">
-                                <img src="{{$post->photo}}" alt="{{$post->photo}}">
+                                    <img src="{{$post->photo}}" alt="{{$post->photo}}">
                                     <div class="content">
                                         <p class="date"><i class="fa fa-calendar" aria-hidden="true"></i> {{$post->created_at->format('d M, Y. D')}}
                                             <span class="float-right">
                                                 <i class="fa fa-user" aria-hidden="true"></i>
-                                                 {{$post->author_info->name ?? 'Anonymous'}}
+                                                 {{$post->author_info->name ?? 'Anonyme'}}
                                             </span>
                                         </p>
                                         <a href="{{route('blog.detail',$post->slug)}}" class="title">{{$post->title}}</a>
                                         <p>{!! html_entity_decode($post->summary) !!}</p>
-                                        <a href="{{route('blog.detail',$post->slug)}}" class="more-btn">Continue Reading</a>
+                                        <a href="{{route('blog.detail',$post->slug)}}" class="more-btn">Continuer la lecture</a>
                                     </div>
                                 </div>
-                                <!-- End Single Blog  -->
+                                <!-- Fin Single Blog  -->
                             </div>
                         @endforeach
                         <div class="col-12">
                             <!-- Pagination -->
                             {{-- {{$posts->appends($_GET)->links()}} --}}
-                            <!--/ End Pagination -->
+                            <!--/ Fin Pagination -->
                         </div>
                     </div>
                 </div>
@@ -59,36 +59,36 @@
                         <!-- Single Widget -->
                         <div class="single-widget search">
                             <form class="form" method="GET" action="{{route('blog.search')}}">
-                                <input type="text" placeholder="Search Here..." name="search">
-                                <button class="button" type="sumbit"><i class="fa fa-search"></i></button>
+                                <input type="text" placeholder="Rechercher ici..." name="search">
+                                <button class="button" type="submit"><i class="fa fa-search"></i></button>
                             </form>
                         </div>
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                         <!-- Single Widget -->
                         <div class="single-widget category">
-                            <h3 class="title">Blog Categories</h3>
+                            <h3 class="title">Catégories du Blog</h3>
                             <ul class="categor-list">
                                 @if(!empty($_GET['category']))
                                     @php
                                         $filter_cats=explode(',',$_GET['category']);
                                     @endphp
                                 @endif
-                            <form action="{{route('blog.filter')}}" method="POST">
+                                <form action="{{route('blog.filter')}}" method="POST">
                                     @csrf
                                     {{-- {{count(Helper::postCategoryList())}} --}}
                                     @foreach(Helper::postCategoryList('posts') as $cat)
-                                    <li>
-                                        <a href="{{route('blog.category',$cat->slug)}}">{{$cat->title}} </a>
-                                    </li>
+                                        <li>
+                                            <a href="{{route('blog.category',$cat->slug)}}">{{$cat->title}} </a>
+                                        </li>
                                     @endforeach
                                 </form>
 
                             </ul>
                         </div>
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                         <!-- Single Widget -->
                         <div class="single-widget recent-post">
-                            <h3 class="title">Recent post</h3>
+                            <h3 class="title">Article Récent</h3>
                             @foreach($recent_posts as $post)
                                 <!-- Single Post -->
                                 <div class="single-post">
@@ -100,17 +100,17 @@
                                         <ul class="comment">
                                             <li><i class="fa fa-calendar" aria-hidden="true"></i>{{$post->created_at->format('d M, y')}}</li>
                                             <li><i class="fa fa-user" aria-hidden="true"></i>
-                                                {{$post->author_info->name ?? 'Anonymous'}}
+                                                {{$post->author_info->name ?? 'Anonyme'}}
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-                                <!-- End Single Post -->
+                                <!-- Fin Single Post -->
                             @endforeach
                         </div>
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                         <!-- Single Widget -->
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                         <!-- Single Widget -->
                         <div class="single-widget side-tags">
                             <h3 class="title">Tags</h3>
@@ -124,34 +124,32 @@
                                     @csrf
                                     @foreach(Helper::postTagList('posts') as $tag)
                                         <li>
-                                            <li>
-                                                <a href="{{route('blog.tag',$tag->title)}}">{{$tag->title}} </a>
-                                            </li>
+                                            <a href="{{route('blog.tag',$tag->title)}}">{{$tag->title}} </a>
                                         </li>
                                     @endforeach
                                 </form>
                             </ul>
                         </div>
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                         <!-- Single Widget -->
                         <div class="single-widget newsletter">
-                            <h3 class="title">Newslatter</h3>
+                            <h3 class="title">Newsletter</h3>
                             <div class="letter-inner">
-                                <h4>Subscribe & get news <br> latest updates.</h4>
+                                <h4>Abonnez-vous et recevez les dernières nouvelles.</h4>
                                 <form method="POST" action="{{route('subscribe')}}" class="form-inner">
                                     @csrf
-                                    <input type="email" name="email" placeholder="Enter your email">
-                                    <button type="submit" class="btn " style="width: 100%">Submit</button>
+                                    <input type="email" name="email" placeholder="Entrez votre email">
+                                    <button type="submit" class="btn " style="width: 100%">Soumettre</button>
                                 </form>
                             </div>
                         </div>
-                        <!--/ End Single Widget -->
+                        <!--/ Fin Single Widget -->
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!--/ End Blog Single -->
+    <!--/ Fin Blog Single -->
 @endsection
 @push('styles')
     <style>

@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
-@section('title','E-SHOP || Comment Page')
+@section('title','E-SHOP || Page de Commentaire')
 @section('main-content')
-    <!-- DataTales Example -->
+    <!-- Exemple de DataTales -->
     <div class="card shadow mb-4">
         <div class="row">
             <div class="col-md-12">
@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-danger float-left">Comment Lists</h6>
+            <h6 class="m-0 font-weight-bold text-danger float-left">Liste des Commentaires</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -17,23 +17,23 @@
                     <table class="table table-bordered" id="order-dataTable" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Author</th>
-                            <th>Post Title</th>
+                            <th>N°</th>
+                            <th>Auteur</th>
+                            <th>Titre de l'Article</th>
                             <th>Message</th>
                             <th>Date</th>
-                            <th>Status</th>
+                            <th>Statut</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Author</th>
-                            <th>Post Title</th>
+                            <th>N°</th>
+                            <th>Auteur</th>
+                            <th>Titre de l'Article</th>
                             <th>Message</th>
                             <th>Date</th>
-                            <th>Status</th>
+                            <th>Statut</th>
                             <th>Action</th>
                         </tr>
                         </tfoot>
@@ -44,7 +44,7 @@
                                 <td>{{$comment->user_info['name']}}</td>
                                 <td>{{$comment->post->title}}</td>
                                 <td>{{$comment->comment}}</td>
-                                <td>{{$comment->created_at->format('M d D, Y g: i a')}}</td>
+                                <td>{{$comment->created_at->format('d M Y, g : i a')}}</td>
                                 <td>
                                     @if($comment->status=='active')
                                         <span class="badge badge-success">{{$comment->status}}</span>
@@ -56,14 +56,14 @@
                                     <a href="{{route('comment.edit',$comment->id)}}"
                                        class="btn btn-primary btn-sm float-left mr-1"
                                        style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip"
-                                       title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                                       title="Modifier" data-placement="bottom"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="{{route('comment.destroy',[$comment->id])}}">
                                         @csrf
                                         @method('delete')
                                         <button class="btn btn-danger btn-sm dltBtn"
                                                 data-id={{$comment->id}} style="height:30px;
                                                 width:30px;border-radius:50%
-                                        " data-toggle="tooltip" data-placement="bottom" title="Delete"><i
+                                        " data-toggle="tooltip" data-placement="bottom" title="Supprimer"><i
                                             class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </td>
@@ -71,14 +71,15 @@
                         @endforeach
                         </tbody>
                     </table>
-                    <span style="float:right">{{$comments->links()}}</span>
+                    <span style="float:right">{{$comments->links('vendor.pagination.custom-pagination')}}</span>
                 @else
-                    <h6 class="text-center">No post comments found!!!</h6>
+                    <h6 class="text-center">Aucun commentaire trouvé !!!</h6>
                 @endif
             </div>
         </div>
     </div>
 @endsection
+
 
 @push('styles')
     <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">

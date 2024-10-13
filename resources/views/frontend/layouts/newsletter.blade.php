@@ -1,4 +1,3 @@
-
 <!-- Start Shop Newsletter  -->
 <section class="shop-newsletter section">
     <div class="container">
@@ -8,11 +7,11 @@
                     <!-- Start Newsletter Inner -->
                     <div class="inner">
                         <h4>Newsletter</h4>
-                        <p> Subscribe to our newsletter and get <span>10%</span> off your first purchase</p>
+                        <p> Abonnez-vous à notre newsletter et obtenez <span>10%</span> de réduction sur votre premier achat</p>
                         <form action="{{route('subscribe')}}" method="post" class="newsletter-inner">
                             @csrf
-                            <input name="email" placeholder="Your email address" required="" type="email">
-                            <button class="btn" type="submit">Subscribe</button>
+                            <input name="email" placeholder="Votre adresse e-mail" required="" type="email">
+                            <button class="btn" type="submit">S'abonner</button>
                         </form>
                     </div>
                     <!-- End Newsletter Inner -->

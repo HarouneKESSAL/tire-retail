@@ -1,5 +1,7 @@
 @extends('frontend.layouts.master')
-@section('title','Wishlist Page')
+
+@section('title','Liste de Souhaits')
+
 @section('main-content')
     <!-- Breadcrumbs -->
     <div class="breadcrumbs">
@@ -8,29 +10,29 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="javascript:void(0);">Wishlist</a></li>
+                            <li><a href="{{('home')}}">Accueil<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="javascript:void(0);">Liste de Souhaits</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Breadcrumbs -->
+    <!-- Fin des Breadcrumbs -->
 
-    <!-- Shopping Cart -->
+    <!-- Liste de Souhaits -->
     <div class="shopping-cart section">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <!-- Shopping Summery -->
+                    <!-- Résumé des Achats -->
                     <table class="table shopping-summery">
                         <thead>
                         <tr class="main-hading">
-                            <th>PRODUCT</th>
-                            <th>NAME</th>
+                            <th>PRODUIT</th>
+                            <th>NOM</th>
                             <th class="text-center">TOTAL</th>
-                            <th class="text-center">ADD TO CART</th>
+                            <th class="text-center">AJOUTER AU PANIER</th>
                             <th class="text-center"><i class="ti-trash remove-icon"></i></th>
                         </tr>
                         </thead>
@@ -47,77 +49,73 @@
                                         <p class="product-des">{!!($wishlist['summary']) !!}</p>
                                     </td>
                                     <td class="total-amount" data-title="Total"><span>${{$wishlist['amount']}}</span></td>
-                                    <td><a href="{{route('add-to-cart',$wishlist->product['slug'])}}" class='btn btn-danger text-white'>Add To Cart</a></td>
-                                    <td class="action" data-title="Remove"><a href="{{route('wishlist-delete',$wishlist->id)}}"><i class="ti-trash remove-icon"></i></a></td>
+                                    <td><a href="{{route('add-to-cart',$wishlist->product['slug'])}}" class='btn btn-danger text-white'>Ajouter au Panier</a></td>
+                                    <td class="action" data-title="Supprimer"><a href="{{route('wishlist-delete',$wishlist->id)}}"><i class="ti-trash remove-icon"></i></a></td>
                                 </tr>
                             @endforeach
                         @else
                             <tr>
                                 <td class="text-center">
-                                    There are no any wishlist available. <a href="{{route('product-grids')}}" style="color:blue;">Continue shopping</a>
+                                    Il n'y a aucune liste de souhaits disponible. <a href="{{route('product-grids')}}" style="color:blue;">Continuer vos achats</a>
 
                                 </td>
                             </tr>
                         @endif
-
-
                         </tbody>
                     </table>
-                    <!--/ End Shopping Summery -->
+                    <!--/ Fin du Résumé des Achats -->
                 </div>
             </div>
         </div>
     </div>
-    <!--/ End Shopping Cart -->
+    <!--/ Fin Liste de Souhaits -->
 
-    <!-- Start Shop Services Area  -->
+    <!-- Zone des Services du Magasin -->
     <section class="shop-services section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
+                    <!-- Démarrer Service Unique -->
                     <div class="single-service">
                         <i class="ti-rocket"></i>
-                        <h4>Free shiping</h4>
-                        <p>Orders over $100</p>
+                        <h4>Livraison Gratuite</h4>
+                        <p>Pour les commandes de plus de 100$</p>
                     </div>
-                    <!-- End Single Service -->
+                    <!-- Fin Service Unique -->
                 </div>
                 <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
+                    <!-- Démarrer Service Unique -->
                     <div class="single-service">
                         <i class="ti-reload"></i>
-                        <h4>Free Return</h4>
-                        <p>Within 30 days returns</p>
+                        <h4>Retour Gratuit</h4>
+                        <p>Retour sous 30 jours</p>
                     </div>
-                    <!-- End Single Service -->
+                    <!-- Fin Service Unique -->
                 </div>
                 <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
+                    <!-- Démarrer Service Unique -->
                     <div class="single-service">
                         <i class="ti-lock"></i>
-                        <h4>Sucure Payment</h4>
-                        <p>100% secure payment</p>
+                        <h4>Paiement Sécurisé</h4>
+                        <p>100% sécurisé</p>
                     </div>
-                    <!-- End Single Service -->
+                    <!-- Fin Service Unique -->
                 </div>
                 <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
+                    <!-- Démarrer Service Unique -->
                     <div class="single-service">
                         <i class="ti-tag"></i>
-                        <h4>Best Peice</h4>
-                        <p>Guaranteed price</p>
+                        <h4>Meilleurs Prix</h4>
+                        <p>Prix garantis</p>
                     </div>
-                    <!-- End Single Service -->
+                    <!-- Fin Service Unique -->
                 </div>
             </div>
         </div>
     </section>
-    <!-- End Shop Newsletter -->
+    <!-- Fin Zone des Services -->
 
     @include('frontend.layouts.newsletter')
-
-
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
@@ -129,7 +127,7 @@
                 <div class="modal-body">
                     <div class="row no-gutters">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <!-- Product Slider -->
+                            <!-- Diaporama Produit -->
                             <div class="product-gallery">
                                 <div class="quickview-slider-active">
                                     <div class="single-slider">
@@ -146,11 +144,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- End Product slider -->
+                            <!-- Fin Diaporama Produit -->
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="quickview-content">
-                                <h2>Flared Shift Dress</h2>
+                                <h2>Robe Évasée</h2>
                                 <div class="quickview-ratting-review">
                                     <div class="quickview-ratting-wrap">
                                         <div class="quickview-ratting">
@@ -160,10 +158,10 @@
                                             <i class="yellow fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                         </div>
-                                        <a href="#"> (1 customer review)</a>
+                                        <a href="#"> (1 avis client)</a>
                                     </div>
                                     <div class="quickview-stock">
-                                        <span><i class="fa fa-check-circle-o"></i> in stock</span>
+                                        <span><i class="fa fa-check-circle-o"></i> en stock</span>
                                     </div>
                                 </div>
                                 <h3>$29.00</h3>
@@ -173,7 +171,7 @@
                                 <div class="size">
                                     <div class="row">
                                         <div class="col-lg-6 col-12">
-                                            <h5 class="title">Size</h5>
+                                            <h5 class="title">Taille</h5>
                                             <select>
                                                 <option selected="selected">s</option>
                                                 <option>m</option>
@@ -182,18 +180,18 @@
                                             </select>
                                         </div>
                                         <div class="col-lg-6 col-12">
-                                            <h5 class="title">Color</h5>
+                                            <h5 class="title">Couleur</h5>
                                             <select>
                                                 <option selected="selected">orange</option>
-                                                <option>purple</option>
-                                                <option>black</option>
-                                                <option>pink</option>
+                                                <option>violet</option>
+                                                <option>noir</option>
+                                                <option>rose</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="quantity">
-                                    <!-- Input Order -->
+                                    <!-- Quantité Commande -->
                                     <div class="input-group">
                                         <div class="button minus">
                                             <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
@@ -207,15 +205,15 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <!--/ End Input Order -->
+                                    <!--/ Fin Quantité Commande -->
                                 </div>
                                 <div class="add-to-cart">
-                                    <a href="#" class="btn">Add to cart</a>
+                                    <a href="#" class="btn">Ajouter au Panier</a>
                                     <a href="#" class="btn min"><i class="ti-heart"></i></a>
                                     <a href="#" class="btn min"><i class="fa fa-compress"></i></a>
                                 </div>
                                 <div class="default-social">
-                                    <h4 class="share-now">Share:</h4>
+                                    <h4 class="share-now">Partager :</h4>
                                     <ul>
                                         <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
                                         <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
@@ -230,7 +228,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal end -->
+    <!-- Fin Modal -->
 
 @endsection
 @push('scripts')

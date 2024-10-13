@@ -48,6 +48,9 @@ Auth::routes(['verify' => true]);
 Route::get('user/login', [FrontendController::class, 'login'])->name('login.form');
 Route::post('user/login', [FrontendController::class, 'loginSubmit'])->name('login.submit');
 Route::get('user/logout', [FrontendController::class, 'logout'])->name('user.logout');
+Route::get('/termes-et-conditions', function () {
+    return view('frontend.pages.terms-and-conditions');
+})->name('terms-and-conditions');
 
 Route::get('user/register', [FrontendController::class, 'register'])->name('register.form');
 Route::post('user/register', [FrontendController::class, 'registerSubmit'])->name('register.submit');
@@ -95,9 +98,11 @@ Route::post('cart/order', [OrderController::class, 'store'])->name('cart.order')
 Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])->name('order.pdf');
 Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.order.income');
 // Route::get('/user/chart',[AdminController::class, 'userPieChart'])->name('user.piechart');
-Route::get('/product-grids', [FrontendController::class, 'productViewG'])->name('product-grids');
-Route::get('/product-lists', [FrontendController::class, 'productViewL'])->name('product-lists');
-Route::match(['get', 'post'], '/filter', [FrontendController::class, 'productView'])->name('shop.filter');
+// Single route to handle both grid and list views using a viewType parameter
+Route::get('/products/{viewType}', [FrontendController::class, 'productView'])->name('product.view');
+
+
+Route::post('/filter', [FrontendController::class, 'productView'])->name('shop.filter');
 // Order Track
 Route::get('/product/track', [OrderController::class, 'orderTrack'])->name('order.track');
 Route::post('product/track/order', [OrderController::class, 'productTrackOrder'])->name('product.track.order');

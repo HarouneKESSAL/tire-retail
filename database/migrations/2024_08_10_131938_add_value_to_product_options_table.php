@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('product_options', function (Blueprint $table) {
-            $table->string('value')->after('type'); // Add the value column back
+            $table->text('value')->after('type'); // Add the value column back
         });
 
         Schema::table('product_option_product', function (Blueprint $table) {

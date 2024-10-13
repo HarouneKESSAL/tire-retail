@@ -22,7 +22,7 @@
                         <input type="hidden" name="car_brand" value="{{ request('car_brand') }}">
                         <input type="hidden" name="model" value="{{ request('model') }}">
                         <input type="hidden" name="year" value="{{ request('year') }}">
-                        <button type="submit" class="btn btn-danger">LANCER LA RECHERCHE</button>
+                        <button type="submit" class="btn-red">LANCER LA RECHERCHE</button>
                     </form>
                 </div>
             </div>

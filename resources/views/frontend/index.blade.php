@@ -124,7 +124,7 @@
                             <select name="option" class="form-control">
                                 <option value="">Sélectionner l'option</option>
                                 @foreach($pneuOptions as $option)
-                                    <option value="{{ $option->name }}">{{ $option->name }}</option>
+                                    <option value="{{ $option->option }}">{{ $option->option }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -178,7 +178,7 @@
                         <select name="option" class="form-control">
                             <option value="">Select Option</option>
                             @foreach($pneuJantesOptions as $option)
-                                <option value="{{ $option->name }}">{{ $option->name }}</option>
+                                <option value="{{ $option->option }}">{{ $option->option }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -240,171 +240,18 @@
         </div>
     </div>
 
-
-    {{--        <div class="filter-box">--}}
-    {{--        <div class="filter-options text-center mb-4">--}}
-    {{--            <button type="button" id="pneu-btn" class="filter-btn active">Pneu</button>--}}
-    {{--            <button type="button" id="pneu-jantes-btn" class="filter-btn">Pneu/Jantes</button>--}}
-    {{--            <button type="button" id="roues-jantes-btn" class="filter-btn">Roues/Jantes</button>--}}
-    {{--        </div>--}}
-
-    {{--        <!-- PNEU Form -->--}}
-    {{--        <div id="pneu-filter" class="filter-content active">--}}
-    {{--            <form id="pneu-form" method="POST" action="{{ route('product.search') }}" class="filter-form">--}}
-    {{--                @csrf--}}
-    {{--                <input type="hidden" name="category_slug" value="pneu">--}}
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="width" class="form-control">--}}
-    {{--                            <option value="">Largeur</option>--}}
-    {{--                            @foreach($pneuDimensions['widths'] as $width)--}}
-    {{--                                <option value="{{ $width->width }}">{{ $width->width }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="aspect_ratio" class="form-control">--}}
-    {{--                            <option value="">Rapport</option>--}}
-    {{--                            @foreach($pneuDimensions['aspect_ratios'] as $aspect_ratio)--}}
-    {{--                                <option--}}
-    {{--                                    value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="diameter" class="form-control">--}}
-    {{--                            <option value="">Diametre</option>--}}
-    {{--                            @foreach($pneuDimensions['diameters'] as $diameter)--}}
-    {{--                                <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
-    {{--            </form>--}}
-    {{--        </div>--}}
-
-    {{--        <!-- PNEU/JANTES Form -->--}}
-    {{--        <div id="pneu-jantes-filter" class="filter-content">--}}
-    {{--            <form id="pneu-jantes-form" method="post" action="{{ route('filter.results') }}" class="filter-form">--}}
-    {{--                @csrf--}}
-    {{--                <input type="hidden" name="category_slug" value="pneujantes">--}}
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="year" class="form-control">--}}
-    {{--                            <option value="">Select Year</option>--}}
-    {{--                            @foreach($years as $year)--}}
-    {{--                                <option value="{{ $year->car_year }}">{{ $year->car_year }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="car_brand" class="form-control">--}}
-    {{--                            <option value="">Select Make</option>--}}
-    {{--                            @foreach($car_brands as $car_brand)--}}
-    {{--                                <option value="{{ $car_brand->car_brand }}">{{ $car_brand->car_brand }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="model" class="form-control">--}}
-    {{--                            <option value="">Select Model</option>--}}
-    {{--                            @foreach($models as $model)--}}
-    {{--                                <option value="{{ $model->car_model }}">{{ $model->car_model }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="option" class="form-control mb-2">--}}
-    {{--                            <option value="">Select Option</option>--}}
-    {{--                            @foreach($options as $option)--}}
-    {{--                                <option value="{{ $option->name }}">{{ $option->name }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
-    {{--            </form>--}}
-    {{--        </div>--}}
-
-    {{--        <!-- ROUES/JANTES Form -->--}}
-    {{--        <div id="roues-jantes-filter" class="filter-content">--}}
-    {{--            <form id="roues-jantes-form" method="GET" action="{{ route('filter.results') }}" class="filter-form">--}}
-    {{--                @csrf--}}
-    {{--                <input type="hidden" name="category_slug" value="rouesjantes">--}}
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="width" class="form-control">--}}
-    {{--                            <option value="">Largeur</option>--}}
-    {{--                            @foreach($rouesJantesDimensions['widths'] as $width)--}}
-    {{--                                <option value="{{ $width->width }}">{{ $width->width }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="aspect_ratio" class="form-control">--}}
-    {{--                            <option value="">Rapport</option>--}}
-    {{--                            @foreach($rouesJantesDimensions['aspect_ratios'] as $aspect_ratio)--}}
-    {{--                                <option--}}
-    {{--                                    value="{{ $aspect_ratio->aspect_ratio }}">{{ $aspect_ratio->aspect_ratio }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <select name="diameter" class="form-control">--}}
-    {{--                            <option value="">Diametre</option>--}}
-    {{--                            @foreach($rouesJantesDimensions['diameters'] as $diameter)--}}
-    {{--                                <option value="{{ $diameter->diameter }}">{{ $diameter->diameter }}</option>--}}
-    {{--                            @endforeach--}}
-    {{--                        </select>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--                <div class="form-row mb-3">--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="summer"> Summer</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="winter"> Winter</label>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="col">--}}
-    {{--                        <label><input type="checkbox" name="season[]" value="all-season"> All Season</label>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--                <button type="submit" class="btn btn-black btn-block">Lancer la recherche</button>--}}
-    {{--            </form>--}}
-    {{--        </div>--}}
-    {{--    </div>--}}
-
-
-    <!-- Filter Section End -->
     <style>
+        /* Ensure that the modal's parent isn't restricting the stacking context */
+        .modal {
+            position: fixed; /* This ensures it's positioned relative to the viewport */
+            z-index: 1050; /* Keep a high z-index */
+        }
+
+
+        .modal-backdrop {
+            z-index: 1040; /* Ensure the backdrop appears below the modal */
+        }
+
         @media (max-width: 768px) {
             .search-container {
                 top: 60%;
@@ -685,7 +532,7 @@
         });
     </script>
 
-    <!-- Modal for Displaying Filter Result -->
+    <!-- Modal Markup -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -702,9 +549,10 @@
             </div>
         </div>
     </div>
-    <!-- Modal End --><!-- Filter Section End -->
 
-    <!-- Modal for Displaying Filter Result -->
+
+    <!-- Modal End --><!-- Filter Section End -->
+    <!-- Modal Markup -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -715,35 +563,23 @@
                 <div class="modal-body" id="filterResults">
                     <!-- Search results will be displayed here -->
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Modal End -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const filterContents = document.querySelectorAll('.filter-content');
             const filterModal = new bootstrap.Modal(document.getElementById('filterModal'));
 
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const targetId = this.id.replace('-btn', '-filter');
-                    filterContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === targetId) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
-
+            // Submit handler for the filter form
             document.getElementById('pneu-jantes-form').addEventListener('submit', function (e) {
                 e.preventDefault();
+
                 const formData = new FormData(this);
+
                 fetch(this.action, {
                     method: this.method,
                     body: formData,
@@ -755,33 +591,35 @@
                     .then(response => response.text())
                     .then(data => {
                         document.getElementById('filterResults').innerHTML = data;
-                        filterModal.show();
+                        filterModal.show();  // Show the modal with the search results
                     })
                     .catch(error => console.error('Error:', error));
             });
-
-            // No custom JavaScript handling for the "Pneu" and "Roues/Jantes" forms,
-            // so they will redirect as usual upon submission.
+        });
+        $('#filterModal').on('shown.bs.modal', function () {
+            $(this).css('z-index', 1050);
         });
 
     </script>
+
+
     <!-- Slider Area -->
-    @if(count($banners) > 0)
+    @if(count($banners)>0)
         <section id="Gslider" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-                @foreach($banners as $key => $banner)
-                    <li data-target="#Gslider" data-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}"></li>
+                @foreach($banners as $key=>$banner)
+                    <li data-target="#Gslider" data-slide-to="{{$key}}" class="{{(($key==0)? 'active' : '')}}"></li>
                 @endforeach
+
             </ol>
             <div class="carousel-inner" role="listbox">
-                @foreach($banners as $key => $banner)
-                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                        <img class="first-slide" src="{{ $banner->photo }}" alt="First slide">
+                @foreach($banners as $key=>$banner)
+                    <div class="carousel-item {{(($key==0)? 'active' : '')}}">
+                        <img class="first-slide" src="{{$banner->photo}}" alt="First slide">
                         <div class="carousel-caption d-none d-md-block text-left">
-                            <h1 class="wow fadeInDown">{{ $banner->title }}</h1>
+                            <h1 class="wow fadeInDown">{{$banner->title}}</h1>
                             <p>{!! html_entity_decode($banner->description) !!}</p>
-                            <a class="btn  btn-lg ws-btn wow fadeInUpBig" href="{{ route('product-grids') }}"
-                               role="button">Shop Now<i class="far fa-arrow-alt-circle-right"></i></a>
+                            <a class="btn btn-lg ws-btn wow fadeInUpBig" href="{{ route('product.view', ['viewType' => 'grid']) }}" role="button">Shop Now<i class="far fa-arrow-alt-circle-right"></i></a>
                         </div>
                     </div>
                 @endforeach
@@ -797,7 +635,9 @@
         </section>
     @endif
 
+    <!--/ End Slider Area -->
 
+    <!-- Start Small Banner  -->
     <section class="small-banner section">
         <div class="container-fluid">
             <div class="row">
@@ -828,7 +668,9 @@
             </div>
         </div>
     </section>
+    <!-- End Small Banner -->
 
+    <!-- Start Product Area -->
     <div class="product-area section">
         <div class="container">
             <div class="row">
@@ -845,17 +687,16 @@
                             <!-- Tab Nav -->
                             <ul class="nav nav-tabs filter-tope-group" id="myTab" role="tablist">
                                 @php
-                                    $categories = DB::table('categories')
-                                        ->where('status', 'active')
-                                        ->where('is_parent', 1)
-                                        ->get();
+                                    $categories=DB::table('categories')->where('status','active')->where('is_parent',1)->get();
+                                    // dd($categories);
                                 @endphp
                                 @if($categories)
-                                    <button class="btn btn-category active" data-filter="*">
+                                    <button class="btn" style="background:black"data-filter="*">
                                         All Products
                                     </button>
-                                    @foreach($categories as $key => $cat)
-                                        <button class="btn btn-category" data-filter=".{{$cat->id}}">
+                                    @foreach($categories as $key=>$cat)
+
+                                        <button class="btn" style="background:none;color:black;"data-filter=".{{$cat->id}}">
                                             {{$cat->title}}
                                         </button>
                                     @endforeach
@@ -866,98 +707,97 @@
                         <div class="tab-content isotope-grid" id="myTabContent">
                             <!-- Start Single Tab -->
                             @if($product_lists)
-                                @foreach($product_lists as $key => $product)
+                                @foreach($product_lists as $key=>$product)
                                     <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{$product->cat_id}}">
                                         <div class="single-product">
                                             <div class="product-img">
-                                                <a href="{{route('product-detail', $product->slug)}}">
+                                                <a href="{{route('product-detail',$product->slug)}}">
                                                     @php
-                                                        $photo = explode(',', $product->photo);
+                                                        $photo=explode(',',$product->photo);
+                                                    // dd($photo);
                                                     @endphp
                                                     <img class="default-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
                                                     <img class="hover-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
-                                                    @if($product->stock <= 0)
+                                                    @if($product->stock<=0)
                                                         <span class="out-of-stock">Sale out</span>
-                                                    @elseif($product->condition == 'new')
-                                                        <span class="new">New</span>
-                                                    @elseif($product->condition == 'hot')
+                                                    @elseif($product->condition=='new')
+                                                        <span class="new">New</span
+                                                    @elseif($product->condition=='hot')
                                                         <span class="hot">Hot</span>
                                                     @else
                                                         <span class="price-dec">{{$product->discount}}% Off</span>
                                                     @endif
+
+
                                                 </a>
                                                 <div class="button-head">
                                                     <div class="product-action">
-                                                        <a data-toggle="modal" data-target="#{{$product->id}}"
-                                                           title="Quick View" href="#"><i class="ti-eye"></i><span>Quick Shop</span></a>
-                                                        <a title="Wishlist"
-                                                           href="{{route('add-to-wishlist', $product->slug)}}"><i
-                                                                class="ti-heart"></i><span>Add to Wishlist</span></a>
+                                                        <a data-toggle="modal" data-target="#{{$product->id}}" title="Quick View" href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
+                                                        <a title="Wishlist" href="{{route('add-to-wishlist',$product->slug)}}" ><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
                                                     </div>
                                                     <div class="product-action-2">
-                                                        <a title="Add to cart"
-                                                           href="{{route('add-to-cart', $product->slug)}}">Add to
-                                                            cart</a>
+                                                        <a title="Add to cart" href="{{route('add-to-cart',$product->slug)}}">Add to cart</a>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="product-content">
-                                                <h3>
-                                                    <a href="{{route('product-detail', $product->slug)}}">{{$product->title}}</a>
-                                                </h3>
+                                                <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h3>
                                                 <div class="product-price">
                                                     @php
-                                                        $after_discount = ($product->price - ($product->price * $product->discount) / 100);
+                                                        $after_discount=($product->price-($product->price*$product->discount)/100);
                                                     @endphp
-                                                    <span>${{number_format($after_discount, 2)}}</span>
-                                                    <del style="padding-left:4%;">
-                                                        ${{number_format($product->price, 2)}}</del>
+                                                    <span>${{number_format($after_discount,2)}}</span>
+                                                    <del style="padding-left:4%;">${{number_format($product->price,2)}}</del>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
+
+                                <!--/ End Single Tab -->
                             @endif
+
+                            <!--/ End Single Tab -->
+
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <!-- End Product Area -->
-    @php
+    {{-- @php
         $featured=DB::table('products')->where('is_featured',1)->where('status','active')->orderBy('id','DESC')->limit(1)->get();
-    @endphp
-        <!-- Start Midium Banner  -->
-    {{--    <section class="midium-banner">--}}
-    {{--        <div class="container">--}}
-    {{--            <div class="row">--}}
-    {{--                @if($featured)--}}
-    {{--                    @foreach($featured as $data)--}}
-    {{--                        <!-- Single Banner  -->--}}
-    {{--                        <div class="col-lg-6 col-md-6 col-12">--}}
-    {{--                            <div class="single-banner">--}}
-    {{--                                @php--}}
-    {{--                                    $photo=explode(',',$data->photo);--}}
-    {{--                                @endphp--}}
-    {{--                                <img src="{{$photo[0]}}" alt="{{$photo[0]}}">--}}
-    {{--                                <div class="content">--}}
-    {{--                                    <p>{{$data->cat_info['title']}}</p>--}}
-    {{--                                    <h3>{{$data->title}} <br>Up to<span> {{$data->discount}}%</span></h3>--}}
-    {{--                                    <a href="{{route('product-detail',$data->slug)}}">Shop Now</a>--}}
-    {{--                                </div>--}}
-    {{--                            </div>--}}
-    {{--                        </div>--}}
-    {{--                        <!-- /End Single Banner  -->--}}
-    {{--                    @endforeach--}}
-    {{--                @endif--}}
-    {{--            </div>--}}
-    {{--        </div>--}}
-    {{--    </section>--}}
+    @endphp --}}
+    <!-- Start Midium Banner  -->
+    <section class="midium-banner">
+        <div class="container">
+            <div class="row">
+                @if($featured)
+                    @foreach($featured as $data)
+                        <!-- Single Banner  -->
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="single-banner">
+                                @php
+                                    $photo=explode(',',$data->photo);
+                                @endphp
+                                <img src="{{$photo[0]}}" alt="{{$photo[0]}}">
+                                <div class="content">
+                                    <p>{{$data->cat_info['title']}}</p>
+                                    <h3>{{$data->title}} <br>Up to<span> {{$data->discount}}%</span></h3>
+                                    <a href="{{route('product-detail',$data->slug)}}">Shop Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /End Single Banner  -->
+                    @endforeach
+                @endif
+            </div>
+        </div>
+    </section>
     <!-- End Midium Banner -->
 
-    <!-- Start Most Popular Area -->
+    <!-- Start Most Popular -->
     <div class="product-area most-popular section">
         <div class="container">
             <div class="row">
@@ -986,12 +826,8 @@
                                         </a>
                                         <div class="button-head">
                                             <div class="product-action">
-                                                <a data-toggle="modal" data-target="#{{$product->id}}"
-                                                   title="Quick View" href="#"><i
-                                                        class=" ti-eye"></i><span>Quick Shop</span></a>
-                                                <a title="Wishlist"
-                                                   href="{{route('add-to-wishlist',$product->slug)}}"><i
-                                                        class=" ti-heart "></i><span>Add to Wishlist</span></a>
+                                                <a data-toggle="modal" data-target="#{{$product->id}}" title="Quick View" href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
+                                                <a title="Wishlist" href="{{route('add-to-wishlist',$product->slug)}}" ><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
                                             </div>
                                             <div class="product-action-2">
                                                 <a href="{{route('add-to-cart',$product->slug)}}">Add to cart</a>
@@ -999,8 +835,7 @@
                                         </div>
                                     </div>
                                     <div class="product-content">
-                                        <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a>
-                                        </h3>
+                                        <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h3>
                                         <div class="product-price">
                                             <span class="old">${{number_format($product->price,2)}}</span>
                                             @php
@@ -1020,7 +855,7 @@
     </div>
     <!-- End Most Popular Area -->
 
-    <!-- Start Shop Home List  !-->
+    <!-- Start Shop Home List  -->
     <section class="shop-home-list section">
         <div class="container">
             <div class="row">
@@ -1048,17 +883,14 @@
                                                     // dd($photo);
                                                 @endphp
                                                 <img src="{{$photo[0]}}" alt="{{$photo[0]}}">
-                                                <a href="{{route('add-to-cart',$product->slug)}}" class="buy"><i
-                                                        class="fa fa-shopping-bag"></i></a>
+                                                <a href="{{route('add-to-cart',$product->slug)}}" class="buy"><i class="fa fa-shopping-bag"></i></a>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-12 no-padding">
                                             <div class="content">
-                                                <h4 class="title"><a
-                                                        href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a>
-                                                </h4>
-                                                <p class="price with-discount">
-                                                    ${{number_format($product->discount,2)}}</p>
+
+                                                <h4 class="title"><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h4>
+                                                <p class="price with-discount">${{number_format($product->discount,2)}}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1161,8 +993,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    class="ti-close" aria-hidden="true"></span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="ti-close" aria-hidden="true"></span></button>
                         </div>
                         <div class="modal-body">
                             <div class="row no-gutters">
@@ -1189,11 +1020,11 @@
                                         <div class="quickview-ratting-review">
                                             <div class="quickview-ratting-wrap">
                                                 <div class="quickview-ratting">
+                                                    {{-- <i class="yellow fa fa-star"></i>
                                                     <i class="yellow fa fa-star"></i>
                                                     <i class="yellow fa fa-star"></i>
                                                     <i class="yellow fa fa-star"></i>
-                                                    <i class="yellow fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i> --}}
                                                     @php
                                                         $rate=DB::table('product_reviews')->where('product_id',$product->id)->avg('rate');
                                                         $rate_count=DB::table('product_reviews')->where('product_id',$product->id)->count();
@@ -1219,9 +1050,7 @@
                                         @php
                                             $after_discount=($product->price-($product->price*$product->discount)/100);
                                         @endphp
-                                        <h3><small>
-                                                <del class="text-muted">${{number_format($product->price,2)}}</del>
-                                            </small> ${{number_format($after_discount,2)}}  </h3>
+                                        <h3><small><del class="text-muted">${{number_format($product->price,2)}}</del></small>    ${{number_format($after_discount,2)}}  </h3>
                                         <div class="quickview-peragraph">
                                             <p>{!! html_entity_decode($product->summary) !!}</p>
                                         </div>
@@ -1240,7 +1069,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-lg-6 col-12">
+                                                    {{-- <div class="col-lg-6 col-12">
                                                         <h5 class="title">Color</h5>
                                                         <select>
                                                             <option selected="selected">orange</option>
@@ -1248,7 +1077,7 @@
                                                             <option>black</option>
                                                             <option>pink</option>
                                                         </select>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             </div>
                                         @endif
@@ -1258,18 +1087,14 @@
                                                 <!-- Input Order -->
                                                 <div class="input-group">
                                                     <div class="button minus">
-                                                        <button type="button" class="btn btn-primary btn-number"
-                                                                disabled="disabled" data-type="minus"
-                                                                data-field="quant[1]">
+                                                        <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
                                                             <i class="ti-minus"></i>
                                                         </button>
                                                     </div>
                                                     <input type="hidden" name="slug" value="{{$product->slug}}">
-                                                    <input type="text" name="quant[1]" class="input-number" data-min="1"
-                                                           data-max="1000" value="1">
+                                                    <input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1">
                                                     <div class="button plus">
-                                                        <button type="button" class="btn btn-primary btn-number"
-                                                                data-type="plus" data-field="quant[1]">
+                                                        <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
                                                             <i class="ti-plus"></i>
                                                         </button>
                                                     </div>
@@ -1278,13 +1103,11 @@
                                             </div>
                                             <div class="add-to-cart">
                                                 <button type="submit" class="btn">Add to cart</button>
-                                                <a href="{{route('add-to-wishlist',$product->slug)}}" class="btn min"><i
-                                                        class="ti-heart"></i></a>
+                                                <a href="{{route('add-to-wishlist',$product->slug)}}" class="btn min"><i class="ti-heart"></i></a>
                                             </div>
                                         </form>
                                         <div class="default-social">
-                                            <!-- ShareThis BEGIN -->
-                                            <div class="sharethis-inline-share-buttons"></div><!-- ShareThis END -->
+                                            <!-- ShareThis BEGIN --><div class="sharethis-inline-share-buttons"></div><!-- ShareThis END -->
                                         </div>
                                     </div>
                                 </div>
@@ -1296,7 +1119,6 @@
         @endforeach
     @endif
     <!-- Modal end -->
-
 @endsection
 
 @push('styles')

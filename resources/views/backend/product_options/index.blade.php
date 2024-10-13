@@ -35,11 +35,11 @@
                                 <td>{{ $option->is_boolean ? 'N/A' : $option->value }}</td>
                                 <td>{{ $option->is_boolean ? 'Yes' : 'No' }}</td>
                                 <td>
-                                    <a href="{{ route('product-options.edit', $option->id) }}" class="btn btn-primary">Edit</a>
-                                    <form action="{{ route('product-options.destroy', $option->id) }}" method="POST" style="display:inline-block;">
+                                    <a href="{{route('product-options.edit', $option->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                                    <form method="POST" action="{{route('product-options.destroy', $option->id)}}">
                                         @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        @method('delete')
+                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$option->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </td>
                             </tr>

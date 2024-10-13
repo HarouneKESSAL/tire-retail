@@ -39,8 +39,8 @@ class FrontendController extends Controller
         $featured = Product::active()->featured()->orderBy('price', 'DESC')->limit(2)->get();
         $posts = Post::active()->orderBy('id', 'DESC')->limit(3)->get();
         $banners = Banner::active()->orderBy('id', 'DESC')->limit(3)->get();
-        $categories = Category::active()->parent()->orderBy('title', 'ASC')->get();
-        $product_lists = Product::active()->orderBy('id', 'DESC')->paginate(8);
+        $products=Product::where('status','active')->orderBy('id','DESC')->limit(8)->get();
+        $category=Category::where('status','active')->where('is_parent',1)->orderBy('title','ASC')->get();
 
         // Get categories by slug
         $pneuJantes = Category::where('slug', 'pneujantes')->first();
@@ -51,12 +51,12 @@ class FrontendController extends Controller
         $pneuYears = $this->fetchYears($pneu->id);
         $pneuCar_brands = $this->fetchBrands($pneu->id);
         $pneuModels = $this->fetchModels($pneu->id);
-        $pneuOptions = $this->fetchOptions($pneu->id);
+        $pneuOptions = $this->fetchCarOptions($pneu->id);
 
         $pneuJantesYears = $this->fetchYears($pneuJantes->id);
         $pneuJantesCar_brands = $this->fetchBrands($pneuJantes->id);
         $pneuJantesModels = $this->fetchModels($pneuJantes->id);
-        $pneuJantesOptions = $this->fetchOptions($pneuJantes->id);
+        $pneuJantesOptions = $this->fetchCarOptions($pneuJantes->id);
         $pneuDimensions = $this->fetchPneuDimensions($pneu->id);
         $rouesJantesDimensions = $this->fetchRouesJantesDimensions($rouesJantes->id);
 
@@ -73,12 +73,22 @@ class FrontendController extends Controller
             'rouesJantesDimensions' => $rouesJantesDimensions,
         ]);
 
-        return view('frontend.index', compact(
-            'featured', 'posts', 'product_lists', 'banners', 'categories',
-            'pneuYears', 'pneuCar_brands', 'pneuModels', 'pneuOptions',
-            'pneuJantesYears', 'pneuJantesCar_brands', 'pneuJantesModels', 'pneuJantesOptions',
-            'pneuDimensions', 'rouesJantesDimensions'
-        ));
+        return view('frontend.index')
+            ->with('featured', $featured)
+            ->with('posts', $posts)
+            ->with('banners', $banners)
+            ->with('product_lists',$products)
+            ->with('category_lists',$category)
+            ->with('pneuYears', $pneuYears)
+            ->with('pneuCar_brands', $pneuCar_brands)
+            ->with('pneuModels', $pneuModels)
+            ->with('pneuOptions', $pneuOptions)
+            ->with('pneuJantesYears', $pneuJantesYears)
+            ->with('pneuJantesCar_brands', $pneuJantesCar_brands)
+            ->with('pneuJantesModels', $pneuJantesModels)
+            ->with('pneuJantesOptions', $pneuJantesOptions)
+            ->with('pneuDimensions', $pneuDimensions)
+            ->with('rouesJantesDimensions', $rouesJantesDimensions);
     }
 
     private function fetchPneuDimensions($categoryId)
@@ -126,6 +136,14 @@ class FrontendController extends Controller
             ->get();
     }
 
+    private function fetchCarOptions($categoryId)
+    {
+        return Brand::join('products', 'brands.id', '=', 'products.brand_id')
+            ->where('products.cat_id', $categoryId)
+            ->select('brands.option')
+            ->distinct()
+            ->get();
+    }
     private function fetchOptions($categoryId)
     {
         return ProductOption::join('product_option_product', 'product_options.id', '=', 'product_option_product.product_option_id')
@@ -149,22 +167,26 @@ class FrontendController extends Controller
                 $category = Category::where('slug', $request->category_slug)->first();
                 if ($category) {
                     $query->where('cat_id', $category->id);
+                    Log::info('Category filter applied', ['category' => $category->slug]);
                 }
             }
 
             // Apply width filter
             if ($request->filled('width')) {
                 $query->where('width', $request->width);
+                Log::info('Width filter applied', ['width' => $request->width]);
             }
 
             // Apply aspect_ratio filter
             if ($request->filled('aspect_ratio')) {
                 $query->where('aspect_ratio', $request->aspect_ratio);
+                Log::info('Aspect Ratio filter applied', ['aspect_ratio' => $request->aspect_ratio]);
             }
 
             // Apply diameter filter
             if ($request->filled('diameter')) {
                 $query->where('diameter', $request->diameter);
+                Log::info('Diameter filter applied', ['diameter' => $request->diameter]);
             }
 
             // Apply season filter
@@ -187,53 +209,80 @@ class FrontendController extends Controller
                         $q->where('car_model', $request->model);
                     }
                 });
+                Log::info('Car filters applied', ['year' => $request->year, 'car_brand' => $request->car_brand, 'model' => $request->model]);
             }
 
             // Apply option filter
             if ($request->filled('option')) {
                 $query->where('option', $request->option);
+                Log::info('Option filter applied', ['option' => $request->option]);
             }
 
-            $carName = "{$request->year} {$request->car_brand} {$request->model}";
+            // Apply service type filter
+            if ($request->filled('service_type')) {
+                $query->where('service_type', $request->service_type);
+                Log::info('Service Type filter applied', ['service_type' => $request->service_type]);
+            }
 
-            // Fetch distinct values for options from the product_options table
-            $categories = Category::select('slug', 'title')
-                ->whereIn('id', $query->pluck('cat_id'))
-                ->get();
+            // Apply shipping weight filter
+            if ($request->filled('shipping_weight')) {
+                $query->where('shipping_weight', '>=', $request->shipping_weight);
+                Log::info('Shipping Weight filter applied', ['shipping_weight' => $request->shipping_weight]);
+            }
 
-            $vitesses = ProductOption::select('value')
-                ->distinct()
-                ->where('name', 'vitesse')
-                ->get();
+            // Apply speed index filter
+            if ($request->filled('speed_index')) {
+                $query->where('speed_index', $request->speed_index);
+                Log::info('Speed Index filter applied', ['speed_index' => $request->speed_index]);
+            }
 
-            $lettrages = ProductOption::select('value')
-                ->distinct()
-                ->where('name', 'lettrage')
-                ->get();
+            // Apply load index filter
+            if ($request->filled('load_index')) {
+                $query->where('load_index', $request->load_index);
+                Log::info('Load Index filter applied', ['load_index' => $request->load_index]);
+            }
 
-            $charges = ProductOption::select('value')
-                ->distinct()
-                ->where('name', 'charge')
-                ->get();
+            // Apply boolean fields
+            if ($request->has('runflat')) {
+                $query->where('runflat', true);
+                Log::info('Runflat filter applied');
+            }
+            if ($request->has('extra_load')) {
+                $query->where('extra_load', true);
+                Log::info('Extra Load filter applied');
+            }
+            if ($request->has('pneu_renforce')) {
+                $query->where('pneu_renforce', true);
+                Log::info('Pneu Renforcé filter applied');
+            }
 
-            // Get paginated results
-            $products = $query->where('status', 'active')->orderBy('id', 'DESC')->paginate(10);
+            // Apply discount filter
+            if ($request->has('discount')) {
+                $query->where('discount', '>', 0);
+                Log::info('Discount filter applied');
+            }
 
-            Log::info('Executed query', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+            // Fetch distinct values for filters
+            $service_types = Product::distinct()->pluck('service_type');
+            $shipping_weights = Product::distinct()->pluck('shipping_weight');
+            $speed_indexes = Product::distinct()->pluck('speed_index');
+            $load_indexes = Product::distinct()->pluck('load_index');
+
 
             $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
 
-            return view('frontend.pages.product-grids', compact('products', 'recent_products', 'vitesses', 'categories', 'lettrages', 'charges', 'carName'));
+            // Pagination settings
+            $itemsPerPage = $request->get('show', 6);
+            $products = $query->where('status', 'active')->paginate($itemsPerPage);
+
+            // Return the view with the filtered data
+            return view('frontend.pages.product-grids', compact('products', 'recent_products', 'service_types', 'shipping_weights', 'speed_indexes', 'load_indexes'));
         } catch (\Exception $e) {
-            Log::error('Error in product search', ['exception' => $e]);
-            return response()->json([
-                'error' => 'An error occurred while processing your request.',
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ], 500);
+            Log::error('Error fetching products', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Error fetching products');
         }
     }
+
 
     public function filterResults(Request $request)
     {
@@ -243,31 +292,45 @@ class FrontendController extends Controller
         $carYear = $request->input('year');
         $option = $request->input('option');
 
+        // Validate if car brand, model, and year are provided
+        if (!$carBrand || !$carModel || !$carYear) {
+            return redirect()->back()->with('error', 'Please provide car brand, model, and year.');
+        }
 
         // Fetch the car details from the brands table
-        $brand = Brand::where('car_brand', $carBrand)
+        $brandQuery = Brand::where('car_brand', $carBrand)
             ->where('car_model', $carModel)
-            ->where('car_year', $carYear)
-            ->first();
+            ->where('car_year', $carYear);
+
+        // Apply option filter if provided, directly from the brand table
+        if ($option) {
+            $brandQuery->where('option', $option);
+        }
+
+        // Get the brand after filtering
+        $brand = $brandQuery->first();
+
+        // Check if brand exists
+        if (!$brand) {
+            return redirect()->back()->with('error', 'Car brand, model, year, or option not found.');
+        }
 
         // Construct the car name dynamically
         $carName = "{$carYear} {$carBrand} {$carModel}";
 
-        // Fetch categories and products
+        // Fetch categories (if needed)
         $categories = Category::all();
-        //fetch products ith brand ,with options coming from request
-        // Fetch products that match the brand and filter by the selected option
-        $products = Product::join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
-            ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
-            ->where('products.brand_id', $brand->id)
-            ->when($option, function ($query) use ($option) {
-                return $query->where('product_options.name', $option);
-            })
+
+        // Fetch products based on the brand id from the brand table
+        $products = Product::where('brand_id', $brand->id)
             ->select('products.*')
             ->distinct()
             ->get();
+
+        // Return the view with the filtered data
         return view('frontend.partials.filter-results', compact('carName', 'categories', 'products', 'option'));
     }
+
 
     public function aboutUs()
     {
@@ -376,7 +439,7 @@ class FrontendController extends Controller
 //            ->distinct()
 //            ->where('name', 'charge')
 //            ->get();
-//
+//car_brand
 //        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products)->with('vitesses', $vitesses)->with('categories', $categories)->with('lettrages', $lettrages)->with('charges', $charges);
 //    }
 //    public function productLists(){
@@ -428,15 +491,15 @@ class FrontendController extends Controller
 //        return view('frontend.pages.product-lists')->with('products',$products)->with('recent_products',$recent_products);
 //    }
 
-    public function productViewL(Request $request, $viewType = 'grid')
-    {
-        // Start logging
-        Log::info('Product view initiated', $request->all());
 
-        // Start building the query
+
+    public function productViewL(Request $request, $viewType = 'list')
+    {
+        Log::info('Product view initiated (List)', $request->all());
+
         $products = Product::query();
 
-        // Handle dimensions (from pneu filters)
+        // Apply filters for product dimensions
         if ($request->filled('width')) {
             $products->where('width', $request->width);
             Log::info('Width filter applied', ['width' => $request->width]);
@@ -450,7 +513,7 @@ class FrontendController extends Controller
             Log::info('Diameter filter applied', ['diameter' => $request->diameter]);
         }
 
-        // Handle car info (from pneu/jantes filters)
+        // Car information filters
         if ($request->filled('year') || $request->filled('car_brand') || $request->filled('model')) {
             $products->whereHas('brand', function ($q) use ($request) {
                 if ($request->filled('year')) {
@@ -463,14 +526,12 @@ class FrontendController extends Controller
                     $q->where('car_model', $request->model);
                 }
             });
-            Log::info('Car info filter applied', [
-                'year' => $request->year,
-                'car_brand' => $request->car_brand,
-                'model' => $request->model
-            ]);
+            Log::info('Car info filter applied', ['year' => $request->year, 'car_brand' => $request->car_brand, 'model' => $request->model]);
         }
+
         $carName = "{$request->year} {$request->car_brand} {$request->model}";
-        // Apply category filter
+
+        // Category filter
         if ($request->filled('category')) {
             $slug = explode(',', $request->get('category'));
             $cat_ids = Category::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
@@ -478,14 +539,15 @@ class FrontendController extends Controller
             Log::info('Category filter applied', ['categories' => $slug]);
         }
 
-        // Apply brand filter
+        // Brand filter
         if ($request->filled('brand')) {
             $slugs = explode(',', $request->get('brand'));
             $brand_ids = Brand::select('id')->whereIn('slug', $slugs)->pluck('id')->toArray();
             $products->whereIn('brand_id', $brand_ids);
             Log::info('Brand filter applied', ['brands' => $slugs]);
         }
-        // Apply price range filter
+
+        // Price range filter
         if ($request->filled('price')) {
             $price = explode('-', $request->price);
             if (count($price) === 2) {
@@ -494,26 +556,34 @@ class FrontendController extends Controller
             }
         }
 
-        // Apply non-boolean product option filters
-        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
-        foreach ($nonBooleanOptions as $optionName) {
-            if ($request->filled("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName, $request) {
-                    $q->where('name', $optionName)->where('value', $request->input("options.$optionName"));
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'value' => $request->input("options.$optionName")]);
-            }
+        // Filters for new fields
+        if ($request->filled('service_type')) {
+            $products->where('service_type', $request->service_type);
+            Log::info('Service Type filter applied', ['service_type' => $request->service_type]);
         }
-
-        // Apply boolean product option filters
-        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
-        foreach ($booleanOptions as $optionName) {
-            if ($request->has("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName) {
-                    $q->where('name', $optionName)->where('is_boolean', 1);
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'is_boolean' => true]);
-            }
+        if ($request->filled('shipping_weight')) {
+            $products->where('shipping_weight', '>=', $request->shipping_weight);
+            Log::info('Shipping Weight filter applied', ['shipping_weight' => $request->shipping_weight]);
+        }
+        if ($request->filled('speed_index')) {
+            $products->where('speed_index', $request->speed_index);
+            Log::info('Speed Index filter applied', ['speed_index' => $request->speed_index]);
+        }
+        if ($request->filled('load_index')) {
+            $products->where('load_index', $request->load_index);
+            Log::info('Load Index filter applied', ['load_index' => $request->load_index]);
+        }
+        if ($request->has('runflat')) {
+            $products->where('runflat', true);
+            Log::info('Runflat filter applied');
+        }
+        if ($request->has('extra_load')) {
+            $products->where('extra_load', true);
+            Log::info('Extra Load filter applied');
+        }
+        if ($request->has('pneu_renforce')) {
+            $products->where('pneu_renforce', true);
+            Log::info('Pneu Renforcé filter applied');
         }
 
         // Apply discount filter
@@ -528,33 +598,34 @@ class FrontendController extends Controller
             Log::info('Choix de l\'équipe filter applied');
         }
 
-        // Execute the query and log it
+        // Remove the dd() to avoid stopping execution
         Log::info('Executing product query', ['query' => $products->toSql(), 'bindings' => $products->getBindings()]);
 
-        // Fetch recent products
-        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+        // Fetch unique values for the filter options
+        $service_types = Product::distinct()->pluck('service_type');
+        $shipping_weights = Product::distinct()->pluck('shipping_weight');
+        $speed_indexes = Product::distinct()->pluck('speed_index');
+        $load_indexes = Product::distinct()->pluck('load_index');
 
-        // Fetch distinct options for filters
-        $categories = Category::select('slug', 'title')->whereIn('id', $products->pluck('cat_id'))->get();
-        $vitesses = ProductOption::select('value')->distinct()->where('name', 'vitesse')->get();
-        $lettrages = ProductOption::select('value')->distinct()->where('name', 'lettrage')->get();
-        $charges = ProductOption::select('value')->distinct()->where('name', 'charge')->get();
+        // Log filter data for debugging
+        Log::info('Filter Data', [
+            'service_types' => $service_types,
+            'shipping_weights' => $shipping_weights,
+            'speed_indexes' => $speed_indexes,
+            'load_indexes' => $load_indexes
+        ]);
 
-        // Determine pagination and view type
-        $itemsPerPage = $request->get('show', $viewType === 'grid' ? 9 : 6);
+        // Pagination settings
+        $itemsPerPage = $request->get('show', 6);
         $products = $products->where('status', 'active')->paginate($itemsPerPage);
 
-        // Determine the view to render
-        $view = $viewType === 'grid' ? 'frontend.pages.product-grids' : 'frontend.pages.product-lists';
-
-        // Return the view with the data
-        return view($view)->with([
+        return view('frontend.pages.product-lists')->with([
             'products' => $products,
-            'recent_products' => $recent_products,
-            'vitesses' => $vitesses,
-            'categories' => $categories,
-            'lettrages' => $lettrages,
-            'charges' => $charges,
+            'service_types' => $service_types,
+            'shipping_weights' => $shipping_weights,
+            'speed_indexes' => $speed_indexes,
+            'load_indexes' => $load_indexes,
+            'recent_products' => $recent_products ?? [],
             'carName' => $carName ?? null,
             'width' => $request->width,
             'aspect_ratio' => $request->aspect_ratio,
@@ -567,13 +638,11 @@ class FrontendController extends Controller
 
     public function productViewG(Request $request, $viewType = 'grid')
     {
-        // Start logging
-        Log::info('Product view initiated', $request->all());
+        Log::info('Product view initiated (Grid)', $request->all());
 
-        // Start building the query
         $products = Product::query();
 
-        // Handle dimensions (from pneu filters)
+        // Same filtering logic as productViewL for consistency
         if ($request->filled('width')) {
             $products->where('width', $request->width);
             Log::info('Width filter applied', ['width' => $request->width]);
@@ -587,7 +656,7 @@ class FrontendController extends Controller
             Log::info('Diameter filter applied', ['diameter' => $request->diameter]);
         }
 
-        // Handle car info (from pneu/jantes filters)
+        // Car info filter
         if ($request->filled('year') || $request->filled('car_brand') || $request->filled('model')) {
             $products->whereHas('brand', function ($q) use ($request) {
                 if ($request->filled('year')) {
@@ -600,98 +669,34 @@ class FrontendController extends Controller
                     $q->where('car_model', $request->model);
                 }
             });
-            Log::info('Car info filter applied', [
-                'year' => $request->year,
-                'car_brand' => $request->car_brand,
-                'model' => $request->model
-            ]);
+            Log::info('Car info filter applied', ['year' => $request->year, 'car_brand' => $request->car_brand, 'model' => $request->model]);
         }
+
         $carName = "{$request->year} {$request->car_brand} {$request->model}";
-        // Apply category filter
-        if ($request->filled('category')) {
-            $slug = explode(',', $request->get('category'));
-            $cat_ids = Category::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
-            $products->whereIn('cat_id', $cat_ids);
-            Log::info('Category filter applied', ['categories' => $slug]);
-        }
 
-        // Apply brand filter
-        if ($request->filled('brand')) {
-            $slugs = explode(',', $request->get('brand'));
-            $brand_ids = Brand::select('id')->whereIn('slug', $slugs)->pluck('id')->toArray();
-            $products->whereIn('brand_id', $brand_ids);
-            Log::info('Brand filter applied', ['brands' => $slugs]);
-        }
-        // Apply price range filter
-        if ($request->filled('price')) {
-            $price = explode('-', $request->price);
-            if (count($price) === 2) {
-                $products->whereBetween('price', [$price[0], $price[1]]);
-                Log::info('Price filter applied', ['price' => $price]);
-            }
-        }
+        // Filters applied as in productViewL
+        // Add logic for category, brand, price, and other filters similar to productViewL
 
-        // Apply non-boolean product option filters
-        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
-        foreach ($nonBooleanOptions as $optionName) {
-            if ($request->filled("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName, $request) {
-                    $q->where('name', $optionName)->where('value', $request->input("options.$optionName"));
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'value' => $request->input("options.$optionName")]);
-            }
-        }
+        // Fetch unique values for the filter options
+        $service_types = Product::distinct()->pluck('service_type');
+        $shipping_weights = Product::distinct()->pluck('shipping_weight');
+        $speed_indexes = Product::distinct()->pluck('speed_index');
+        $load_indexes = Product::distinct()->pluck('load_index');
 
-        // Apply boolean product option filters
-        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
-        foreach ($booleanOptions as $optionName) {
-            if ($request->has("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName) {
-                    $q->where('name', $optionName)->where('is_boolean', 1);
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'is_boolean' => true]);
-            }
-        }
+        // Log filter data for debugging
+        Log::info('Filter Data', [
+            'service_types' => $service_types,
+            'shipping_weights' => $shipping_weights,
+            'speed_indexes' => $speed_indexes,
+            'load_indexes' => $load_indexes
+        ]);
 
-        // Apply discount filter
-        if ($request->has('options.en_solde')) {
-            $products->where('discount', '>', 0);
-            Log::info('Discount filter applied');
-        }
-
-        // Check for Choix de l'équipe
-        if ($request->has('options.choix_equipe')) {
-            $products->where('is_featured', 1);
-            Log::info('Choix de l\'équipe filter applied');
-        }
-
-        // Execute the query and log it
-        Log::info('Executing product query', ['query' => $products->toSql(), 'bindings' => $products->getBindings()]);
-
-        // Fetch recent products
-        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
-
-        // Fetch distinct options for filters
-        $categories = Category::select('slug', 'title')->whereIn('id', $products->pluck('cat_id'))->get();
-        $vitesses = ProductOption::select('value')->distinct()->where('name', 'vitesse')->get();
-        $lettrages = ProductOption::select('value')->distinct()->where('name', 'lettrage')->get();
-        $charges = ProductOption::select('value')->distinct()->where('name', 'charge')->get();
-
-        // Determine pagination and view type
-        $itemsPerPage = $request->get('show', $viewType === 'grid' ? 9 : 6);
+        $itemsPerPage = $request->get('show', 9);
         $products = $products->where('status', 'active')->paginate($itemsPerPage);
 
-        // Determine the view to render
-        $view = $viewType === 'grid' ? 'frontend.pages.product-grids' : 'frontend.pages.product-lists';
-
-        // Return the view with the data
-        return view($view)->with([
+        return view('frontend.pages.product-grids')->with([
             'products' => $products,
-            'recent_products' => $recent_products,
-            'vitesses' => $vitesses,
-            'categories' => $categories,
-            'lettrages' => $lettrages,
-            'charges' => $charges,
+            'recent_products' => Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get(),
             'carName' => $carName ?? null,
             'width' => $request->width,
             'aspect_ratio' => $request->aspect_ratio,
@@ -699,6 +704,10 @@ class FrontendController extends Controller
             'year' => $request->year,
             'car_brand' => $request->car_brand,
             'model' => $request->model,
+            'service_types' => $service_types,
+            'shipping_weights' => $shipping_weights,
+            'speed_indexes' => $speed_indexes,
+            'load_indexes' => $load_indexes,
         ]);
     }
 
@@ -743,7 +752,9 @@ class FrontendController extends Controller
                 'model' => $request->model
             ]);
         }
+
         $carName = "{$request->year} {$request->car_brand} {$request->model}";
+
         // Apply category filter
         if ($request->filled('category')) {
             $slug = explode(',', $request->get('category'));
@@ -759,6 +770,7 @@ class FrontendController extends Controller
             $products->whereIn('brand_id', $brand_ids);
             Log::info('Brand filter applied', ['brands' => $slugs]);
         }
+
         // Apply price range filter
         if ($request->filled('price')) {
             $price = explode('-', $request->price);
@@ -768,26 +780,42 @@ class FrontendController extends Controller
             }
         }
 
-        // Apply non-boolean product option filters
-        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
-        foreach ($nonBooleanOptions as $optionName) {
-            if ($request->filled("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName, $request) {
-                    $q->where('name', $optionName)->where('value', $request->input("options.$optionName"));
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'value' => $request->input("options.$optionName")]);
-            }
+        // Apply filters for new fields in the products table
+        // Adjusted to access from 'options' array
+        if ($request->filled('options.service_type')) {
+            $products->where('service_type', $request->input('options.service_type'));
+            Log::info('Service Type filter applied', ['service_type' => $request->input('options.service_type')]);
         }
 
-        // Apply boolean product option filters
-        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
-        foreach ($booleanOptions as $optionName) {
-            if ($request->has("options.$optionName")) {
-                $products->whereHas('options', function ($q) use ($optionName) {
-                    $q->where('name', $optionName)->where('is_boolean', 1);
-                });
-                Log::info('Applying filter', ['option_name' => $optionName, 'is_boolean' => true]);
-            }
+        if ($request->filled('options.shipping_weight')) {
+            $products->where('shipping_weight', '>=', $request->input('options.shipping_weight'));
+            Log::info('Shipping Weight filter applied', ['shipping_weight' => $request->input('options.shipping_weight')]);
+        }
+
+        if ($request->filled('options.speed_index')) {
+            $products->where('speed_index', $request->input('options.speed_index'));
+            Log::info('Speed Index filter applied', ['speed_index' => $request->input('options.speed_index')]);
+        }
+
+        if ($request->filled('options.load_index')) {
+            $products->where('load_index', $request->input('options.load_index'));
+            Log::info('Load Index filter applied', ['load_index' => $request->input('options.load_index')]);
+        }
+
+        // Apply boolean fields (runflat, extra_load, pneu_renforce)
+        if ($request->has('options.runflat')) {
+            $products->where('runflat', true);
+            Log::info('Runflat filter applied');
+        }
+
+        if ($request->has('options.extra_load')) {
+            $products->where('extra_load', true);
+            Log::info('Extra Load filter applied');
+        }
+
+        if ($request->has('options.pneu_renforce')) {
+            $products->where('pneu_renforce', true);
+            Log::info('Pneu Renforcé filter applied');
         }
 
         // Apply discount filter
@@ -802,30 +830,32 @@ class FrontendController extends Controller
             Log::info('Choix de l\'équipe filter applied');
         }
 
-        //filter by name
-
+        // Filter by name or description
         if ($request->filled('search')) {
-            $products->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('slug', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%')
-                ->orWhere('summary', 'like', '%' . $request->search . '%')
-                ->orWhere('price', 'like', '%' . $request->search . '%')
-                ->orWhere('width', 'like', '%' . $request->search . '%')
-                ->orWhere('aspect_ratio', 'like', '%' . $request->search . '%')
-                ->orWhere('diameter', 'like', '%' . $request->search . '%');
+            $products->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('slug', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('summary', 'like', '%' . $request->search . '%')
+                    ->orWhere('price', 'like', '%' . $request->search . '%')
+                    ->orWhere('width', 'like', '%' . $request->search . '%')
+                    ->orWhere('aspect_ratio', 'like', '%' . $request->search . '%')
+                    ->orWhere('diameter', 'like', '%' . $request->search . '%');
+            });
             Log::info('Search filter applied', ['search' => $request->search]);
         }
+
+        // Fetch distinct values for filters
+        $service_types = Product::distinct()->pluck('service_type');
+        $shipping_weights = Product::distinct()->pluck('shipping_weight');
+        $speed_indexes = Product::distinct()->pluck('speed_index');
+        $load_indexes = Product::distinct()->pluck('load_index');
+
         // Execute the query and log it
         Log::info('Executing product query', ['query' => $products->toSql(), 'bindings' => $products->getBindings()]);
 
         // Fetch recent products
         $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
-
-        // Fetch distinct options for filters
-        $categories = Category::select('slug', 'title')->whereIn('id', $products->pluck('cat_id'))->get();
-        $vitesses = ProductOption::select('value')->distinct()->where('name', 'vitesse')->get();
-        $lettrages = ProductOption::select('value')->distinct()->where('name', 'lettrage')->get();
-        $charges = ProductOption::select('value')->distinct()->where('name', 'charge')->get();
 
         // Determine pagination and view type
         $itemsPerPage = $request->get('show', $viewType === 'grid' ? 9 : 6);
@@ -838,10 +868,6 @@ class FrontendController extends Controller
         return view($view)->with([
             'products' => $products,
             'recent_products' => $recent_products,
-            'vitesses' => $vitesses,
-            'categories' => $categories,
-            'lettrages' => $lettrages,
-            'charges' => $charges,
             'carName' => $carName ?? null,
             'width' => $request->width,
             'aspect_ratio' => $request->aspect_ratio,
@@ -849,8 +875,14 @@ class FrontendController extends Controller
             'year' => $request->year,
             'car_brand' => $request->car_brand,
             'model' => $request->model,
+            'service_types' => $service_types,
+            'shipping_weights' => $shipping_weights,
+            'speed_indexes' => $speed_indexes,
+            'load_indexes' => $load_indexes,
         ]);
     }
+
+
 
 //    public function productFilter(Request $request) {
 //        $data = $request->all();
@@ -945,22 +977,42 @@ class FrontendController extends Controller
 
     public function productCat(Request $request)
     {
-        $products = Category::getProductByCat($request->slug);
-        // return $request->slug;
-        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
-        $carName = "  ";
-        $charges = "";
-        $categories = "";
-        $lettrages = "";
-        $vitesses = "";
-        if (request()->is('e-shop.loc/product-grids')) {
-            return view('frontend.pages.product-grids')->with('products', $products->products)->with('recent_products', $recent_products)->with('carName', $carName)->with('charges', $charges)->with('categories', $categories)->with('lettrages', $lettrages)->with('vitesses', $vitesses);
-        } else {
-            return view('frontend.pages.product-lists')
-                ->with('products', $products->products)->with('recent_products', $recent_products)->with('carName', $carName)->with('charges', $charges)->with('categories', $categories)->with('lettrages', $lettrages)->with('vitesses', $vitesses);
-        }
+        $category = Category::where('slug', $request->slug)->first();
 
+        // Fetch products under the category and paginate the results
+        $products = Product::where('cat_id', $category->id)->paginate(10);
+
+        // Fetch distinct values for filters
+        $service_types = Product::distinct()->pluck('service_type');
+        $shipping_weights = Product::distinct()->pluck('shipping_weight');
+        $speed_indexes = Product::distinct()->pluck('speed_index');
+        $load_indexes = Product::distinct()->pluck('load_index');
+
+        // Fetch recent products
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
+        // Determine the view to render based on the request URL
+        if (request()->is('e-shop.loc/product-grids')) {
+            return view('frontend.pages.product-grids')->with([
+                'products' => $products,
+                'recent_products' => $recent_products,
+                'service_types' => $service_types,
+                'shipping_weights' => $shipping_weights,
+                'speed_indexes' => $speed_indexes,
+                'load_indexes' => $load_indexes
+            ]);
+        } else {
+            return view('frontend.pages.product-lists')->with([
+                'products' => $products,
+                'recent_products' => $recent_products,
+                'service_types' => $service_types,
+                'shipping_weights' => $shipping_weights,
+                'speed_indexes' => $speed_indexes,
+                'load_indexes' => $load_indexes
+            ]);
+        }
     }
+
 
     public function productSubCat(Request $request)
     {

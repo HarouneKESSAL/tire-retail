@@ -6,7 +6,7 @@
     <meta name='copyright' content=''>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="keywords" content="online shop, purchase, cart, ecommerce site, best online shopping">
+    <meta name="keywords" content="boutique en ligne, achat, panier, site ecommerce, meilleur shopping en ligne">
     <meta name="description" content="{{$product_detail->summary}}">
     <meta property="og:url" content="{{route('product-detail',$product_detail->slug)}}">
     <meta property="og:type" content="article">
@@ -14,7 +14,7 @@
     <meta property="og:image" content="{{$product_detail->photo}}">
     <meta property="og:description" content="{{$product_detail->description}}">
 @endsection
-@section('title','E-SHOP || PRODUCT DETAIL')
+@section('title','E-SHOP || DÉTAIL DU PRODUIT')
 @section('main-content')
 
     <!-- Breadcrumbs -->
@@ -24,567 +24,471 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="">Shop Details</a></li>
+                            <li><a href="{{route('home')}}">Accueil<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="">Détails du Produit</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Breadcrumbs -->
+    <!-- Fin Breadcrumbs -->
 
-        <!-- Product Style 1 -->
-        <section class="product-area shop-sidebar shop-list shop section">
-            <div class="container">
-                <div class="row">
+    <!-- Style du Produit -->
+    <section class="product-area shop-sidebar shop-list shop section">
+        <div class="container">
+            <div class="row">
 
-                    <div class="content-wrapper">
-                        <div class="row">
-                            <!-- Sidebar Navigation (Nav-Pills) -->
-                            <div class="col-lg-3 col-md-4 col-12">
-                                <div class="nav-pills">
-                                    <div class="single-widget">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <!-- Navigation Sidebar (Nav-Pills) -->
+                        <div class="col-lg-3 col-md-4 col-12">
+                            <div class="nav-pills">
+                                <div class="single-widget">
 
-                                        <ul class="nav nav-pills nav-stacked" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" id="presentation-tab" data-toggle="tab"
-                                                   href="#presentation" role="tab" aria-controls="presentation"
-                                                   aria-selected="true">
-                                                    <i class="fa fa-eye"></i> Présentation
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="specifications-tab" data-toggle="tab"
-                                                   href="#specifications" role="tab" aria-controls="specifications"
-                                                   aria-selected="false">
-                                                    <i class="fa fa-cogs"></i> Spécifications
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="avis-client-tab" data-toggle="tab"
-                                                   href="#avis-client"
-                                                   role="tab" aria-controls="avis-client" aria-selected="false">
-                                                    <i class="fa fa-comment"></i> Avis client
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <ul class="nav nav-pills nav-stacked" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="presentation-tab" data-toggle="tab"
+                                               href="#presentation" role="tab" aria-controls="presentation"
+                                               aria-selected="true">
+                                                <i class="fa fa-eye"></i> Présentation
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="specifications-tab" data-toggle="tab"
+                                               href="#specifications" role="tab" aria-controls="specifications"
+                                               aria-selected="false">
+                                                <i class="fa fa-cogs"></i> Spécifications
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="avis-client-tab" data-toggle="tab"
+                                               href="#avis-client"
+                                               role="tab" aria-controls="avis-client" aria-selected="false">
+                                                <i class="fa fa-comment"></i> Avis client
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Main Product Content -->
-                            <div class="col-lg-9 col-md-8 col-12">
-                                <div class="tab-content">
-                                    <!-- Presentation Tab Content -->
-                                    <div class="tab-pane fade show active" id="presentation" role="tabpanel"
-                                         aria-labelledby="presentation-tab">
-                                        <div class="product-container">
-                                            <div class="row">
-                                                <!-- Tire Image Section -->
-                                                <div class="col-md-5">
-                                                    <div class="img-pneu text-center">
-                                                        <img
-                                                            src="https://d2raphc8m6em86.cloudfront.net/27582/conversions/rotalla-s130-medium.jpg"
-                                                            itemprop="image" alt="Rotalla S130 Pneu d'hiver"
-                                                            class="img-responsive" style="width:300px">
-
-                                                        <form action="{{route('single-add-to-cart')}}" method="POST">
-                                                            @csrf
-                                                            <div class="quantity">
-
-                                                                <!-- Input Order -->
-                                                                <div class="input-group">
-                                                                    <div class="button minus">
-                                                                        <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-                                                                            <i class="ti-minus"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                    <input type="hidden" name="slug" value="{{$product_detail->slug}}">
-                                                                    <input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
-                                                                    <div class="button plus">
-                                                                        <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
-                                                                            <i class="ti-plus"></i>
-                                                                        </button>
-                                                                    </div>
+                        <!-- Contenu Principal du Produit -->
+                        <div class="col-lg-9 col-md-8 col-12">
+                            <div class="tab-content">
+                                <!-- Contenu de l'onglet Présentation -->
+                                <div class="tab-pane fade show active" id="presentation" role="tabpanel" aria-labelledby="presentation-tab">
+                                    <div class="product-container">
+                                        <div class="row">
+                                            <!-- Section Image du Produit -->
+                                            <div class="col-md-5">
+                                                <div class="img-pneu text-center">
+                                                    <img src="https://d2raphc8m6em86.cloudfront.net/27582/conversions/rotalla-s130-medium.jpg" itemprop="image" alt="Rotalla S130 Pneu d'hiver" class="img-responsive" style="width:300px">
+                                                    <form action="{{route('single-add-to-cart')}}" method="POST">
+                                                        @csrf
+                                                        <div class="quantity">
+                                                            <br>
+                                                            <!-- Input Order -->
+                                                            <div class="input-group">
+                                                                <div class="button minus mr-1" >
+                                                                    <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                                                        <i class="ti-minus"></i>
+                                                                    </button>
                                                                 </div>
-                                                                <!--/ End Input Order -->
+                                                                <input type="hidden" name="slug" value="{{$product_detail->slug}}">
+                                                                <input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
+                                                                <div class="button plus">
+                                                                    <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+                                                                        <i class="ti-plus"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                            <div class="add-to-cart mt-4">
-                                                                <button type="submit" class="btn-red">Add to cart</button>
-                                                                <a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
-                                                            </div>
-                                                        </form>
-
-                                                    </div>
-                                                </div>
-
-
-                                                <!-- Product Information Section -->
-                                                <div class="col-md-7">
-                                                    <div class="information-supp">
-                                                        <h1 class="brand-title">{{$product_detail->brand}}</h1>
-                                                        <div class="tire-info">
-                                                            <div class="tire-dimension">
-                                                                <h3>Dimension</h3>
-                                                                <p>{{$product_detail->width}}
-                                                                    /{{$product_detail->aspect_ratio}}
-                                                                    R{{$product_detail->diameter}} - 91V</p>
-                                                            </div>
-                                                            <div class="price">
-                                                                {{$product_detail->price}}<sup>95$</sup>
-                                                                <span class="availability">En stock</span>
-                                                            </div>
+                                                            <!--/ End Input Order -->
                                                         </div>
-                                                        <div class="features">
-                                                            {!! $product_detail->summary !!}
+                                                        <div class="add-to-cart mt-4">
+                                                            <button type="submit" class="btn-red">Add to cart</button>
+                                                            <a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
                                                         </div>
-
-                                                    </div>
+                                                    </form>
                                                 </div>
                                             </div>
 
-                                            <!-- Product Description -->
-                                            <div class="description">
-                                                <p>{!! $product_detail->description !!}</p>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Specifications Tab Content -->
-
-                                    <div class="tab-pane fade" id="specifications" role="tabpanel"
-                                         aria-labelledby="specifications-tab">
-                                        <h3>Spécifications</h3>
-                                        <div class="row" >
-                                            <div class="col-md-6">
-                                                <table class="table specification-pneu">
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>Manufacturier</td>
-                                                        <td>{{$product_detail->brand}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Cloutable</td>
-                                                        <td>{{ $specifications['Cloutable'] }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Saison</td>
-                                                        <td>{{$product_detail->season}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Code produit</td>
-                                                        <td>{{$product_detail->code}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Largeur du pneu</td>
-                                                        <td>{{$product_detail->width}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Ratio du pneu</td>
-                                                        <td>{{$product_detail->aspect_ratio}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Diamètre du pneu</td>
-                                                        <td>{{$product_detail->diameter}}</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td>Indice de charge</td>
-                                                        <td>91</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Indice de vitesse</td>
-                                                        <td>V</td>
-                                                    </tr>
-
-                                                    <tr class="specification-pneu-mobile">
-                                                        <td>Flancs porteurs (Runflat)</td>
-                                                        <td>{{ $specifications['Flancs porteurs (Runflat)'] }}</td>
-                                                    </tr>
-                                                    <tr class="specification-pneu-mobile">
-                                                        <td>Pneu renforcé</td>
-                                                        <td>{{ $specifications['Pneu renforcé'] }}</td>
-                                                    </tr>
-                                                    <tr class="specification-pneu-mobile">
-                                                        <td>Extra Load</td>
-                                                        <td>{{ $specifications['Extra Load'] }}</td>
-                                                    </tr>
-
-
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <table class="table specification-pneu specification-route">
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>Flancs porteurs (Runflat)</td>
-                                                        <td>{{ $specifications['Flancs porteurs (Runflat)'] }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Pneu renforcé</td>
-                                                        <td>{{ $specifications['Pneu renforcé'] }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Extra Load</td>
-                                                        <td>{{ $specifications['Extra Load'] }}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Avis Client Tab Content -->
-
-                                    <!-- Reviews Tab -->
-                                    <div class="tab-pane fade" id="avis-client" role="tabpanel"
-                                         aria-labelledby="avis-client-tab">
-                                        <h3>Avis Client</h3>
-                                        <div class="tab-single review-panel">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <!-- Review Section -->
-                                                    <div class="comment-review">
-                                                        <div class="add-review mb-4">
-                                                            <h5>Add A Review</h5>
-                                                            <p>Your email address will not be published. Required fields
-                                                                are marked.</p>
+                                            <!-- Section Information du Produit -->
+                                            <div class="col-md-7">
+                                                <div class="information-supp">
+                                                    <h1 class="brand-title">{{$product_detail->brand}}</h1>
+                                                    <div class="tire-info">
+                                                        <div class="tire-dimension">
+                                                            <h3>Dimensions</h3>
+                                                            <p>{{$product_detail->width}}/{{$product_detail->aspect_ratio}} R{{$product_detail->diameter}} - 91V</p>
                                                         </div>
-                                                        <h4>Your Rating <span class="text-danger">*</span></h4>
-                                                        <div class="review-inner">
-                                                            @auth
-                                                                <form class="form" method="post"
-                                                                      action="{{route('review.store',$product_detail->slug)}}">
-                                                                    @csrf
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12 col-12 mb-3">
-                                                                            <div class="rating_box">
-                                                                                <div class="star-rating">
-                                                                                    <div class="star-rating__wrap">
-                                                                                        @for($i = 5; $i >= 1; $i--)
-                                                                                            <input
-                                                                                                class="star-rating__input"
-                                                                                                id="star-rating-{{ $i }}"
-                                                                                                type="radio" name="rate"
-                                                                                                value="{{ $i }}">
-                                                                                            <label
-                                                                                                class="star-rating__ico fa fa-star-o"
-                                                                                                for="star-rating-{{ $i }}"
-                                                                                                title="{{ $i }} out of 5 stars"></label>
-                                                                                        @endfor
-                                                                                        @error('rate')
-                                                                                        <span
-                                                                                            class="text-danger">{{ $message }}</span>
-                                                                                        @enderror
-                                                                                    </div>
+                                                        <div class="price">
+                                                            {{$product_detail->price}}<sup>95$</sup>
+                                                            <span class="availability">En stock</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="features">
+                                                        {!! $product_detail->summary !!}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Description du Produit -->
+                                        <div class="description">
+                                            <p>{!! $product_detail->description !!}</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Contenu de l'onglet Spécifications -->
+                                <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                                    <h3>Spécifications</h3>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table specification-pneu">
+                                                <tbody>
+                                                <tr>
+                                                    <td>Manufacturier</td>
+                                                    <td>{{$product_detail->brand}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cloutable</td>
+                                                    <td>{{ $specifications['Cloutable'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Saison</td>
+                                                    <td>{{$product_detail->season}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Code produit</td>
+                                                    <td>{{$product_detail->code}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Largeur du pneu</td>
+                                                    <td>{{$product_detail->width}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ratio du pneu</td>
+                                                    <td>{{$product_detail->aspect_ratio}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Diamètre du pneu</td>
+                                                    <td>{{$product_detail->diameter}}</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>Indice de charge</td>
+                                                    <td>91</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Indice de vitesse</td>
+                                                    <td>V</td>
+                                                </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table specification-pneu specification-route">
+                                                <tbody>
+                                                <tr class="specification-pneu-mobile">
+                                                    <td>Flancs porteurs (Runflat)</td>
+                                                    <td>{{ $specifications['Flancs porteurs (Runflat)'] }}</td>
+                                                </tr>
+                                                <tr class="specification-pneu-mobile">
+                                                    <td>Pneu renforcé</td>
+                                                    <td>{{ $specifications['Pneu renforcé'] }}</td>
+                                                </tr>
+                                                <tr class="specification-pneu-mobile">
+                                                    <td>Extra Load</td>
+                                                    <td>{{ $specifications['Extra Load'] }}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Contenu de l'onglet Avis Client -->
+
+                                <!-- Avis Client -->
+                                <div class="tab-pane fade" id="avis-client" role="tabpanel" aria-labelledby="avis-client-tab">
+                                    <h3>Avis Client</h3>
+                                    <div class="tab-single review-panel">
+                                        <div class="row">
+                                            <div class="col-lg-8 col-md-8 col-sm-12">
+                                                <div class="comment-review">
+                                                    <div class="add-review mb-4">
+                                                        <h5>Ajouter un Avis</h5>
+                                                        <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués.</p>
+                                                    </div>
+                                                    <h4>Votre Évaluation <span class="text-danger">*</span></h4>
+                                                    <div class="review-inner">
+                                                        @auth
+                                                            <form class="form" method="post" action="{{route('review.store',$product_detail->slug)}}">
+                                                                @csrf
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-12 mb-3">
+                                                                        <div class="rating_box">
+                                                                            <div class="star-rating">
+                                                                                <div class="star-rating__wrap">
+                                                                                    @for($i = 5; $i >= 1; $i--)
+                                                                                        <input class="star-rating__input" id="star-rating-{{ $i }}" type="radio" name="rate" value="{{ $i }}">
+                                                                                        <label class="star-rating__ico fa fa-star" for="star-rating-{{ $i }}" title="{{ $i }} sur 5 étoiles"></label>
+                                                                                    @endfor
+                                                                                    @error('rate')
+                                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                                    @enderror
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-lg-12 col-12 mb-3">
-                                                                            <div class="form-group">
-                                                                                <label>Write a review</label>
-                                                                                <textarea name="review" rows="6"
-                                                                                          class="form-control"
-                                                                                          placeholder="Share your thoughts..."></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-lg-12 col-12">
-                                                                            <div class="form-group">
-                                                                                <button type="submit" class="btn-red">
-                                                                                    Submit
-                                                                                </button>
-                                                                            </div>
+                                                                    </div>
+                                                                    <div class="col-lg-12 col-12 mb-3">
+                                                                        <div class="form-group">
+                                                                            <label>Écrire un avis</label>
+                                                                            <textarea name="review" rows="6" class="form-control" placeholder="Partagez vos impressions..."></textarea>
                                                                         </div>
                                                                     </div>
-                                                                </form>
-                                                            @else
-                                                                <p class="text-center p-5">
-                                                                    You need to <a href="{{ route('login.form') }}"
-                                                                                   style="color:rgb(54, 54, 204)">Login</a>
-                                                                    OR <a style="color:blue"
-                                                                          href="{{ route('register.form') }}">Register</a>
-                                                                </p>
-                                                            @endauth
-                                                        </div>
+                                                                    <div class="col-lg-12 col-12">
+                                                                        <div class="form-group">
+                                                                            <button type="submit" class="btn-red">Soumettre</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        @else
+                                                            <p class="text-center p-5">
+                                                                Vous devez <a href="{{ route('login.form') }}" style="color:rgb(54, 54, 204)">vous connecter</a> OU <a style="color:blue" href="{{ route('register.form') }}">vous inscrire</a>
+                                                            </p>
+                                                        @endauth
                                                     </div>
-
-                                                    <div class="ratting-main mt-4">
-                                                        <div class="avg-ratting mb-4">
-                                                            <h4>{{ ceil($product_detail->getReview->avg('rate')) }}
-                                                                <span>(Overall)</span></h4>
-                                                            <span>Based on {{ $product_detail->getReview->count() }} Comments</span>
-                                                        </div>
-                                                        @foreach($product_detail['getReview'] as $data)
-                                                            <!-- Single Rating -->
-                                                            <div class="single-rating mb-3">
-                                                                <div class="rating-author">
-                                                                    @if($data->user_info['photo'])
-                                                                        <img src="{{ $data->user_info['photo'] }}"
-                                                                             alt="{{ $data->user_info['name'] }}"
-                                                                             class="rounded-circle" width="50">
-                                                                    @else
-                                                                        <img src="{{ asset('backend/img/avatar.png') }}"
-                                                                             alt="Profile.jpg" class="rounded-circle"
-                                                                             width="50">
-                                                                    @endif
-                                                                </div>
-                                                                <div class="rating-des">
-                                                                    <h6>{{ $data->user_info['name'] }}</h6>
-                                                                    <div class="ratings">
-                                                                        <ul class="rating">
-                                                                            @for($i = 1; $i <= 5; $i++)
-                                                                                @if($data->rate >= $i)
-                                                                                    <li>
-                                                                                        <i class="fa fa-star text-warning"></i>
-                                                                                    </li>
-                                                                                @else
-                                                                                    <li><i class="fa fa-star-o"></i>
-                                                                                    </li>
-                                                                                @endif
-                                                                            @endfor
-                                                                        </ul>
-                                                                        <div class="rate-count">
-                                                                            (<span>{{ $data->rate }}</span>)
-                                                                        </div>
-                                                                    </div>
-                                                                    <p>{{ $data->review }}</p>
-                                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                                <div class="ratting-main mt-4">
+                                                    <div class="avg-ratting mb-4">
+                                                        <h4>{{ ceil($product_detail->getReview->avg('rate')) }}<span>(Global)</span></h4>
+                                                        <span>Basé sur {{ $product_detail->getReview->count() }} Commentaires</span>
+                                                    </div>
+                                                    @foreach($product_detail['getReview'] as $data)
+                                                        <!-- Avis Client Individuel -->
+                                                        <div class="single-rating mb-3 d-flex align-items-center">
+                                                            <div class="rating-author mr-3">
+                                                                @if($data->user_info['photo'])
+                                                                    <img src="{{ $data->user_info['photo'] }}" alt="{{ $data->user_info['name'] }}" class="rounded-circle" width="50">
+                                                                @else
+                                                                    <img src="{{ asset('backend/img/avatar.png') }}" alt="Profile.jpg" class="rounded-circle" width="50">
+                                                                @endif
                                                             </div>
-                                                            <!--/ End Single Rating -->
-                                                        @endforeach
-                                                    </div>
-                                                    <!--/ End Review -->
+                                                            <div class="rating-des">
+                                                                <h6>{{ $data->user_info['name'] }}</h6>
+                                                                <div class="ratings d-flex align-items-center">
+                                                                    <ul class="rating d-flex list-unstyled mb-0">
+                                                                        @for($i = 1; $i <= 5; $i++)
+                                                                            @if($data->rate >= $i)
+                                                                                <li><i class="fa fa-star text-warning"></i></li>
+                                                                            @else
+                                                                                <li><i class="fa fa-star-o"></i></li>
+                                                                            @endif
+                                                                        @endfor
+                                                                    </ul>
+                                                                    <div class="rate-count ml-2">
+                                                                        (<span>{{ $data->rate }}</span>)
+                                                                    </div>
+                                                                </div>
+                                                                <p>{{ $data->review }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <!--/ Fin de l'avis client -->
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Add your CSS Styles here -->
-                                    <style>
-                                        /* Enhancements for the "Avis Client" (Customer Reviews) Section */
-
-                                        /* Review panel container */
-                                        .review-panel {
-                                            background-color: #f9f9f9;
-                                            padding: 20px;
-                                            border-radius: 10px;
-                                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                                            margin-bottom: 20px;
-                                        }
-
-                                        /* Review title */
-                                        .review-panel h3 {
-                                            font-size: 24px;
-                                            font-weight: bold;
-                                            color: #333;
-                                            margin-bottom: 20px;
-                                            border-bottom: 2px solid #c30000;
-                                            padding-bottom: 10px;
-                                        }
-
-                                        /* Review box */
-                                        .single-rating {
-                                            background-color: #fff;
-                                            padding: 20px;
-                                            border-radius: 10px;
-                                            margin-bottom: 20px;
-                                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-                                            transition: box-shadow 0.3s ease;
-                                        }
-
-                                        .single-rating:hover {
-                                            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-                                        }
-
-                                        /* Review author image */
-                                        .rating-author img {
-                                            border-radius: 50%;
-                                            border: 2px solid #ddd;
-                                            width: 60px;
-                                            height: 60px;
-                                            object-fit: cover;
-                                        }
-
-                                        /* Review author name and rating */
-                                        .rating-des h6 {
-                                            font-size: 18px;
-                                            font-weight: bold;
-                                            margin-bottom: 5px;
-                                            color: #333;
-                                        }
-
-                                        .ratings {
-                                            display: flex;
-                                            align-items: center;
-                                        }
-
-                                        .ratings ul.rating {
-                                            list-style-type: none;
-                                            padding: 0;
-                                            display: flex;
-                                            margin: 0;
-                                        }
-
-                                        .ratings ul.rating li {
-                                            color: #f39c12;
-                                            font-size: 1.5rem;
-                                            margin-right: 2px;
-                                        }
-
-                                        .ratings .fa-star-o {
-                                            color: #ddd;
-                                        }
-
-                                        /* Review content */
-                                        .single-rating p {
-                                            font-size: 16px;
-                                            color: #555;
-                                            line-height: 1.6;
-                                            margin-top: 10px;
-                                        }
-
-                                        /* Review submission form */
-                                        .add-review {
-                                            background-color: #fff;
-                                            padding: 20px;
-                                            border-radius: 10px;
-                                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-                                            margin-bottom: 20px;
-                                        }
-
-                                        .add-review h5 {
-                                            font-size: 20px;
-                                            font-weight: bold;
-                                            color: #333;
-                                            margin-bottom: 10px;
-                                        }
-
-                                        .add-review p {
-                                            color: #555;
-                                            font-size: 14px;
-                                            margin-bottom: 15px;
-                                        }
-
-                                        .add-review label {
-                                            font-size: 16px;
-                                            font-weight: bold;
-                                            color: #333;
-                                            margin-bottom: 5px;
-                                            display: block;
-                                        }
-
-                                        .add-review textarea {
-                                            width: 100%;
-                                            padding: 10px;
-                                            border-radius: 8px;
-                                            border: 1px solid #ddd;
-                                            font-size: 16px;
-                                            resize: none;
-                                            height: 120px;
-                                        }
-
-                                        .add-review .btn-red {
-                                            margin-top: 10px;
-                                            width: 150px;
-                                        }
-
-                                        /* Star rating */
-                                        .star-rating__ico {
-                                            cursor: pointer;
-                                            color: #ddd; /* default unselected star color */
-                                            transition: color 0.2s ease-in-out;
-                                        }
-                                        .star-rating__ico:hover,
-                                        .star-rating__ico:hover ~ .star-rating__ico,
-                                        .star-rating__input:checked ~ .star-rating__ico {
-                                            color: #ffc107; /* color when hovering or selected */
-                                        }
-                                        .star-rating__ico:hover {
-                                            color: #e67e22;
-                                        }
-
-                                        .star-rating__wrap {
-                                            display: flex;
-                                            font-size: 2rem;
-                                            margin-bottom: 10px;
-                                            direction: rtl; /* reverse the star order */
-                                        }
-                                        .star-rating__input {
-                                            display: none; /* hide the radio buttons */
-                                        }
-                                        /* Average rating */
-                                        .avg-ratting {
-                                            text-align: center;
-                                            margin-bottom: 20px;
-                                        }
-
-                                        .avg-ratting h4 {
-                                            font-size: 40px;
-                                            font-weight: bold;
-                                            color: #c30000;
-                                        }
-
-                                        .avg-ratting span {
-                                            font-size: 16px;
-                                            color: #666;
-                                        }
-
-                                        /* Comments count */
-                                        .avg-ratting span {
-                                            color: #555;
-                                        }
-
-                                        /* Mobile responsiveness */
-                                        @media only screen and (max-width: 768px) {
-                                            .single-rating {
-                                                padding: 15px;
-                                            }
-
-                                            .rating-author img {
-                                                width: 50px;
-                                                height: 50px;
-                                            }
-
-                                            .ratings ul.rating li {
-                                                font-size: 1.2rem;
-                                            }
-
-                                            .single-rating p {
-                                                font-size: 14px;
-                                            }
-                                        }
-
-                                    </style>
-
-                                    <!--/ End Reviews Tab -->
                                 </div>
+
+                                <!-- Vos Styles CSS personnalisés -->
+                                <style>
+
+                                    /* Évaluation par étoiles */
+                                    .star-rating__wrap {
+                                        display: inline-flex;
+                                        justify-content: center;
+                                    }
+
+                                    .star-rating__ico {
+                                        font-size: 24px;
+                                        cursor: pointer;
+                                        color: #ccc; /* Couleur des étoiles non sélectionnées */
+                                        transition: color 0.2s ease-in-out;
+                                    }
+
+                                    .star-rating__input {
+                                        display: none; /* Masquer les boutons radio */
+                                    }
+
+                                    /* Étoiles remplies */
+                                    .star-rating__input:checked ~ .star-rating__ico,
+                                    .star-rating__ico:hover ~ .star-rating__ico {
+                                        color: #ffd700; /* Couleur des étoiles sélectionnées */
+                                    }
+
+                                    /* Remplir les étoiles jusqu'à celle sélectionnée */
+                                    .star-rating__input:checked ~ .star-rating__ico:nth-child(-n+5),
+                                    .star-rating__input:checked ~ .star-rating__ico:nth-child(-n+4),
+                                    .star-rating__input:checked ~ .star-rating__ico:nth-child(-n+3),
+                                    .star-rating__input:checked ~ .star-rating__ico:nth-child(-n+2),
+                                    .star-rating__input:checked ~ .star-rating__ico:nth-child(-n+1) {
+                                        color: #ffd700; /* Couleur des étoiles remplies */
+                                    }
+
+                                    /* Effet hover pour une meilleure clarté */
+                                    .star-rating__ico:hover,
+                                    .star-rating__ico:hover ~ .star-rating__ico {
+                                        color: #916101; /* Couleur au survol des étoiles */
+                                    }
+
+
+                                    /* Section Avis */
+                                    .comment-review {
+                                        padding: 20px;
+                                        border: 1px solid #e0e0e0;
+                                        border-radius: 8px;
+                                        background-color: #f8f9fa;
+                                        margin-bottom: 20px;
+                                    }
+
+                                    .comment-review h5 {
+                                        font-weight: bold;
+                                    }
+
+                                    .comment-review h4 {
+                                        margin-top: 15px;
+                                        margin-bottom: 15px;
+                                    }
+
+                                    .form-group textarea {
+                                        border-radius: 5px;
+                                        resize: none;
+                                    }
+
+
+
+                                    /* Section d'affichage des avis */
+                                    .ratting-main {
+                                        border-top: 1px solid #ddd;
+                                        padding-top: 20px;
+                                    }
+
+                                    .avg-ratting {
+                                        display: flex;
+                                        align-items: center;
+                                        font-size: 1.2em;
+                                    }
+
+                                    .avg-ratting h4 {
+                                        font-weight: bold;
+                                        margin-right: 10px;
+                                    }
+
+                                    .rating-des h6 {
+                                        font-size: 1.1em;
+                                        font-weight: bold;
+                                    }
+
+                                    .rating-des p {
+                                        font-size: 0.9em;
+                                        color: #666;
+                                    }
+
+                                    .ratings ul {
+                                        display: flex;
+                                        list-style: none;
+                                        padding: 0;
+                                    }
+
+                                    .ratings ul li {
+                                        margin-right: 5px;
+                                    }
+
+                                    .fa-star, .fa-star-o {
+                                        color: #ffd700;
+                                        font-size: 20px;
+                                    }
+
+                                    .rate-count {
+                                        font-size: 0.9em;
+                                        color: #999;
+                                    }
+
+                                    .add-to-cart {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                    }
+
+                                    .input-group {
+                                        margin-right: 15px;
+                                    }
+
+
+
+                                    .btn-primary.btn-number {
+                                        background-color: #c30000;
+                                        border: none;
+                                        border-radius: 8px;
+                                        color: #fff;
+                                        width: 40px;
+                                        height: 40px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        transition: background-color 0.3s ease;
+                                    }
+
+                                    .btn-primary.btn-number:hover {
+                                        background-color: #a80000;
+                                    }
+
+                                    .btn-primary.btn-number:disabled {
+                                        background-color: #ccc;
+                                        cursor: not-allowed;
+                                    }
+
+                                    .input-number {
+                                        text-align: center;
+                                        border: 1px solid #ddd;
+                                        border-radius: 8px;
+                                        padding: 5px;
+                                        width: 60px;
+                                        margin: 0 5px;
+                                        font-size: 1.2rem;
+                                    }
+                                </style>
                             </div>
-
-                            <!-- Add your CSS Styles here -->
-
-
                         </div>
+
                     </div>
                 </div>
             </div>
+        </div>
 
-            </div>
-            </div>
-        </section>
+        </div>
+        </div>
+    </section>
 
 
 
 
-    <!-- Start Most Popular -->
+    <!-- Début Produits Connexes -->
     <div class="product-area most-popular related-product section">
         <div class="container">
             <div class="row">
                 <div class="col-12">
                     <div class="section-title">
-                        <h2>Related Products</h2>
+                        <h2>Produits Connexes</h2>
                     </div>
                 </div>
             </div>
@@ -594,7 +498,7 @@
                     <div class="owl-carousel popular-slider">
                         @foreach($product_detail->rel_prods as $data)
                             @if($data->id !==$product_detail->id)
-                                <!-- Start Single Product -->
+                                <!-- Début Produit Unique -->
                                 <div class="single-product">
                                     <div class="product-img">
                                         <a href="{{route('product-detail',$data->slug)}}">
@@ -603,20 +507,19 @@
                                             @endphp
                                             <img class="default-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
                                             <img class="hover-img" src="{{$photo[0]}}" alt="{{$photo[0]}}">
-                                            <span class="price-dec">{{$data->discount}} % Off</span>
+                                            <span class="price-dec">{{$data->discount}} % Réduction</span>
                                             {{-- <span class="out-of-stock">Hot</span> --}}
                                         </a>
 
 
                                         <div class="button-head">
                                             <div class="product-action">
-                                                <a data-toggle="modal" data-target="#modelExample" title="Quick View"
-                                                   href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
-                                                <a title="Wishlist" href="#"><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
-                                                <a title="Compare" href="#"><i class="ti-bar-chart-alt"></i><span>Add to Compare</span></a>
+                                                <a data-toggle="modal" data-target="#modelExample" title="Vue Rapide"
+                                                   href="#"><i class=" ti-eye"></i><span>Vue Rapide</span></a>
+                                                <a title="Ajouter aux Favoris" href="#"><i class=" ti-heart "></i><span>Ajouter aux Favoris</span></a>
                                             </div>
                                             <div class="product-action-2">
-                                                <a title="Add to cart" href="#">Add to cart</a>
+                                                <a title="Ajouter au panier" href="#">Ajouter au panier</a>
                                             </div>
                                         </div>
                                     </div>
@@ -632,7 +535,7 @@
 
                                     </div>
                                 </div>
-                                <!-- End Single Product -->
+                                <!-- Fin Produit Unique -->
 
                             @endif
                         @endforeach
@@ -641,7 +544,7 @@
             </div>
         </div>
     </div>
-    <!-- End Most Popular Area -->
+    <!-- Fin Produits Connexes -->
 
     <div class="modal fade" id="modelExample" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -654,7 +557,7 @@
                 <div class="modal-body">
                     <div class="row no-gutters">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <!-- Product Slider -->
+                            <!-- Galerie du Produit -->
                             <div class="product-gallery">
                                 <div class="quickview-slider-active">
                                     <div class="single-slider">
@@ -671,11 +574,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- End Product slider -->
+                            <!-- Fin Galerie du Produit -->
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="quickview-content">
-                                <h2>Flared Shift Dress</h2>
+                                <h2>Robe évasée</h2>
                                 <div class="quickview-ratting-review">
                                     <div class="quickview-ratting-wrap">
                                         <div class="quickview-ratting">
@@ -685,10 +588,10 @@
                                             <i class="yellow fa fa-star"></i>
                                             <i class="fa fa-star"></i>
                                         </div>
-                                        <a href="#"> (1 customer review)</a>
+                                        <a href="#"> (1 avis client)</a>
                                     </div>
                                     <div class="quickview-stock">
-                                        <span><i class="fa fa-check-circle-o"></i> in stock</span>
+                                        <span><i class="fa fa-check-circle-o"></i> en stock</span>
                                     </div>
                                 </div>
                                 <h3>$29.00</h3>
@@ -700,7 +603,7 @@
                                 <div class="size">
                                     <div class="row">
                                         <div class="col-lg-6 col-12">
-                                            <h5 class="title">Size</h5>
+                                            <h5 class="title">Taille</h5>
                                             <select>
                                                 <option selected="selected">s</option>
                                                 <option>m</option>
@@ -709,18 +612,18 @@
                                             </select>
                                         </div>
                                         <div class="col-lg-6 col-12">
-                                            <h5 class="title">Color</h5>
+                                            <h5 class="title">Couleur</h5>
                                             <select>
                                                 <option selected="selected">orange</option>
-                                                <option>purple</option>
-                                                <option>black</option>
-                                                <option>pink</option>
+                                                <option>violet</option>
+                                                <option>noir</option>
+                                                <option>rose</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="quantity">
-                                    <!-- Input Order -->
+                                    <!-- Entrée Quantité -->
                                     <div class="input-group">
                                         <div class="button minus">
                                             <button type="button" class="btn btn-primary btn-number" disabled="disabled"
@@ -737,15 +640,15 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <!--/ End Input Order -->
+                                    <!--/ Fin Entrée Quantité -->
                                 </div>
                                 <div class="add-to-cart">
-                                    <a href="#" class="btn">Add to cart</a>
+                                    <a href="#" class="btn">Ajouter au panier</a>
                                     <a href="#" class="btn min"><i class="ti-heart"></i></a>
                                     <a href="#" class="btn min"><i class="fa fa-compress"></i></a>
                                 </div>
                                 <div class="default-social">
-                                    <h4 class="share-now">Share:</h4>
+                                    <h4 class="share-now">Partager :</h4>
                                     <ul>
                                         <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
                                         <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
@@ -763,10 +666,58 @@
 
 @endsection
 
-
-
 @push('styles')
     <style>
+        /* Remove Red Line above Dimension */
+        .tire-dimension h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333; /* Keeping it neutral with no red border */
+            margin-bottom: 10px; /* Adjust spacing */
+            border: none; /* Removed the red line */
+        }
+
+        /* Styling for Plus and Minus Buttons */
+        .button.minus, .button.plus {
+
+            color: #fff;
+            border-radius: 50%;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Disabled state for minus button */
+        .button.minus:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Styling for Input Field */
+        .input-number {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0 10px;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        /* Ensure everything aligns properly */
+        .quantity .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
         /* Align the button and input field horizontally */
         .d-flex {
             display: flex;
@@ -791,23 +742,6 @@
             border: 1px solid #ddd; /* Subtle border */
             font-size: 1.2rem;
             margin-right: 10px;
-        }
-
-        .btn-red {
-            background-color: #c30000;
-            border: none;
-            padding: 12px 20px;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            display: inline-block;
-            border-radius: 8px; /* Added border radius */
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-red:hover {
-            background-color: #a80000;
         }
 
         /* Centering image inside its div */

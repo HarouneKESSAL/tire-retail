@@ -1,49 +1,57 @@
 @extends('backend.layouts.master')
-@section('title','E-SHOP || Brand Create')
+@section('title','E-SHOP || Ajouter Voiture')
 @section('main-content')
 
     <div class="card">
-        <h5 class="card-header">Add Car</h5>
+        <h5 class="card-header">Ajouter Voiture</h5>
         <div class="card-body">
             <form method="post" action="{{route('brand.store')}}">
                 {{csrf_field()}}
                 <div class="form-group">
-                    <label for="car_brand" class="col-form-label">Car Brand <span class="text-danger">*</span></label>
-                    <input id="car_brand" type="text" name="car_brand" placeholder="Enter car brand" value="{{old('car_brand')}}" class="form-control">
+                    <label for="car_brand" class="col-form-label">Marque de Voiture <span class="text-danger">*</span></label>
+                    <input id="car_brand" type="text" name="car_brand" placeholder="Entrez la marque de la voiture" value="{{old('car_brand')}}" class="form-control">
                     @error('car_brand')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="car_model" class="col-form-label">Car Model <span class="text-danger">*</span></label>
-                    <input id="car_model" type="text" name="car_model" placeholder="Enter car model" value="{{old('car_model')}}" class="form-control">
+                    <label for="car_model" class="col-form-label">Modèle de Voiture <span class="text-danger">*</span></label>
+                    <input id="car_model" type="text" name="car_model" placeholder="Entrez le modèle de la voiture" value="{{old('car_model')}}" class="form-control">
                     @error('car_model')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="car_year" class="col-form-label">Car Year <span class="text-danger">*</span></label>
-                    <input id="car_year" type="number" name="car_year" placeholder="Enter car year" value="{{old('car_year')}}" class="form-control">
+                    <label for="car_year" class="col-form-label">Année de la Voiture <span class="text-danger">*</span></label>
+                    <input id="car_year" type="number" name="car_year" placeholder="Entrez l'année de la voiture" value="{{old('car_year')}}" class="form-control">
                     @error('car_year')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="status" class="col-form-label">Status <span class="text-danger">*</span></label>
+                    <label for="option" class="col-form-label">Option <span class="text-danger">*</span></label>
+                    <input id="option" type="text" name="option" placeholder="Entrez l'option" value="{{ old('option') }}" class="form-control">
+                    @error('option')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="col-form-label">Statut <span class="text-danger">*</span></label>
                     <select name="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
                     </select>
                     @error('status')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
-                    <button type="reset" class="btn btn-warning">Reset</button>
-                    <button class="btn btn-success" type="submit">Submit</button>
+                    <button type="reset" class="btn btn-warning">Réinitialiser</button>
+                    <button class="btn btn-success" type="submit">Soumettre</button>
                 </div>
             </form>
         </div>

@@ -1,92 +1,93 @@
 @extends('backend.layouts.master')
 
 @section('main-content')
- <!-- DataTales Example -->
- <div class="card shadow mb-4">
-     <div class="row">
-         <div class="col-md-12">
-            @include('backend.layouts.notification')
-         </div>
-     </div>
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-danger float-left">Category Lists</h6>
-      <a href="{{route('category.create')}}" class=" btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Category</a>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        @if(count($categories)>0)
-        <table class="table table-bordered" id="banner-dataTable" width="100%" cellspacing="0">
-          <thead>
-            <tr>
-              <th>S.N.</th>
-              <th>Title</th>
-              <th>Slug</th>
-              <th>Is Parent</th>
-              <th>Parent Category</th>
-              <th>Photo</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tfoot>
-            <tr>
-              <th>S.N.</th>
-              <th>Title</th>
-              <th>Slug</th>
-              <th>Is Parent</th>
-              <th>Parent Category</th>
-              <th>Photo</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </tfoot>
-          <tbody>
+    <!-- Exemple DataTales -->
+    <div class="card shadow mb-4">
+        <div class="row">
+            <div class="col-md-12">
+                @include('backend.layouts.notification')
+            </div>
+        </div>
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger float-left">Liste des Catégories</h6>
+            <a href="{{route('category.create')}}" class=" btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Ajouter une catégorie"><i class="fas fa-plus"></i> Ajouter une Catégorie</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                @if(count($categories)>0)
+                    <table class="table table-bordered" id="banner-dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Titre</th>
+                            <th>Slug</th>
+                            <th>Est Parent</th>
+                            <th>Catégorie Parent</th>
+                            <th>Photo</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th>N°</th>
+                            <th>Titre</th>
+                            <th>Slug</th>
+                            <th>Est Parent</th>
+                            <th>Catégorie Parent</th>
+                            <th>Photo</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
 
-            @foreach($categories as $category)
-              @php
-              @endphp
-                <tr>
-                    <td>{{$category->id}}</td>
-                    <td>{{$category->title}}</td>
-                    <td>{{$category->slug}}</td>
-                    <td>{{(($category->is_parent==1)? 'Yes': 'No')}}</td>
-                    <td>
-                        {{$category->parent_info->title ?? ''}}
-                    </td>
-                    <td>
-                        @if($category->photo)
-                            <img src="{{$category->photo}}" class="img-fluid" style="max-width:80px" alt="{{$category->photo}}">
-                        @else
-                            <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid" style="max-width:80px" alt="avatar.png">
-                        @endif
-                    </td>
-                    <td>
-                        @if($category->status=='active')
-                            <span class="badge badge-success">{{$category->status}}</span>
-                        @else
-                            <span class="badge badge-warning">{{$category->status}}</span>
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{route('category.edit',$category->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="{{route('category.destroy',[$category->id])}}">
-                      @csrf
-                      @method('delete')
-                          <button class="btn btn-danger btn-sm dltBtn" data-id={{$category->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-          </tbody>
-        </table>
-        <span style="float:right">{{$categories->links()}}</span>
-        @else
-          <h6 class="text-center">No Categories found!!! Please create Category</h6>
-        @endif
-      </div>
+                        @foreach($categories as $category)
+                            @php
+                                @endphp
+                            <tr>
+                                <td>{{$category->id}}</td>
+                                <td>{{$category->title}}</td>
+                                <td>{{$category->slug}}</td>
+                                <td>{{(($category->is_parent==1)? 'Oui': 'Non')}}</td>
+                                <td>
+                                    {{$category->parent_info->title ?? ''}}
+                                </td>
+                                <td>
+                                    @if($category->photo)
+                                        <img src="{{$category->photo}}" class="img-fluid" style="max-width:80px" alt="{{$category->photo}}">
+                                    @else
+                                        <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid" style="max-width:80px" alt="avatar.png">
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($category->status=='active')
+                                        <span class="badge badge-success">{{$category->status}}</span>
+                                    @else
+                                        <span class="badge badge-warning">{{$category->status}}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{route('category.edit',$category->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="Modifier" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                                    <form method="POST" action="{{route('category.destroy',[$category->id])}}">
+                                        @csrf
+                                        @method('delete')
+                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$category->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                    <span style="float:right">{{$categories->links('vendor.pagination.custom-pagination')}}</span>
+                @else
+                    <h6 class="text-center">Aucune catégorie trouvée ! Veuillez créer une catégorie.</h6>
+                @endif
+            </div>
+        </div>
     </div>
-</div>
 @endsection
+
 
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">

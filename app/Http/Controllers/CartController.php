@@ -20,7 +20,7 @@ class CartController extends Controller
         if (empty($request->slug)) {
             request()->session()->flash('error','Invalid Products');
             return back();
-        }        
+        }
         $product = Product::where('slug', $request->slug)->first();
         // return $product;
         if (empty($product)) {
@@ -37,9 +37,9 @@ class CartController extends Controller
             // return $already_cart->quantity;
             if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
             $already_cart->save();
-            
+
         }else{
-            
+
             $cart = new Cart;
             $cart->user_id = auth()->user()->id;
             $cart->product_id = $product->id;
@@ -51,8 +51,8 @@ class CartController extends Controller
             $wishlist=Wishlist::where('user_id',auth()->user()->id)->where('cart_id',null)->update(['cart_id'=>$cart->id]);
         }
         request()->session()->flash('success','Product successfully added to cart');
-        return back();       
-    }  
+        return back();
+    }
 
     public function singleAddToCart(Request $request){
         $request->validate([
@@ -69,7 +69,7 @@ class CartController extends Controller
         if ( ($request->quant[1] < 1) || empty($product) ) {
             request()->session()->flash('error','Invalid Products');
             return back();
-        }    
+        }
 
         $already_cart = Cart::where('user_id', auth()->user()->id)->where('order_id',null)->where('product_id', $product->id)->first();
 
@@ -83,9 +83,9 @@ class CartController extends Controller
             if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
 
             $already_cart->save();
-            
+
         }else{
-            
+
             $cart = new Cart;
             $cart->user_id = auth()->user()->id;
             $cart->product_id = $product->id;
@@ -97,19 +97,19 @@ class CartController extends Controller
             $cart->save();
         }
         request()->session()->flash('success','Product successfully added to cart.');
-        return back();       
-    } 
-    
+        return back();
+    }
+
     public function cartDelete(Request $request){
         $cart = Cart::find($request->id);
         if ($cart) {
             $cart->delete();
             request()->session()->flash('success','Cart successfully removed');
-            return back();  
+            return back();
         }
         request()->session()->flash('error','Error please try again');
-        return back();       
-    }     
+        return back();
+    }
 
     public function cartUpdate(Request $request){
         // dd($request->all());
@@ -132,7 +132,7 @@ class CartController extends Controller
                     }
                     $cart->quantity = ($cart->product->stock > $quant) ? $quant  : $cart->product->stock;
                     // return $cart;
-                    
+
                     if ($cart->product->stock <=0) continue;
                     $after_price=($cart->product->price-($cart->product->price*$cart->product->discount)/100);
                     $cart->amount = $after_price * $quant;
@@ -146,7 +146,7 @@ class CartController extends Controller
             return back()->with($error)->with('success', $success);
         }else{
             return back()->with('Cart Invalid!');
-        }    
+        }
     }
 
     // public function addToCart(Request $request){
@@ -176,7 +176,7 @@ class CartController extends Controller
     //             'price'=>$this->product->price,
     //             'photo'=>$this->product->photo,
     //         );
-            
+
     //         $price=$this->product->price;
     //         if($this->product->discount){
     //             $price=($price-($price*$this->product->discount)/100);
@@ -231,25 +231,36 @@ class CartController extends Controller
     // }
 
     public function checkout(Request $request){
-        // $cart=session('cart');
-        // $cart_index=\Str::random(10);
-        // $sub_total=0;
-        // foreach($cart as $cart_item){
-        //     $sub_total+=$cart_item['amount'];
-        //     $data=array(
-        //         'cart_id'=>$cart_index,
-        //         'user_id'=>$request->user()->id,
-        //         'product_id'=>$cart_item['id'],
-        //         'quantity'=>$cart_item['quantity'],
-        //         'amount'=>$cart_item['amount'],
-        //         'status'=>'new',
-        //         'price'=>$cart_item['price'],
-        //     );
+        $user_id = auth()->user()->id;
+        $cart_items = Cart::where('user_id', $user_id)->where('order_id', null)->get();
 
-        //     $cart=new Cart();
-        //     $cart->fill($data);
-        //     $cart->save();
-        // }
-        return view('frontend.pages.checkout');
+        if (!$cart_items->count()) {
+            request()->session()->flash('error', 'Your cart is empty.');
+            return back();
+        }
+
+        $sub_total = 0;
+
+        // Calculate Subtotal
+        foreach ($cart_items as $item) {
+            $sub_total += $item->amount;
+        }
+
+        // Calculate Taxes and Fees
+        $shipping_fee = 18.00; // Fixed shipping fee
+        $tps = $sub_total * 0.05; // TPS (5%)
+        $tvq = $sub_total * 0.0975; // TVQ (9.975%)
+        $total_payment = $sub_total + $shipping_fee + $tps + $tvq;
+
+        // Passing Data to the View
+        return view('frontend.pages.checkout', [
+            'cart_items' => $cart_items,
+            'sub_total' => $sub_total,
+            'shipping_fee' => $shipping_fee,
+            'tps' => $tps,
+            'tvq' => $tvq,
+            'total_payment' => $total_payment
+        ]);
     }
+
 }

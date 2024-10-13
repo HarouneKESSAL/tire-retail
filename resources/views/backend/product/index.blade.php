@@ -9,8 +9,8 @@
             </div>
         </div>
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-danger float-left">Product Lists</h6>
-            <a href="{{route('product.create')}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>
+            <h6 class="m-0 font-weight-bold text-danger float-left">Liste des produits</h6>
+            <a href="{{route('product.create')}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Ajouter un produit"><i class="fas fa-plus"></i> Ajouter un produit</a>
         </div>
 
         <div class="card-body">
@@ -19,64 +19,95 @@
                     <table class="table table-bordered" id="product-dataTable" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>Condition</th>
-                            <th>Car</th>
-                            <th>Stock</th>
-                            <th>Photo</th>
-                            <th>Status</th>
-                            <th>Width (mm)</th>
-                            <th>Aspect Ratio</th>
-                            <th>Diameter (inch)</th>
-                            <th>Code</th> <!-- New field -->
-                            <th>Model</th> <!-- New field -->
-                            <th>Brand</th> <!-- New field -->
+                            <th>Code</th>
+                            <th>Modèle</th>
+                            <th>Marque</th>
+                            <th>Type de service</th>
+                            <th>Largeur (mm)</th>
+                            <th>Ratio d'aspect</th>
+                            <th>Construction</th>
+                            <th>Diamètre (pouces)</th>
+                            <th>Indice de charge</th>
+                            <th>Indice de vitesse</th>
+                            <th>Poids d'expédition</th>
+                            <th>Voiture</th>
                             <th>Option</th>
-                            <th>Season</th>
+                            <th>Extra Load</th> <!-- Boolean Field -->
+                            <th>Pneu renforcé</th> <!-- Boolean Field -->
+                            <th>Flancs porteurs (Runflat)</th> <!-- Boolean Field -->
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Remise</th>
+                            <th>État</th>
+                            <th>Photo</th>
+                            <th>Statut</th>
+                            <th>Saison</th>
                             <th>Action</th>
                         </tr>
+
                         </thead>
                         <tfoot>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>Condition</th>
-                            <th>Car</th>
-                            <th>Stock</th>
-                            <th>Photo</th>
-                            <th>Status</th>
-                            <th>Width (mm)</th>
-                            <th>Aspect Ratio</th>
-                            <th>Diameter (inch)</th>
-                            <th>Code</th> <!-- New field -->
-                            <th>Model</th> <!-- New field -->
-                            <th>Brand</th> <!-- New field -->
+                            <th>Code</th>
+                            <th>Modèle</th>
+                            <th>Marque</th>
+                            <th>Type de service</th>
+                            <th>Largeur (mm)</th>
+                            <th>Ratio d'aspect</th>
+                            <th>Construction</th>
+                            <th>Diamètre (pouces)</th>
+                            <th>Indice de charge</th>
+                            <th>Indice de vitesse</th>
+                            <th>Poids d'expédition</th>
+                            <th>Voiture</th>
                             <th>Option</th>
-                            <th>Season</th>
+                            <th>Extra Load</th> <!-- Boolean Field -->
+                            <th>Pneu renforcé</th> <!-- Boolean Field -->
+                            <th>Flancs porteurs (Runflat)</th> <!-- Boolean Field -->
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Remise</th>
+                            <th>État</th>
+                            <th>Photo</th>
+                            <th>Statut</th>
+                            <th>Saison</th>
                             <th>Action</th>
                         </tr>
+
                         </tfoot>
                         <tbody>
                         @foreach($products as $product)
-                            @php
-                                $sub_cat_info = DB::table('categories')->select('title')->where('id', $product->child_cat_id)->first();
-                                $brand = DB::table('brands')->where('id', $product->brand_id)->first();
-                            @endphp
                             <tr>
-                                <td>{{$product->id}}</td>
-                                <td>{{$product->title}}</td>
-                                <td>{{$product->cat_info['title']}} <sub>{{$product->sub_cat_info->title ?? ''}}</sub></td>
+                                <td>{{$product->code}}</td>
+                                <td>{{$product->model}}</td>
+                                <td>{{$product->brand}}</td>
+                                <td>{{$product->service_type}}</td>
+                                <td>{{$product->width}}</td>
+                                <td>{{$product->aspect_ratio}}</td>
+                                <td>R</td>
+                                <td>{{$product->diameter}}</td>
+                                <td>{{$product->load_index}}</td>
+                                <td>{{$product->speed_index}}</td>
+                                <td>{{$product->shipping_weight}}</td>
+
+                                <td>
+                                    @php
+                                        $car = DB::table('brands')->select('car_brand', 'car_model', 'car_year')->where('id', $product->brand_id)->first();
+                                    @endphp
+                                    {{ $car ? $car->car_brand . ' ' . $car->car_model . ' ' . $car->car_year : 'N/A' }}
+                                </td>
+                                <td>
+                                    @php
+                                        $car = DB::table('brands')->select('option')->where('id', $product->brand_id)->first();
+                                    @endphp
+                                    {{$car->option}}
+                                </td>
+                                <!-- Display "Oui" for true booleans and "Non" for false -->
+                                <td>{{ $product->extra_load ? 'Oui' : 'Non' }}</td>
+                                <td>{{ $product->pneu_renforce ? 'Oui' : 'Non' }}</td>
+                                <td>{{ $product->runflat ? 'Oui' : 'Non' }}</td>
+
                                 <td>Rs. {{$product->price}} /-</td>
-                                <td>{{$product->discount}}% OFF</td>
-                                <td>{{$product->condition}}</td>
-                                <td>{{ $brand ? $brand->car_brand . ' ' . $brand->car_model . ' ' . $brand->car_year : 'N/A' }}</td>
                                 <td>
                                     @if($product->stock > 0)
                                         <span class="badge badge-primary">{{$product->stock}}</span>
@@ -84,6 +115,8 @@
                                         <span class="badge badge-danger">{{$product->stock}}</span>
                                     @endif
                                 </td>
+                                <td>{{$product->discount}}% OFF</td>
+                                <td>{{$product->condition}}</td>
                                 <td>
                                     @if($product->photo)
                                         @php
@@ -94,6 +127,7 @@
                                         <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid" style="max-width:80px" alt="avatar.png">
                                     @endif
                                 </td>
+
                                 <td>
                                     @if($product->status == 'active')
                                         <span class="badge badge-success">{{$product->status}}</span>
@@ -101,36 +135,24 @@
                                         <span class="badge badge-warning">{{$product->status}}</span>
                                     @endif
                                 </td>
-                                <td>{{$product->width}}</td>
-                                <td>{{$product->aspect_ratio}}</td>
-                                <td>{{$product->diameter}}</td>
-                                <td>{{$product->code}}</td> <!-- New field -->
-                                <td>{{$product->model}}</td> <!-- New field -->
-                                <td>{{$product->brand}}</td> <!-- New field -->
-                                <td>
-                                    <ul>
-                                        @foreach($product->options as $option)
-                                            <li>{{ $option->name }}: {{ $option->value }}</li>
-                                        @endforeach
-                                    </ul>
-
-                                </td>
                                 <td>{{$product->season}}</td>
                                 <td>
-                                    <a href="{{route('product.edit', $product->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px; border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                                    <a href="{{route('product.edit', $product->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px; border-radius:50%" data-toggle="tooltip" title="Modifier" data-placement="bottom"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="{{route('product.destroy', [$product->id])}}">
                                         @csrf
                                         @method('delete')
-                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px; border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px; border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
+
                     </table>
-                    <span style="float:right">{{$products->links()}}</span>
+                    <span style="float:right">{{$products->links('vendor.pagination.custom-pagination')}}</span>
+
                 @else
-                    <h6 class="text-center">No Products found!!! Please create Product</h6>
+                    <h6 class="text-center">Aucun produit trouvé ! Veuillez créer un produit.</h6>
                 @endif
             </div>
         </div>
@@ -141,7 +163,6 @@
     <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
     <style>
-
         div.dataTables_wrapper div.dataTables_paginate {
             display: none;
         }
@@ -186,8 +207,8 @@
                 var dataID = $(this).data('id');
                 e.preventDefault();
                 swal({
-                    title: "Are you sure?",
-                    text: "Once deleted, you will not be able to recover this data!",
+                    title: "Êtes-vous sûr ?",
+                    text: "Une fois supprimé, vous ne pourrez plus récupérer ces données !",
                     icon: "warning",
                     buttons: true,
                     dangerMode: true,
@@ -195,7 +216,7 @@
                     if (willDelete) {
                         form.submit();
                     } else {
-                        swal("Your data is safe!");
+                        swal("Vos données sont en sécurité !");
                     }
                 });
             });

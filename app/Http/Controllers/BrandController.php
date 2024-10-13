@@ -24,6 +24,7 @@ class BrandController extends Controller
             'car_brand' => 'string|required',
             'car_model' => 'string|required',
             'car_year' => 'integer|required',
+            'option' => 'required|string',
         ]);
         $data = $request->all();
         $slug = Str::slug("{$request->car_brand} {$request->car_model} {$request->car_year}");
@@ -57,6 +58,7 @@ class BrandController extends Controller
             'car_brand' => 'string|required',
             'car_model' => 'string|required',
             'car_year' => 'integer|required',
+            'option' => 'required|string',
         ]);
         $data = $request->all();
         $status = $brand->fill($data)->save();

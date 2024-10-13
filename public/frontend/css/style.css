@@ -34,7 +34,16 @@ Version:1.0
 19. Contact CSS
 20. 404 Error CSS
 21. Footer CSS
-========================================*/
+22. Button CSS
+ */
+
+.header {
+    position: relative; /* Ensure the navbar stays at the top */
+    width: 100%;
+    background-color: rgba(51, 51, 51, 0.9); /* A solid or semi-transparent background */
+    /*z-index: 9999; !* A very high z-index to ensure it stays above everything *!*/
+     box-shadow: 0 4px 2px -2px gray; /* Optional: Add shadow for visibility */
+}
 .color-plate {
     position: fixed;
     display: block;
@@ -2096,14 +2105,36 @@ Version:1.0
     background-color: #333;
     color: #fff;
 }
-.single-product .product-content h3 a:hover{
-    color: #ff0000; /* Changed to Red */
+/* Style for product title */
+.single-product .product-content h3 a {
+    color: #000000; /* Default text color is black */
+    font-size: 18px; /* A bit smaller than the default */
+    font-weight: normal;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
+
+.single-product .product-content h3 a:hover {
+    text-decoration: underline;
+    color: #ff0000; /* Red on hover */
+}
+
+/* Active and hover state */
+.single-product .product-content h3 a:active:hover {
+    color: #ff0000; /* Keep it red when active and hovered */
+}
+
+.single-product .product-content h3 a:focus {
+    text-decoration: underline;
+}
+
+/* Old price styling */
 .single-product .product-content .product-price span.old {
     text-decoration: line-through;
-    opacity: .6;
+    opacity: 0.6;
     margin-right: 2px;
 }
+
 /*======================================
    End Single Product CSS
 ========================================*/
@@ -4725,3 +4756,76 @@ Version:1.0
 /*=============================
 	End Footer CSS
 ===============================*/
+
+/*=============================
+    22. Start Button CSS
+===============================*/
+
+/* Button */
+
+.btn-red {
+    background-color: #c30000;
+    border: 0;
+    border-bottom: 4px solid #6e0000;
+    border-radius: 8px;
+    color: #fff !important;
+    font-family: "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 150px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    top: 0;
+}
+
+.btn-red:hover {
+    background-color: #a80000;
+    border-bottom-color: #580000;
+    top: -2px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-red:active {
+    background-color: #8e0000;
+    border-bottom-color: #400000;
+    top: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.btn-black {
+    background-color: #000000;
+    border: 0;
+    border-bottom: 4px solid #3c3b3b;
+    border-radius: 8px;
+    color: #fff !important;
+    font-family: "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 150px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    top: 0;
+}
+
+.btn-black:hover {
+    background-color: #3c3b3b;
+    border-bottom-color: #2a2a2a;
+    top: -2px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-black:active {
+    background-color: #2a2a2a;
+    border-bottom-color: #1a1a1a;
+    top: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+

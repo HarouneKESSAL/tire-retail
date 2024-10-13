@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Brand extends Model
 {
     protected $fillable = [
-        'car_brand', 'car_model', 'car_year', 'slug', 'status'
+        'car_brand', 'car_model', 'car_year', 'slug', 'status', 'option' // Add option here
     ];
 
     public function getFullNameAttribute(): string

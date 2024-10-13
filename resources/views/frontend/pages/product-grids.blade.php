@@ -10,8 +10,8 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li>Home<i class="ti-arrow-right"></i></li>
-                            <li class="active">Shop Grid</li>
+                            <li>{{ __('Accueil') }}<i class="ti-arrow-right"></i></li>
+                            <li class="active">{{ __('Boutique en Grille') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -38,290 +38,314 @@
                 <div class="row">
                     <div class="col-lg-3 col-md-4 col-12">
                         <div class="shop-sidebar">
-
-                            <!-- Car Name -->
-                            @if($carName == "  ")
-                            @else
-                                <div class="single-widget">
-                                    <h3 class="title">{{ $carName }}</h3>
-                                </div>
-                            @endif
-
-
-
-                            <!-- Single Widget -->
                             <div class="single-widget category">
                                 <h3 class="title">Categories</h3>
                                 <ul class="categor-list">
                                     @php
-                                        // $category = new Category();
                                         $menu=App\Models\Category::getAllParentWithChild();
                                     @endphp
                                     @if($menu)
                                         <li>
                                         @foreach($menu as $cat_info)
                                             @if($cat_info->child_cat->count()>0)
-                                                <li>
-                                                    <a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
+                                                <li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
                                                     <ul>
                                                         @foreach($cat_info->child_cat as $sub_menu)
-                                                            <li>
-                                                                <a href="{{route('product-sub-cat',[$cat_info->slug,$sub_menu->slug])}}">{{$sub_menu->title}}</a>
-                                                            </li>
+                                                            <li><a href="{{route('product-sub-cat',[$cat_info->slug,$sub_menu->slug])}}">{{$sub_menu->title}}</a></li>
                                                         @endforeach
                                                     </ul>
                                                 </li>
                                             @else
-                                                <li>
-                                                    <a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a>
-                                                </li>
+                                                <li><a href="{{route('product-cat',$cat_info->slug)}}">{{$cat_info->title}}</a></li>
                                                 @endif
                                                 @endforeach
                                                 </li>
                                             @endif
-                                            {{-- @foreach(Helper::productCategoryList('products') as $cat)
-                                                @if($cat->is_parent==1)
-                                                    <li><a href="{{route('product-cat',$cat->slug)}}">{{$cat->title}}</a></li>
-                                                @endif
-                                            @endforeach --}}
                                 </ul>
                             </div>
                             <!--/ End Single Widget -->
+                            <div class="filter-sidebar">
+                                <!-- Search Filter Title -->
+                                <h3 class="filter-title">{{ __('Filtre de Recherche') }}</h3>
+                                <!-- Filter Sections -->
+                                <div class="filter-section">
+                                    <!-- Options Section -->
+                                    <div class="single-widget options">
+                                        <h4 class="filter-subtitle" data-toggle="collapse" data-target="#filterOptions" aria-expanded="false" aria-controls="filterOptions">
+                                            OPTIONS <i class="fa fa-angle-down"></i>
+                                        </h4>
+                                        <div id="filterOptions" class="collapse show">
+                                            <ul class="filter-list">
+                                                <!-- Season -->
+                                                <li class="form-group row">
+                                                    <label for="season" class="col-sm-5 col-form-label">Saison</label>
+                                                    <div class="col-sm-7">
+                                                        <select name="season" id="season" class="form-control custom-select">
+                                                            <option value="">Hiver</option>
+                                                        </select>
+                                                    </div>
+                                                </li>
 
-                            <!-- Price Filter -->
-                            <div class="single-widget range">
-                                <h3 class="title">Shop by Price</h3>
-                                <div class="price-filter">
-                                    <div class="price-filter-inner">
+                                                <!-- Speed Index -->
+                                                <li class="form-group row">
+                                                    <label for="speed_index" class="col-sm-5 col-form-label">Indice de vitesse</label>
+                                                    <div class="col-sm-7">
+                                                        <select name="options[speed_index]" id="speed_index" class="form-control custom-select">
+                                                            <option value="">Optionnel</option>
+                                                            @foreach($speed_indexes as $speed_index)
+                                                                <option value="{{ $speed_index }}">{{ $speed_index }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </li>
 
-                                        @php
-                                            $max=DB::table('products')->max('price');
-                                            // dd($max);
-                                        @endphp
-                                        <div id="slider-range" data-min="0" data-max="{{$max}}"></div>
-                                        <div class="product_filter">
-                                            <button type="submit" class="filter-btn">Filter</button>
-                                            <div class="label-input">
-                                                <span>Range:</span>
-                                                <input style="" type="text" id="amount" readonly/>
-                                                <input type="hidden" name="price" id="price_range"
-                                                       value="@if(!empty($_GET['price'])){{$_GET['price']}}@endif"/>
-                                            </div>
+                                                <!-- Load Index -->
+                                                <li class="form-group row">
+                                                    <label for="load_index" class="col-sm-5 col-form-label">Indice de charge</label>
+                                                    <div class="col-sm-7">
+                                                        <select name="options[load_index]" id="load_index" class="form-control custom-select">
+                                                            <option value="">Optionnel</option>
+                                                            @foreach($load_indexes as $load_index)
+                                                                <option value="{{ $load_index }}">{{ $load_index }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </li>
+
+                                                <!-- Service Type -->
+                                                <li class="form-group row">
+                                                    <label for="service_type" class="col-sm-5 col-form-label">Type de service</label>
+                                                    <div class="col-sm-7">
+                                                        <select name="options[service_type]" id="service_type" class="form-control custom-select">
+                                                            <option value="">Optionnel</option>
+                                                            @foreach($service_types as $service_type)
+                                                                <option value="{{ $service_type }}">{{ $service_type }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </li>
+
+                                                <!-- Shipping Weight -->
+                                                <li class="form-group row">
+                                                    <label for="shipping_weight" class="col-sm-5 col-form-label">Poids d'expédition</label>
+                                                    <div class="col-sm-7">
+                                                        <select name="options[shipping_weight]" id="shipping_weight" class="form-control custom-select">
+                                                            <option value="">Optionnel</option>
+                                                            @foreach($shipping_weights as $shipping_weight)
+                                                                <option value="{{ $shipping_weight }}">{{ $shipping_weight }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </li>
+
+                                                <!-- Boolean Filters -->
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[available_only]" id="available_only" value="1"> Disponible seulement
+                                                    </label>
+                                                </li>
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[runflat]" id="runflat" value="1"> Runflat
+                                                    </label>
+                                                </li>
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[xl_renforces]" id="xl_renforces" value="1"> XL / Renforcés
+                                                    </label>
+                                                </li>
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[cloutable]" id="cloutable" value="1"> Cloutable
+                                                    </label>
+                                                </li>
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[team_choice]" id="team_choice" value="1"> Choix de l'équipe
+                                                    </label>
+                                                </li>
+                                                <li class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="options[on_sale]" id="on_sale" value="1"> En solde / En liquidation
+                                                    </label>
+                                                </li>
+                                            </ul>
                                         </div>
+                                    </div>
+
+                                    <!-- Price Filter -->
+                                    <!-- Price Filter -->
+                                    <div class="single-widget range">
+                                        <h4 class="filter-subtitle" data-toggle="collapse" data-target="#priceFilter" aria-expanded="false" aria-controls="priceFilter">
+                                            PRIX <i class="fa fa-angle-down"></i>
+                                        </h4>
+                                        <div id="priceFilter" class="collapse show">
+                                            <ul class="categor-list">
+                                                <li class="form-group row">
+                                                    <label for="price_range" class="col-sm-4 col-form-label">Prix</label>
+                                                    <div class="col-sm-8">
+                                                        <select name="price_range" id="price_range" class="form-control custom-select">
+                                                            <option value="0-50">0-50$</option>
+                                                            <option value="50-100">50-100$</option>
+                                                            <option value="100-150">100-150$</option>
+                                                            <option value="150+">150$ et +</option>
+                                                        </select>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- Filter Button -->
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-filter">FILTRER MA RECHERCHE</button>
                                     </div>
                                 </div>
-
                             </div>
-                            @if($charges && $vitesses && $lettrages && $categories )
-                                <!-- Additional Filter Options -->
-                                <div class="single-widget category options">
-                                    <h3 class="title" data-toggle="collapse" data-target="#filterOptions"
-                                        aria-expanded="false" aria-controls="filterOptions">
-                                        FILTRE DE RECHERCHE <i class="fa fa-angle-down"></i>
-                                    </h3>
-                                    <div id="filterOptions" class="collapse">
-                                        <ul class="categor-list">
-                                            <!-- Vitesse -->
-                                            <li class="form-group row">
-                                                <label for="vitesse" class="col-sm-4 col-form-label">Vitesse</label>
-                                                <div class="col-sm-8">
-                                                    <select name="options[vitesse]" id="vitesse" class="form-control">
-                                                        <option value="">Optional</option>
-                                                        @foreach($vitesses as $option)
-                                                            <option
-                                                                value="{{ $option->value }}">{{ $option->value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </li>
+                            <style>
+                                /* Ensure full width for the filter list */
+                                .single-widget.range .categor-list {
+                                    width: 100%;
+                                }
 
-                                            <!-- Lettrage -->
-                                            <li class="form-group row">
-                                                <label for="lettrage" class="col-sm-4 col-form-label">Lettrage</label>
-                                                <div class="col-sm-8">
-                                                    <select name="options[lettrage]" id="lettrage" class="form-control">
-                                                        <option value="">Optional</option>
-                                                        @foreach($lettrages as $option)
-                                                            <option
-                                                                value="{{ $option->value }}">{{ $option->value }}</option>
-                                                        @endforeach
-                                                    </select>
+                                /* Consistent styling for the select element */
+                                .single-widget.range .form-control.custom-select {
+                                    width: 100%;
+                                    height: 42px; /* Match the height with other dropdowns */
+                                    padding: 10px;
+                                    font-size: 14px; /* Ensure consistent font size */
+                                    border-radius: 5px;
+                                    border: 1px solid #ccc;
+                                    background-color: #fff;
+                                }
 
-                                                </div>
-                                            </li>
+                                /* Consistent styling for form-group elements */
+                                .single-widget.range .form-group.row {
+                                    margin-bottom: 15px;
+                                    align-items: center; /* Ensure label and select are vertically aligned */
+                                }
 
-                                            <!-- Catégorie -->
-                                            <li class="form-group row">
-                                                <label for="category" class="col-sm-4 col-form-label">Catégorie</label>
-                                                <div class="col-sm-8">
-                                                    <select name="category" id="category" class="form-control">
-                                                        <option value="">Optional</option>
-                                                        @foreach($categories as $option)
-                                                            @php
-                                                                // Get the IDs of the current category and its child categories
-                                                                $categoryIds = \App\Models\Category::where('id', $option->id)
-                                                                    ->orWhere('parent_id', $option->id) // Include child categories if applicable
-                                                                    ->pluck('id')
-                                                                    ->toArray();
+                                .single-widget.range .col-sm-4 {
+                                    font-size: 14px;
+                                    padding-top: 5px;
+                                }
 
-                                                                // Count the number of products that belong to these categories
-                                                                $productCount = \App\Models\Product::where('cat_id', $categoryIds)
-                                                                    ->where('status', 'active')
-                                                                    ->count();
-                                                            @endphp
-                                                            <option value="{{ $option->slug }}">
-                                                                {{ $option->title }} ({{ $productCount }})
-                                                            </option>
-                                                        @endforeach
+                                .single-widget.range .col-sm-8 {
+                                    padding-left: 0;
+                                }
 
-                                                    </select>
-                                                </div>
+                                .single-widget.range {
+                                    padding: 15px;
+                                    background-color: #f9f9f9; /* Keep background consistent */
+                                    border-radius: 5px;
+                                }
+
+                                .single-widget.range .filter-subtitle {
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                    margin-bottom: 10px;
+                                }
 
 
-                                            </li>
+                            </style>
+                            <style>
+                                .single-widget.range .filter-list li .form-control.custom-select {
+                                    width: 100%; /* Ensure full width */
+                                    padding: 8px;
+                                    border-radius: 5px;
+                                    border: 1px solid #ccc;
+                                    background-color: #fff; /* Ensure the dropdown background is white */
+                                    box-sizing: border-box; /* Fix the padding and margin for width */
+                                    display: block; /* Make sure it expands fully */
+                                }
 
-                                            <!-- Charge -->
-                                            <li class="form-group row">
-                                                <label for="charge" class="col-sm-4 col-form-label">Charge</label>
-                                                <div class="col-sm-8">
-                                                    <select name="options[charge]" id="charge" class="form-control">
-                                                        <option value="">Optional</option>
-                                                        @foreach($charges as $option)
-                                                            <option
-                                                                value="{{ $option->value }}">{{ $option->value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </li>
+                                .single-widget.range .filter-list {
+                                    display: block; /* Make sure the list inside the price filter behaves like block elements */
+                                    margin: 0;
+                                    padding: 0;
+                                    width: 100%; /* Ensure the width of the filter list takes up the full available space */
+                                }
 
-                                            <!-- Runflat -->
-                                            <li class="form-group">
-                                                <label for="runflat">Runflat</label>
-                                                @php
-                                                    $productCount = DB::table('products')
-                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
-                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
-                                                        ->where('product_options.name', 'runflat')
-                                                        ->where('product_options.is_boolean', 1)  // Assuming value is stored in pivot table
-                                                        ->where('products.status', 'active')  // Only count active products
-                                                        ->count();
-                                                @endphp
+                                .single-widget.range {
+                                    padding: 10px;
+                                    background-color: #f5f5f5;
+                                    border-radius: 5px;
+                                }
 
-                                                <input type="checkbox" name="options[runflat]" id="runflat" value="1">
-                                                Runflat ({{ $productCount }})
-                                            </li>
+                                .filter-list li select {
+                                    width: 100%; /* Make sure the select element takes up the full width */
+                                    margin-top: 10px;
+                                }
 
-                                            <!-- XL/Renforcés -->
-                                            <li class="form-group">
-                                                <label for="xl_renforces">XL / Renforcés</label>
-                                                @php
-                                                    $productCount = DB::table('products')
-                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
-                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
-                                                        ->where('product_options.name', 'xl_renforces')
-                                                        ->where('product_options.is_boolean', 1)
-                                                        ->where('products.status', 'active') // Only count active products
-                                                        ->count();
-                                                @endphp
-                                                <input type="checkbox" name="options[xl_renforces]" id="xl_renforces"
-                                                       value="1">
-                                                XL / Renforcés ({{ $productCount }})
-                                            </li>
+                                .filter-sidebar {
+                                    background-color: #fff;
+                                    padding: 20px;
+                                    border-radius: 8px;
+                                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                }
 
-                                            <!-- Cloutable -->
-                                            <li class="form-group">
-                                                <label for="cloutable">Cloutable</label>
-                                                @php
-                                                    $productCount = DB::table('products')
-                                                        ->join('product_option_product', 'products.id', '=', 'product_option_product.product_id')
-                                                        ->join('product_options', 'product_option_product.product_option_id', '=', 'product_options.id')
-                                                        ->where('product_options.name', 'cloutable')
-                                                        ->where('product_options.is_boolean', 1)
-                                                        ->where('products.status', 'active') // Only count active products
-                                                        ->count();
-                                                @endphp
-                                                <input type="checkbox" name="options[cloutable]" id="cloutable"
-                                                       value="1">
-                                                Cloutable ({{ $productCount }})
-                                            </li>
+                                .filter-title {
+                                    font-size: 18px;
+                                    font-weight: bold;
+                                    margin-bottom: 20px;
+                                    text-transform: uppercase;
+                                    color: #333;
+                                }
 
-                                            <!-- Choix de l'équipe -->
-                                            <li class="form-group">
-                                                <label for="choix_equipe">Choix de l'équipe</label>
-                                                @php
-                                                    $productCount = DB::table('products')
-                                                        ->where('is_featured', 1)
-                                                        ->where('status', 'active')  // Only count active products
-                                                        ->count();
-                                                @endphp
-                                                <input type="checkbox" name="options[choix_equipe]" id="choix_equipe"
-                                                       value="1">
-                                                Choix de l'équipe ({{ $productCount }})
-                                            </li>
+                                .single-widget {
+                                    margin-bottom: 30px;
+                                }
 
-                                            <!-- En Solde -->
-                                            <li class="form-group">
-                                                <label for="en_solde">En Solde</label>
-                                                @php
-                                                    $productCount = DB::table('products')
-                                                        ->where('discount', '>', 0)
-                                                        ->where('status', 'active')  // Only count active products
-                                                        ->count();
-                                                @endphp
-                                                <input type="checkbox" name="options[en_solde]" id="en_solde" value="1">
-                                                En Solde ({{ $productCount }})
-                                            </li>
+                                .filter-subtitle {
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                    color: #333;
+                                    cursor: pointer;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                }
 
+                                .filter-list {
+                                    list-style-type: none;
+                                    padding: 0;
+                                }
 
-                                            <!-- Filter Button -->
-                                            <li class="form-group">
-                                                <button type="submit" class="filter-btn">Filter</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            @else
-                            @endif
-                            <!--/ End Additional Filter Options -->
-                            <!-- Recent Posts -->
-                            <div class="single-widget recent-post">
-                                <h3 class="title">Recent post</h3>
-                                @foreach($recent_products as $product)
-                                    @php
-                                        $photo = explode(',', $product->photo);
-                                    @endphp
-                                    <div class="single-post first">
-                                        <div class="image">
-                                            <img src="{{ $photo[0] }}" alt="{{ $product->title }}">
-                                        </div>
-                                        <div class="content">
-                                            <h5>
-                                                <a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
-                                            </h5>
-                                            <p class="price">
-                                                <del class="text-muted">${{ number_format($product->price, 2) }}</del>
-                                                ${{ number_format(($product->price - ($product->price * $product->discount) / 100), 2) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                                .filter-list li {
+                                    margin-bottom: 15px;
+                                }
 
-                            <!-- Single Widget -->
-                            <div class="single-widget category">
-                                <h3 class="title">Brands</h3>
-                                <ul class="categor-list">
-                                    @php
-                                        $brands=DB::table('brands')->orderBy('car_brand','ASC')->where('status','active')->get();
-                                    @endphp
-                                    @foreach($brands as $brand)
-                                        <li>
-                                            <a href="{{route('product-brand',$brand->slug)}}">{{$brand->car_brand}}{{$brand->car_model}}{{$brand->car_year}}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <!--/ End Single Widget -->
+                                .filter-list li label {
+                                    font-size: 14px;
+                                    color: #333;
+                                }
+
+                                .form-control.custom-select {
+                                    width: 100%;
+                                    padding: 10px;
+                                    border-radius: 5px;
+                                    border: 1px solid #ccc;
+                                    background-color: #f5f5f5;
+                                    color: #333;
+                                }
+
+                                .btn-filter {
+                                    background-color: #ff0000;
+                                    color: #fff;
+                                    padding: 10px 20px;
+                                    width: 100%;
+                                    border: none;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                }
+
+                                .btn-filter:hover {
+                                    background-color: #b30000;
+                                }
+
+                            </style>
 
                         </div>
                     </div>
@@ -355,8 +379,8 @@
                                         </div>
                                     </div>
                                     <ul class="view-mode">
-                                        <li class="active"><a href="{{route('product-grids')}}"><i class="fa fa-th-large"></i></a></li>
-                                        <li><a href="{{route('product-lists')}}"><i class="fa fa-th-list"></i></a></li>
+                                        <li class="active"><a href="{{ route('product.view', ['viewType' => 'grid']) }}"><i class="fa fa-th-large"></i></a></li>
+                                        <li><a href="{{ route('product.view', ['viewType' => 'list']) }}"<i class="fa fa-th-list"></i></a></li>
                                     </ul>
                                 </div>
                                 <!--/ End Shop Top -->
@@ -398,7 +422,7 @@
                                             </div>
                                             <div class="product-content">
                                                 <h3>
-                                                    <a href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
+                                                    <a  href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
                                                 </h3>
                                                 @php
                                                     $after_discount = $product->price - ($product->price * $product->discount) / 100;
@@ -414,6 +438,7 @@
                                 <h4 class="text-danger" style="margin:100px auto;">There are no products.</h4>
                             @endif
                         </div>
+                        <br><br>
                         <div class="row">
                             <div class="col-md-12 justify-content-center d-flex">
                                 {{ $products->appends(request()->input())->links() }}

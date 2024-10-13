@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title','E-SHOP || Car Page')
+@section('title','E-SHOP || Page Voitures')
 @section('main-content')
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -9,8 +9,8 @@
             </div>
         </div>
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-danger float-left">Car List</h6>
-            <a href="{{route('brand.create')}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add Car"><i class="fas fa-plus"></i> Add Car</a>
+            <h6 class="m-0 font-weight-bold text-danger float-left">Liste des Voitures</h6>
+            <a href="{{route('brand.create')}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Ajouter une voiture"><i class="fas fa-plus"></i> Ajouter Voiture</a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -18,19 +18,21 @@
                     <table class="table table-bordered" id="banner-dataTable" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Car Information</th>
+                            <th>N°</th>
+                            <th>Informations sur la Voiture</th>
+                            <th>Option</th>
                             <th>Slug</th>
-                            <th>Status</th>
+                            <th>Statut</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
-                            <th>S.N.</th>
-                            <th>Car Information</th>
+                            <th>N°</th>
+                            <th>Informations sur la Voiture</th>
+                            <th>Option</th>
                             <th>Slug</th>
-                            <th>Status</th>
+                            <th>Statut</th>
                             <th>Action</th>
                         </tr>
                         </tfoot>
@@ -38,7 +40,8 @@
                         @foreach($brands as $brand)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$brand->full_name}}</td>
+                                <td>{{$brand->getFullNameAttribute()}}</td>
+                                <td>{{$brand->option}}</td>
                                 <td>{{$brand->slug}}</td>
                                 <td>
                                     @if($brand->status=='active')
@@ -48,25 +51,27 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{route('brand.edit',$brand->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                                    <a href="{{route('brand.edit',$brand->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="modifier" data-placement="bottom"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="{{route('brand.destroy',[$brand->id])}}">
                                         @csrf
                                         @method('delete')
-                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$brand->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                        <button class="btn btn-danger btn-sm dltBtn" data-id={{$brand->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
-                    <span style="float:right">{{$brands->links()}}</span>
+                    <span style="float:right">{{$brands->links('vendor.pagination.custom-pagination')}}</span>
+
                 @else
-                    <h6 class="text-center">No cars found!!! Please create a car</h6>
+                    <h6 class="text-center">Aucune voiture trouvée !!! Veuillez créer une voiture</h6>
                 @endif
             </div>
         </div>
     </div>
 @endsection
+
 
 @push('styles')
     <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">

@@ -37,7 +37,7 @@
                                         <label>Your Email<span>*</span></label>
                                         <input type="email" name="email" placeholder="" required="required" value="{{old('email')}}">
                                         @error('email')
-                                            <span class="text-danger">{{$message}}</span>
+                                        <span class="text-danger">{{$message}}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -46,14 +46,14 @@
                                         <label>Your Password<span>*</span></label>
                                         <input type="password" name="password" placeholder="" required="required" value="{{old('password')}}">
                                         @error('password')
-                                            <span class="text-danger">{{$message}}</span>
+                                        <span class="text-danger">{{$message}}</span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group login-btn" style="display: flex; justify-content: center; gap: 10px;">
-                                        <button type="submit" class="btn">Login</button>
-                                        <a href="{{route('register.form')}}" class="btn">Register</a>
+                                        <button type="submit" class="btn-red">Login</button>
+                                        <a href="{{route('register.form')}}" class="btn-black">Register</a>
                                     </div>
 
                                     <div class="checkbox">
