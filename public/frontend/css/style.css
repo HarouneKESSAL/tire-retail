@@ -41,7 +41,7 @@ Version:1.0
     position: relative; /* Ensure the navbar stays at the top */
     width: 100%;
     background-color: rgba(51, 51, 51, 0.9); /* A solid or semi-transparent background */
-    /*z-index: 9999; !* A very high z-index to ensure it stays above everything *!*/
+    z-index: 1000;
      box-shadow: 0 4px 2px -2px gray; /* Optional: Add shadow for visibility */
 }
 .color-plate {

@@ -1,4 +1,5 @@
 @extends('frontend.layouts.master')
+@extends('frontend.layouts.master')
 
 @section('main-content')
     <!-- Breadcrumbs -->
@@ -58,7 +59,7 @@
                                             <label>Votre Téléphone<span>*</span></label>
                                             <input id="phone" name="phone" type="number" placeholder="Entrez votre téléphone">
                                         </div>
-                                    </div>
+                                     </div>
                                     <div class="col-12">
                                         <div class="form-group message">
                                             <label>Votre message<span>*</span></label>
@@ -67,7 +68,7 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group button">
-                                            <button type="submit" class="btn">Envoyer le Message</button>
+                                            <button type="submit" class="btn-red">Envoyer le Message</button>
                                         </div>
                                     </div>
                                 </div>
