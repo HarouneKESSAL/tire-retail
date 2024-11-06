@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductsExport;
+use App\Imports\ProductsImport;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\ProductOption;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\Brand;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
     public function index(): View|\Illuminate\Foundation\Application|Factory|Application
     {
         $products = Product::getAllProduct();
+
         return view('backend.product.index')->with('products', $products);
     }
 
@@ -35,38 +37,38 @@ class ProductController extends Controller
             ->with('options', $options); // Pass the options to the view
     }
 
-
     public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
-            'title' => 'string|required',
-            'summary' => 'string|required',
-            'description' => 'string|nullable',
-            'photo' => 'string|required',
-            'size' => 'nullable',
-            'stock' => 'required|numeric',
-            'cat_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'child_cat_id' => 'nullable|exists:categories,id',
-            'is_featured' => 'sometimes|in:1',
-            'status' => 'required|in:active,inactive',
-            'condition' => 'required|in:default,new,hot',
-            'price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-            'width' => 'required|integer',
-            'aspect_ratio' => 'required|integer',
-            'diameter' => 'required|integer',
-            'season' => 'required|string|in:summer,all-season,winter',
-            'options' => 'nullable|array',
-            'options.*.id' => 'required_with:options|exists:product_options,id',
+            'title'           => 'string|required',
+            'summary'         => 'string|required',
+            'description'     => 'string|nullable',
+            'photo'           => 'string|required',
+            'size'            => 'nullable',
+            'stock'           => 'required|numeric',
+            'cat_id'          => 'required|exists:categories,id',
+            'brand_id'        => 'nullable|exists:brands,id',
+            'child_cat_id'    => 'nullable|exists:categories,id',
+            'is_featured'     => 'sometimes|in:1',
+            'status'          => 'required|in:active,inactive',
+            'condition'       => 'required|in:default,new,hot',
+            'price'           => 'required|numeric',
+            'discount'        => 'nullable|numeric',
+            'width'           => 'required|integer',
+            'aspect_ratio'    => 'required|integer',
+            'diameter'        => 'required|integer',
+            'season'          => 'required|string|in:summer,all-season,winter',
+            'options'         => 'nullable|array',
+            'options.*.id'    => 'required_with:options|exists:product_options,id',
             'options.*.value' => 'required_with:options|string',
-            'code' => 'nullable|string',  // New field
-            'brand' => 'nullable|string',  // New field
-            'model' => 'nullable|string',  // New field
+            'code'            => 'nullable|string',  // New field
+            'brand'           => 'nullable|string',  // New field
+            'model'           => 'nullable|string',  // New field
         ]);
 
         $data = $request->all();
-        $slug = Str::slug($request->title);
+        //make slug equals to the concatinatioin of code brand model
+        $slug = Str::slug($request->input('code') . ' ' . $request->input('brand') . ' ' . $request->input('model'));
         $count = Product::where('slug', $slug)->count();
         if ($count > 0) {
             $slug = $slug . '-' . date('ymdis') . '-' . rand(0, 999);
@@ -86,7 +88,6 @@ class ProductController extends Controller
 
         request()->session()->flash('success', 'Product successfully created');
 
-
         return redirect()->route('product.index');
     }
 
@@ -97,6 +98,7 @@ class ProductController extends Controller
         $categories = Category::where('is_parent', 1)->get();
         $options = ProductOption::all(); // Retrieve all available options
         $items = Product::where('id', $id)->get();
+
         return view('backend.product.edit')
             ->with('product', $product)
             ->with('categories', $categories)
@@ -104,37 +106,36 @@ class ProductController extends Controller
             ->with('options', $options)->with('items', $items);
     }
 
-
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
         // Validation rules
         $this->validate($request, [
-            'title' => 'string|required',
-            'summary' => 'string|required',
-            'description' => 'string|nullable',
-            'photo' => 'string|required',
-            'size' => 'nullable',
-            'stock' => 'required|numeric',
-            'cat_id' => 'required|exists:categories,id',
-            'child_cat_id' => 'nullable|exists:categories,id',
-            'is_featured' => 'sometimes|in:1',
-            'brand_id' => 'nullable|exists:brands,id',
-            'status' => 'required|in:active,inactive',
-            'condition' => 'required|in:default,new,hot',
-            'price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-            'width' => 'required|integer',
-            'aspect_ratio' => 'required|integer',
-            'diameter' => 'required|integer',
-            'season' => 'required|string|in:summer,all-season,winter',
-            'options' => 'nullable|array',
+            'title'               => 'string|required',
+            'summary'             => 'string|required',
+            'description'         => 'string|nullable',
+            'photo'               => 'string|required',
+            'size'                => 'nullable',
+            'stock'               => 'required|numeric',
+            'cat_id'              => 'required|exists:categories,id',
+            'child_cat_id'        => 'nullable|exists:categories,id',
+            'is_featured'         => 'sometimes|in:1',
+            'brand_id'            => 'nullable|exists:brands,id',
+            'status'              => 'required|in:active,inactive',
+            'condition'           => 'required|in:default,new,hot',
+            'price'               => 'required|numeric',
+            'discount'            => 'nullable|numeric',
+            'width'               => 'required|integer',
+            'aspect_ratio'        => 'required|integer',
+            'diameter'            => 'required|integer',
+            'season'              => 'required|string|in:summer,all-season,winter',
+            'options'             => 'nullable|array',
             'options.*.option_id' => 'required_with:options|exists:product_options,id',
-            'options.*.value' => 'required_with:options|string',
-            'code' => 'nullable|string',  // New field
-            'brand' => 'nullable|string',  // New field
-            'model' => 'nullable|string',  // New field
+            'options.*.value'     => 'required_with:options|string',
+            'code'                => 'nullable|string',
+            'brand'               => 'nullable|string',
+            'model'               => 'nullable|string',
         ]);
 
         // Prepare data for saving
@@ -169,10 +170,9 @@ class ProductController extends Controller
         }
 
         request()->session()->flash('success', 'Product successfully updated');
+
         return redirect()->route('product.index');
     }
-
-
 
     public function destroy($id)
     {
@@ -184,6 +184,20 @@ class ProductController extends Controller
         } else {
             request()->session()->flash('error', 'Error while deleting product');
         }
+
         return redirect()->route('product.index');
+    }
+
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        return Excel::download(new ProductsExport, 'products.xlsx');
+    }
+
+    public function import(): RedirectResponse
+    {
+        Excel::import(new ProductsImport, request()->file('file'));
+
+        return redirect()->back()->with('success', 'Products imported successfully');
     }
 }

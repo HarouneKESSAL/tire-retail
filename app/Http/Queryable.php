@@ -9,14 +9,10 @@ trait Queryable
 {
     /**
      * Apply filtering to the query based on a filter array.
-     *
-     * @param Builder $query
-     * @param array|null $filter
-     * @return Builder
      */
     public function scopeFilter(Builder $query, ?array $filter): Builder
     {
-        if (!empty($filter['field']) && isset($filter['value']) && Schema::hasColumn($this->getTable(), $filter['field'])) {
+        if (! empty($filter['field']) && isset($filter['value']) && Schema::hasColumn($this->getTable(), $filter['field'])) {
             $field = $filter['field'];
             $value = $filter['value'];
             $type = $filter['type'] ?? 'contains';
@@ -54,14 +50,12 @@ trait Queryable
     /**
      * Apply sorting to the query.
      *
-     * @param Builder $query
-     * @param string|null $sortBy Comma-separated fields to sort by.
-     * @param string|null $sortOrder Comma-separated orders, corresponding to each field.
-     * @return Builder
+     * @param  string|null  $sortBy  Comma-separated fields to sort by.
+     * @param  string|null  $sortOrder  Comma-separated orders, corresponding to each field.
      */
     public function scopeSort(Builder $query, ?string $sortBy, ?string $sortOrder = 'asc'): Builder
     {
-        if (!empty($sortBy)) {
+        if (! empty($sortBy)) {
             $sortFields = explode(',', $sortBy);
             $sortOrders = explode(',', $sortOrder);
 
@@ -81,9 +75,8 @@ trait Queryable
     /**
      * Apply custom pagination settings to the query.
      *
-     * @param Builder $query
-     * @param int|null $size Number of items per page.
-     * @param int $page Current page number.
+     * @param  int|null  $size  Number of items per page.
+     * @param  int  $page  Current page number.
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function scopePaginated(Builder $query, ?int $size = null, ?int $page = null)

@@ -10,6 +10,7 @@ class ProductOptionController extends Controller
     public function index()
     {
         $options = ProductOption::all();
+
         return view('backend.product_options.index', compact('options'));
     }
 
@@ -39,11 +40,10 @@ class ProductOptionController extends Controller
         return redirect()->route('product-options.index')->with('success', 'Product option created successfully.');
     }
 
-
-
     public function edit(ProductOption $productOption)
     {
         $options = ProductOption::all();
+
         return view('backend.product_options.edit', compact('productOption', 'options'));
     }
 

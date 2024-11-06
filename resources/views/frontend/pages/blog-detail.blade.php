@@ -168,7 +168,7 @@
                                     @csrf
                                     <div class="form-inner">
                                         <input type="email" name="email" placeholder="Entrez votre email">
-                                        <button type="submit" class="btn mt-2">Soumettre</button>
+                                        <button type="submit" class="btn-red mt-3"style="width: 100%">Soumettre</button>
                                     </div>
                                 </form>
                             </div>

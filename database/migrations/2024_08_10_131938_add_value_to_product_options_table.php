@@ -27,5 +27,4 @@ return new class extends Migration
             $table->string('value')->nullable()->after('product_option_id');
         });
     }
-
 };

@@ -19,5 +19,4 @@ return new class extends Migration
             $table->dropColumn('option'); // Remove the option field if rolled back
         });
     }
-
 };

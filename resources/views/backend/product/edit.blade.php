@@ -240,9 +240,8 @@
                 <div class="form-group mb-3">
                     <label for="service_type" class="col-form-label">Type de Service <span class="text-danger">*</span></label>
                     <select name="service_type" class="form-control">
-                        <option value="tire" {{ $product->service_type == 'tire' ? 'selected' : '' }}>Pneu</option>
-                        <option value="rim" {{ $product->service_type == 'rim' ? 'selected' : '' }}>Jante</option>
-                        <option value="both" {{ $product->service_type == 'both' ? 'selected' : '' }}>Les deux</option>
+                        <option value="im" {{ $product->service_type == 'im' ? 'selected' : '' }}>IM</option>
+                        <option value="lt" {{ $product->service_type == 'lt' ? 'selected' : '' }}>LT</option>
                     </select>
                     @error('service_type')
                     <span class="text-danger">{{$message}}</span>

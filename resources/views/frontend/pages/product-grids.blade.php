@@ -380,7 +380,7 @@
                                     </div>
                                     <ul class="view-mode">
                                         <li class="active"><a href="{{ route('product.view', ['viewType' => 'grid']) }}"><i class="fa fa-th-large"></i></a></li>
-                                        <li><a href="{{ route('product.view', ['viewType' => 'list']) }}"<i class="fa fa-th-list"></i></a></li>
+                                        <li><a href="{{ route('product.view', ['viewType' => 'list']) }}"><i class="fa fa-th-list"></i></a></li>
                                     </ul>
                                 </div>
                                 <!--/ End Shop Top -->

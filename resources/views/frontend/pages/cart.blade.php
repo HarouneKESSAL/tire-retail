@@ -81,7 +81,7 @@
                             @else
                                 <tr>
                                     <td class="text-center" colspan="6">
-                                        There are no items in your cart. <a href="{{ route('product-grids') }}" style="color:blue;">Continue shopping</a>
+                                        There are no items in your cart. <a href="{{ route('product.view', ['viewType' => 'grid']) }}" style="color:blue;">Continue shopping</a>
                                     </td>
                                 </tr>
                             @endif
@@ -169,7 +169,7 @@
             .shopping-summary .main-heading {
                 background-color: #f1f1f1;
             }
-            
+
             .cart-summary {
                 padding: 20px;
                 background-color: #ffffff;

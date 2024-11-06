@@ -19,5 +19,4 @@ return new class extends Migration
             $table->string('value');
         });
     }
-
 };

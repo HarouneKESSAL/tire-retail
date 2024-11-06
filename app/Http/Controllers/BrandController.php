@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Brand;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 class BrandController extends Controller
 {
     public function index()
     {
         $brand = Brand::orderBy('id', 'DESC')->paginate();
+
         return view('backend.brand.index')->with('brands', $brand);
     }
 
@@ -30,7 +32,7 @@ class BrandController extends Controller
         $slug = Str::slug("{$request->car_brand} {$request->car_model} {$request->car_year}");
         $count = Brand::where('slug', $slug)->count();
         if ($count > 0) {
-            $slug = $slug . '-' . date('ymdis') . '-' . rand(0, 999);
+            $slug = $slug.'-'.date('ymdis').'-'.rand(0, 999);
         }
         $data['slug'] = $slug;
         $status = Brand::create($data);
@@ -39,15 +41,17 @@ class BrandController extends Controller
         } else {
             request()->session()->flash('error', 'Error, Please try again');
         }
+
         return redirect()->route('brand.index');
     }
 
     public function edit($id)
     {
         $brand = Brand::find($id);
-        if (!$brand) {
+        if (! $brand) {
             request()->session()->flash('error', 'Brand not found');
         }
+
         return view('backend.brand.edit')->with('brand', $brand);
     }
 
@@ -67,6 +71,7 @@ class BrandController extends Controller
         } else {
             request()->session()->flash('error', 'Error, Please try again');
         }
+
         return redirect()->route('brand.index');
     }
 
@@ -80,9 +85,11 @@ class BrandController extends Controller
             } else {
                 request()->session()->flash('error', 'Error, Please try again');
             }
+
             return redirect()->route('brand.index');
         } else {
             request()->session()->flash('error', 'Brand not found');
+
             return redirect()->back();
         }
     }

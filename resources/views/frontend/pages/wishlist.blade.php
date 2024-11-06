@@ -56,7 +56,7 @@
                         @else
                             <tr>
                                 <td class="text-center">
-                                    Il n'y a aucune liste de souhaits disponible. <a href="{{route('product-grids')}}" style="color:blue;">Continuer vos achats</a>
+                                    Il n'y a aucune liste de souhaits disponible. <a href="{{ route('product.view', ['viewType' => 'grid']) }}" style="color:blue;">Continuer vos achats</a>
 
                                 </td>
                             </tr>

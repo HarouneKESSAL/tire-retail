@@ -5,21 +5,20 @@ namespace App\Models;
 use App\Http\Queryable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Cart;
+
 class Product extends Model
 {
     use Queryable;
+
     protected $fillable = [
         'title', 'slug', 'summary', 'description', 'cat_id', 'child_cat_id', 'price',
         'brand_id', 'discount', 'status', 'photo', 'size', 'stock', 'is_featured',
         'condition', 'width', 'aspect_ratio', 'diameter', 'season', 'choix_equipe',
-        'code', 'brand', 'model' ,'service_type', 'shipping_weight', 'speed_index', 'load_index'
-        ,'runflat', 'pneu_renforce', 'extra_load'];
+        'code', 'brand', 'model', 'service_type', 'shipping_weight', 'speed_index', 'load_index', 'runflat', 'pneu_renforce', 'extra_load'];
 
     /**
      * Scope a query to only include active products.
      *
-     * @param Builder $query
      * @return Builder
      */
     public function scopeActive(Builder $query)
@@ -30,10 +29,8 @@ class Product extends Model
     /**
      * Scope a query to only include featured products.
      *
-     * @param Builder $query
      * @return Builder
      */
-
     public function scopeFeatured(Builder $query)
     {
         return $query->where('is_featured', 1);
@@ -42,22 +39,19 @@ class Product extends Model
     /**
      * Scope a query to only include products in stock.
      *
-     * @param Builder $query
      * @return Builder
      */
-
     public function scopeInStock(Builder $query)
     {
         return $query->where('stock', '>', 0);
     }
+
     // Many-to-Many relationship with ProductOption
     public function options()
     {
         return $this->belongsToMany(ProductOption::class, 'product_option_product', 'product_id', 'product_option_id')
             ->withTimestamps();  // No need for withPivot('value') here.
     }
-
-
 
     public function cat_info()
     {
@@ -95,6 +89,7 @@ class Product extends Model
         if ($data) {
             return $data;
         }
+
         return 0;
     }
 
@@ -108,10 +103,13 @@ class Product extends Model
         return $this->hasMany(Wishlist::class)->whereNotNull('cart_id');
     }
 
-    public function brand()
+    public function brands()
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
-
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'cat_id');
+    }
 }

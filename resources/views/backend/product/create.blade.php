@@ -265,8 +265,8 @@
                 <div class="form-group">
                     <label for="service_type" class="col-form-label">Type de Service <span class="text-danger">*</span></label>
                     <select name="service_type" class="form-control">
-                        <option value="normal" {{ old('service_type') == 'normal' ? 'selected' : '' }}>Normal</option>
-                        <option value="express" {{ old('service_type') == 'express' ? 'selected' : '' }}>Express</option>
+                        <option value="im" {{ old('service_type') == 'im' ? 'selected' : '' }}>IM</option>
+                        <option value="lt" {{ old('service_type') == 'lt' ? 'selected' : '' }}>LT</option>
                     </select>
                     @error('service_type')
                     <span class="text-danger">{{$message}}</span>

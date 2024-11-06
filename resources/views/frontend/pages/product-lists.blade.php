@@ -286,7 +286,7 @@
 							<div class="row">
 								@if(count($products))
 									@foreach($products as $product)
-
+                                        @dd($product)
 										<!-- Start Single List -->
 										<div class="col-12">
 											<div class="row">
