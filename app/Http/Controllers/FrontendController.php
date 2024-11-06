@@ -58,15 +58,15 @@ class FrontendController extends Controller
         $rouesJantesDimensions = $this->fetchRouesJantesDimensions($rouesJantes->id);
 
         Log::info('Fetched Data:', [
-            'pneuYears' => $pneuYears,
-            'pneuCar_brands' => $pneuCar_brands,
-            'pneuModels' => $pneuModels,
-            'pneuOptions' => $pneuOptions,
-            'pneuJantesYears' => $pneuJantesYears,
-            'pneuJantesCar_brands' => $pneuJantesCar_brands,
-            'pneuJantesModels' => $pneuJantesModels,
-            'pneuJantesOptions' => $pneuJantesOptions,
-            'pneuDimensions' => $pneuDimensions,
+            'pneuYears'             => $pneuYears,
+            'pneuCar_brands'        => $pneuCar_brands,
+            'pneuModels'            => $pneuModels,
+            'pneuOptions'           => $pneuOptions,
+            'pneuJantesYears'       => $pneuJantesYears,
+            'pneuJantesCar_brands'  => $pneuJantesCar_brands,
+            'pneuJantesModels'      => $pneuJantesModels,
+            'pneuJantesOptions'     => $pneuJantesOptions,
+            'pneuDimensions'        => $pneuDimensions,
             'rouesJantesDimensions' => $rouesJantesDimensions,
         ]);
 
@@ -91,18 +91,18 @@ class FrontendController extends Controller
     private function fetchPneuDimensions($categoryId)
     {
         return [
-            'widths' => Product::where('cat_id', $categoryId)->whereNotNull('width')->select('width')->groupBy('width')->get(),
+            'widths'        => Product::where('cat_id', $categoryId)->whereNotNull('width')->select('width')->groupBy('width')->get(),
             'aspect_ratios' => Product::where('cat_id', $categoryId)->whereNotNull('aspect_ratio')->select('aspect_ratio')->groupBy('aspect_ratio')->get(),
-            'diameters' => Product::where('cat_id', $categoryId)->whereNotNull('diameter')->select('diameter')->groupBy('diameter')->get(),
+            'diameters'     => Product::where('cat_id', $categoryId)->whereNotNull('diameter')->select('diameter')->groupBy('diameter')->get(),
         ];
     }
 
     private function fetchRouesJantesDimensions($categoryId)
     {
         return [
-            'widths' => Product::where('cat_id', $categoryId)->whereNotNull('width')->select('width')->groupBy('width')->get(),
+            'widths'        => Product::where('cat_id', $categoryId)->whereNotNull('width')->select('width')->groupBy('width')->get(),
             'aspect_ratios' => Product::where('cat_id', $categoryId)->whereNotNull('aspect_ratio')->select('aspect_ratio')->groupBy('aspect_ratio')->get(),
-            'diameters' => Product::where('cat_id', $categoryId)->whereNotNull('diameter')->select('diameter')->groupBy('diameter')->get(),
+            'diameters'     => Product::where('cat_id', $categoryId)->whereNotNull('diameter')->select('diameter')->groupBy('diameter')->get(),
         ];
     }
 
@@ -340,28 +340,23 @@ class FrontendController extends Controller
     public function productDetail($slug)
     {
         // Fetch product details by slug
-        $product_detail = Product::with('options')->where('slug', $slug)->firstOrFail();
-
-        // Fetch product options related to the product
-        $product_options = ProductOption::join('product_option_product', 'product_options.id', '=', 'product_option_product.product_option_id')
-            ->where('product_option_product.product_id', $product_detail->id)
-            ->select('product_options.*') // Fetch all columns from ProductOption
-            ->get();
-
+        $product_detail = Product::getProductBySlug($slug);
         // Prepare the full specification array
         $specifications = [
-            'Manufacturier' => $product_detail->brand, // Assuming a relation to the brand table
-            'Cloutable' => optional($product_options->where('name', 'cloutable')->first())->value ?? 'non',
-            'Saison' => $product_detail->season ?? 'N/A',
-            'Code produit' => $product_detail->code ?? 'N/A',
-            'Largeur du pneu' => $product_detail->width ?? 'N/A',
-            'Ratio du pneu' => $product_detail->aspect_ratio ?? 'N/A',
-            'Diamètre du pneu' => $product_detail->diameter ?? 'N/A',
-            'Indice de charge' => optional($product_options->where('name', 'charge')->first())->value ?? 'N/A',
-            'Indice de vitesse' => optional($product_options->where('name', 'vitesse')->first())->value ?? 'N/A',
-            'Flancs porteurs (Runflat)' => optional($product_options->where('name', 'runflat')->first())->is_boolean == 1 ? 'oui' : 'non',
-            'Pneu renforcé' => optional($product_options->where('name', 'xl_renforces')->first())->is_boolean == 1 ? 'oui' : 'non',
-            'Extra Load' => optional($product_options->where('name', 'charge')->first())->value == 'XL' ? 'oui' : 'non',
+            'Manufacturier'             => $product_detail->brand, // Assuming a relation to the brand table
+            'Saison'                    => $product_detail->season ?? 'N/A',
+            'Code produit'              => $product_detail->code ?? 'N/A',
+            'Largeur du pneu'           => $product_detail->width ?? 'N/A',
+            'Ratio du pneu'             => $product_detail->aspect_ratio ?? 'N/A',
+            'Diamètre du pneu'          => $product_detail->diameter ?? 'N/A',
+            'Indice de charge'          => $product_detail->load_index ?? 'N/A',
+            'Indice de vitesse'         => $product_detail->speed_index ?? 'N/A',
+            'Flancs porteurs (Runflat)' => $product_detail->runflat == 1 ? 'oui' : 'non',
+            'Pneu renforcé'             => $product_detail->pneu_renforce == 1 ? 'oui' : 'non',
+            'Extra Load'                => $product_detail->extra_load == 1 ? 'oui' : 'non',
+            'Poids de livraison'        => $product_detail->shipping_weight ?? 'N/A',
+            'Type de service'           => $product_detail->service_type ?? 'N/A',
+
         ];
 
         // Return the view with product details and specifications
@@ -602,10 +597,10 @@ class FrontendController extends Controller
 
         // Log filter data for debugging
         Log::info('Filter Data', [
-            'service_types' => $service_types,
+            'service_types'    => $service_types,
             'shipping_weights' => $shipping_weights,
-            'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes,
+            'speed_indexes'    => $speed_indexes,
+            'load_indexes'     => $load_indexes,
         ]);
 
         // Pagination settings
@@ -613,19 +608,19 @@ class FrontendController extends Controller
         $products = $products->where('status', 'active')->paginate($itemsPerPage);
 
         return view('frontend.pages.product-lists')->with([
-            'products' => $products,
-            'service_types' => $service_types,
+            'products'         => $products,
+            'service_types'    => $service_types,
             'shipping_weights' => $shipping_weights,
-            'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes,
-            'recent_products' => $recent_products ?? [],
-            'carName' => $carName ?? null,
-            'width' => $request->width,
-            'aspect_ratio' => $request->aspect_ratio,
-            'diameter' => $request->diameter,
-            'year' => $request->year,
-            'car_brand' => $request->car_brand,
-            'model' => $request->model,
+            'speed_indexes'    => $speed_indexes,
+            'load_indexes'     => $load_indexes,
+            'recent_products'  => $recent_products ?? [],
+            'carName'          => $carName ?? null,
+            'width'            => $request->width,
+            'aspect_ratio'     => $request->aspect_ratio,
+            'diameter'         => $request->diameter,
+            'year'             => $request->year,
+            'car_brand'        => $request->car_brand,
+            'model'            => $request->model,
         ]);
     }
 
@@ -678,29 +673,29 @@ class FrontendController extends Controller
 
         // Log filter data for debugging
         Log::info('Filter Data', [
-            'service_types' => $service_types,
+            'service_types'    => $service_types,
             'shipping_weights' => $shipping_weights,
-            'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes,
+            'speed_indexes'    => $speed_indexes,
+            'load_indexes'     => $load_indexes,
         ]);
 
         $itemsPerPage = $request->get('show', 9);
         $products = $products->where('status', 'active')->paginate($itemsPerPage);
 
         return view('frontend.pages.product-grids')->with([
-            'products' => $products,
-            'recent_products' => Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get(),
-            'carName' => $carName ?? null,
-            'width' => $request->width,
-            'aspect_ratio' => $request->aspect_ratio,
-            'diameter' => $request->diameter,
-            'year' => $request->year,
-            'car_brand' => $request->car_brand,
-            'model' => $request->model,
-            'service_types' => $service_types,
+            'products'         => $products,
+            'recent_products'  => Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get(),
+            'carName'          => $carName ?? null,
+            'width'            => $request->width,
+            'aspect_ratio'     => $request->aspect_ratio,
+            'diameter'         => $request->diameter,
+            'year'             => $request->year,
+            'car_brand'        => $request->car_brand,
+            'model'            => $request->model,
+            'service_types'    => $service_types,
             'shipping_weights' => $shipping_weights,
-            'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes,
+            'speed_indexes'    => $speed_indexes,
+            'load_indexes'     => $load_indexes,
         ]);
     }
 
@@ -740,9 +735,9 @@ class FrontendController extends Controller
                 }
             });
             Log::info('Car info filter applied', [
-                'year' => $request->year,
+                'year'      => $request->year,
                 'car_brand' => $request->car_brand,
-                'model' => $request->model,
+                'model'     => $request->model,
             ]);
         }
 
@@ -826,14 +821,14 @@ class FrontendController extends Controller
         // Filter by name or description
         if ($request->filled('search')) {
             $products->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%'.$request->search.'%')
-                    ->orWhere('slug', 'like', '%'.$request->search.'%')
-                    ->orWhere('description', 'like', '%'.$request->search.'%')
-                    ->orWhere('summary', 'like', '%'.$request->search.'%')
-                    ->orWhere('price', 'like', '%'.$request->search.'%')
-                    ->orWhere('width', 'like', '%'.$request->search.'%')
-                    ->orWhere('aspect_ratio', 'like', '%'.$request->search.'%')
-                    ->orWhere('diameter', 'like', '%'.$request->search.'%');
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('slug', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('summary', 'like', '%' . $request->search . '%')
+                    ->orWhere('price', 'like', '%' . $request->search . '%')
+                    ->orWhere('width', 'like', '%' . $request->search . '%')
+                    ->orWhere('aspect_ratio', 'like', '%' . $request->search . '%')
+                    ->orWhere('diameter', 'like', '%' . $request->search . '%');
             });
             Log::info('Search filter applied', ['search' => $request->search]);
         }
@@ -859,19 +854,19 @@ class FrontendController extends Controller
 
         // Return the view with the data
         return view($view)->with([
-            'products' => $products,
-            'recent_products' => $recent_products,
-            'carName' => $carName ?? null,
-            'width' => $request->width,
-            'aspect_ratio' => $request->aspect_ratio,
-            'diameter' => $request->diameter,
-            'year' => $request->year,
-            'car_brand' => $request->car_brand,
-            'model' => $request->model,
-            'service_types' => $service_types,
+            'products'         => $products,
+            'recent_products'  => $recent_products,
+            'carName'          => $carName ?? null,
+            'width'            => $request->width,
+            'aspect_ratio'     => $request->aspect_ratio,
+            'diameter'         => $request->diameter,
+            'year'             => $request->year,
+            'car_brand'        => $request->car_brand,
+            'model'            => $request->model,
+            'service_types'    => $service_types,
             'shipping_weights' => $shipping_weights,
-            'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes,
+            'speed_indexes'    => $speed_indexes,
+            'load_indexes'     => $load_indexes,
         ]);
     }
 
@@ -967,10 +962,11 @@ class FrontendController extends Controller
 
     public function productCat(Request $request)
     {
-        $category = Category::where('slug', $request->slug)->first();
-
-        // Fetch products under the category and paginate the results
-        $products = Product::where('cat_id', $category->id)->paginate(10);
+        $products=Product::query()
+            ->where('status','active')
+            ->where('cat_id',$request->cat_id)
+            ->orderBy('id','DESC')
+            ->paginate(9);
 
         // Fetch distinct values for filters
         $service_types = Product::distinct()->pluck('service_type');
@@ -984,21 +980,21 @@ class FrontendController extends Controller
         // Determine the view to render based on the request URL
         if (request()->is('e-shop.loc/product-grids')) {
             return view('frontend.pages.product-grids')->with([
-                'products' => $products,
-                'recent_products' => $recent_products,
-                'service_types' => $service_types,
+                'products'         => $products,
+                'recent_products'  => $recent_products,
+                'service_types'    => $service_types,
                 'shipping_weights' => $shipping_weights,
-                'speed_indexes' => $speed_indexes,
-                'load_indexes' => $load_indexes,
+                'speed_indexes'    => $speed_indexes,
+                'load_indexes'     => $load_indexes,
             ]);
         } else {
             return view('frontend.pages.product-lists')->with([
-                'products' => $products,
-                'recent_products' => $recent_products,
-                'service_types' => $service_types,
+                'products'         => $products,
+                'recent_products'  => $recent_products,
+                'service_types'    => $service_types,
                 'shipping_weights' => $shipping_weights,
-                'speed_indexes' => $speed_indexes,
-                'load_indexes' => $load_indexes,
+                'speed_indexes'    => $speed_indexes,
+                'load_indexes'     => $load_indexes,
             ]);
         }
     }
@@ -1063,11 +1059,11 @@ class FrontendController extends Controller
     {
         // return $request->all();
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
-        $posts = Post::orwhere('title', 'like', '%'.$request->search.'%')
-            ->orwhere('quote', 'like', '%'.$request->search.'%')
-            ->orwhere('summary', 'like', '%'.$request->search.'%')
-            ->orwhere('description', 'like', '%'.$request->search.'%')
-            ->orwhere('slug', 'like', '%'.$request->search.'%')
+        $posts = Post::orwhere('title', 'like', '%' . $request->search . '%')
+            ->orwhere('quote', 'like', '%' . $request->search . '%')
+            ->orwhere('summary', 'like', '%' . $request->search . '%')
+            ->orwhere('description', 'like', '%' . $request->search . '%')
+            ->orwhere('slug', 'like', '%' . $request->search . '%')
             ->orderBy('id', 'DESC')
             ->paginate(8);
 
@@ -1082,9 +1078,9 @@ class FrontendController extends Controller
         if (! empty($data['category'])) {
             foreach ($data['category'] as $category) {
                 if (empty($catURL)) {
-                    $catURL .= '&category='.$category;
+                    $catURL .= '&category=' . $category;
                 } else {
-                    $catURL .= ','.$category;
+                    $catURL .= ',' . $category;
                 }
             }
         }
@@ -1093,16 +1089,16 @@ class FrontendController extends Controller
         if (! empty($data['tag'])) {
             foreach ($data['tag'] as $tag) {
                 if (empty($tagURL)) {
-                    $tagURL .= '&tag='.$tag;
+                    $tagURL .= '&tag=' . $tag;
                 } else {
-                    $tagURL .= ','.$tag;
+                    $tagURL .= ',' . $tag;
                 }
             }
         }
 
         // return $tagURL;
         // return $catURL;
-        return redirect()->route('blog', $catURL.$tagURL);
+        return redirect()->route('blog', $catURL . $tagURL);
     }
 
     public function blogByCategory(Request $request)
@@ -1161,8 +1157,8 @@ class FrontendController extends Controller
     public function registerSubmit(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'string|required|min:2',
-            'email' => 'string|required|email|unique:users,email',
+            'name'     => 'string|required|min:2',
+            'email'    => 'string|required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
 
@@ -1213,10 +1209,10 @@ class FrontendController extends Controller
     public function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name'     => $data['name'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
-            'status' => 'active',
+            'status'   => 'active',
         ]);
     }
 
@@ -1230,9 +1226,9 @@ class FrontendController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required|min:6|confirmed',
-            'token' => 'required',
+            'token'    => 'required',
         ]);
 
         // Check if the token is valid

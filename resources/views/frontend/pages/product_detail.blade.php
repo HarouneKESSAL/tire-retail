@@ -154,9 +154,12 @@
                                                     <td>{{$product_detail->brand}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Cloutable</td>
-                                                    <td>{{ $specifications['Cloutable'] }}</td>
+                                                    <td>Poids de livraison</td>
+                                                    <td>{{$product_detail->shipping_weight}}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td>Type de service</td>
+                                                    <td>{{$product_detail->service_type}}</td>
                                                 <tr>
                                                     <td>Saison</td>
                                                     <td>{{$product_detail->season}}</td>

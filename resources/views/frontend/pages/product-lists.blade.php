@@ -284,9 +284,10 @@
 								</div>
 							</div>
 							<div class="row">
-								@if(count($products))
+{{--                                @dd($products)--}}
+								@if($products->count())
 									@foreach($products as $product)
-                                        @dd($product)
+{{--                                        @dd($product)--}}
 										<!-- Start Single List -->
 										<div class="col-12">
 											<div class="row">
