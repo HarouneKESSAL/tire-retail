@@ -8,9 +8,45 @@
                 @include('backend.layouts.notification')
             </div>
         </div>
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-danger float-left">Liste des produits</h6>
-            <a href="{{route('product.create')}}" class="btn btn-danger btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Ajouter un produit"><i class="fas fa-plus"></i> Ajouter un produit</a>
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-danger">Liste des produits</h6>
+
+            <div class="d-flex align-items-center">
+                <a href="{{ route('products.export') }}" class="btn btn-success mr-2">Export Products</a>
+
+                <!-- Trigger modal for import -->
+                <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#importModal">
+                    Import Products
+                </button>
+
+                <a href="{{ route('product.create') }}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Ajouter un produit">
+                    <i class="fas fa-plus"></i> Ajouter un produit
+                </a>
+            </div>
+        </div>
+
+        <!-- Import Modal -->
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Import Products</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group">
+                                <label for="file">Choose file</label>
+                                <input type="file" name="file" class="form-control-file" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -100,7 +136,10 @@
                                     @php
                                         $car = DB::table('brands')->select('option')->where('id', $product->brand_id)->first();
                                     @endphp
-                                    {{$car->option}}
+
+                                        {{ $car ? $car->option : 'N/A' }}
+
+
                                 </td>
                                 <!-- Display "Oui" for true booleans and "Non" for false -->
                                 <td>{{ $product->extra_load ? 'Oui' : 'Non' }}</td>

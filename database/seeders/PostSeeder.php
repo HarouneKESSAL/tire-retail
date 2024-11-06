@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Post;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PostSeeder extends Seeder
@@ -19,7 +18,7 @@ class PostSeeder extends Seeder
             'summary' => 'Summary for example post 1',
             'description' => 'Content for example post 1',
             'photo' => 'post1.jpg',
-            'status' => 'active'
+            'status' => 'active',
         ]);
     }
 }

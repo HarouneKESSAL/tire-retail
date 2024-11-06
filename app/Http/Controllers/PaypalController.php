@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaypalController extends Controller
 {
@@ -21,12 +21,13 @@ class PaypalController extends Controller
 
         $data['purchase_units'] = array_map(function ($item) {
             $name = Product::where('id', $item['product_id'])->pluck('title')->first();
+
             return [
                 'amount' => [
                     'currency_code' => 'USD', // You can change this to your preferred currency
                     'value' => $item['price'] * $item['quantity'],
                 ],
-                'description' => $name
+                'description' => $name,
             ];
         }, $cart);
 
@@ -48,7 +49,6 @@ class PaypalController extends Controller
         return redirect()->back()->with('error', 'Something went wrong with PayPal.');
     }
 
-
     public function cancel()
     {
         dd('Your payment is canceled. You can create cancel page here.');
@@ -64,10 +64,12 @@ class PaypalController extends Controller
             request()->session()->flash('success', 'You successfully paid through PayPal! Thank you.');
             session()->forget('cart');
             session()->forget('coupon');
+
             return redirect()->route('home');
         }
 
         request()->session()->flash('error', 'Something went wrong. Please try again!');
+
         return redirect()->back();
     }
 }

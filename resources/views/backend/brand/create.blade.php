@@ -7,6 +7,14 @@
         <div class="card-body">
             <form method="post" action="{{route('brand.store')}}">
                 {{csrf_field()}}
+
+                <div class="form-group ">
+                    <label for="car_name" class="col-sm-3 col-form-label">Nom de la Voiture <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="car_name" name="car_name" placeholder="Entrez le nom de la voiture" value="{{old('car_name')}}">
+                        @error('car_name')
+                        <span class="text-danger">{{$message}}</span>
+                        @enderror
+                </div>
                 <div class="form-group">
                     <label for="car_brand" class="col-form-label">Marque de Voiture <span class="text-danger">*</span></label>
                     <input id="car_brand" type="text" name="car_brand" placeholder="Entrez la marque de la voiture" value="{{old('car_brand')}}" class="form-control">
@@ -53,6 +61,7 @@
                     <button type="reset" class="btn btn-warning">Réinitialiser</button>
                     <button class="btn btn-success" type="submit">Soumettre</button>
                 </div>
+
             </form>
         </div>
     </div>

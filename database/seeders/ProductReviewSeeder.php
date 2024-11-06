@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ProductReview;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProductReviewSeeder extends Seeder
@@ -18,7 +17,7 @@ class ProductReviewSeeder extends Seeder
             'product_id' => 1,  // Assuming product with ID 1 exists
             'rate' => 5,
             'review' => 'This is a great product!',
-            'status' => 'active'
+            'status' => 'active',
         ]);
     }
 }

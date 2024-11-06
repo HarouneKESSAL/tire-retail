@@ -3,28 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\PostTag;
-use App\Models\PostCategory;
-use App\Models\Post;
 use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\PostCategory;
+use App\Models\PostTag;
+use App\Models\Product;
 use App\Models\ProductOption;
 use App\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Newsletter\Facades\Newsletter;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
-
 
 class FrontendController extends Controller
 {
-
     public function index(Request $request)
     {
         return redirect()->route($request->user()->role);
@@ -39,8 +36,8 @@ class FrontendController extends Controller
         $featured = Product::active()->featured()->orderBy('price', 'DESC')->limit(2)->get();
         $posts = Post::active()->orderBy('id', 'DESC')->limit(3)->get();
         $banners = Banner::active()->orderBy('id', 'DESC')->limit(3)->get();
-        $products=Product::where('status','active')->orderBy('id','DESC')->limit(8)->get();
-        $category=Category::where('status','active')->where('is_parent',1)->orderBy('title','ASC')->get();
+        $products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(8)->get();
+        $category = Category::where('status', 'active')->where('is_parent', 1)->orderBy('title', 'ASC')->get();
 
         // Get categories by slug
         $pneuJantes = Category::where('slug', 'pneujantes')->first();
@@ -77,8 +74,8 @@ class FrontendController extends Controller
             ->with('featured', $featured)
             ->with('posts', $posts)
             ->with('banners', $banners)
-            ->with('product_lists',$products)
-            ->with('category_lists',$category)
+            ->with('product_lists', $products)
+            ->with('category_lists', $category)
             ->with('pneuYears', $pneuYears)
             ->with('pneuCar_brands', $pneuCar_brands)
             ->with('pneuModels', $pneuModels)
@@ -144,6 +141,7 @@ class FrontendController extends Controller
             ->distinct()
             ->get();
     }
+
     private function fetchOptions($categoryId)
     {
         return ProductOption::join('product_option_product', 'product_options.id', '=', 'product_option_product.product_option_id')
@@ -153,7 +151,6 @@ class FrontendController extends Controller
             ->distinct()
             ->get();
     }
-
 
     public function productSearch(Request $request)
     {
@@ -191,7 +188,7 @@ class FrontendController extends Controller
 
             // Apply season filter
             if ($request->filled('season')) {
-                $seasons = (array)$request->season;  // Convert to array to handle single or multiple seasons
+                $seasons = (array) $request->season;  // Convert to array to handle single or multiple seasons
                 $query->whereIn('season', $seasons);
                 Log::info('Season filter applied', ['season' => $seasons]);
             }
@@ -268,7 +265,6 @@ class FrontendController extends Controller
             $speed_indexes = Product::distinct()->pluck('speed_index');
             $load_indexes = Product::distinct()->pluck('load_index');
 
-
             $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
 
             // Pagination settings
@@ -279,10 +275,10 @@ class FrontendController extends Controller
             return view('frontend.pages.product-grids', compact('products', 'recent_products', 'service_types', 'shipping_weights', 'speed_indexes', 'load_indexes'));
         } catch (\Exception $e) {
             Log::error('Error fetching products', ['error' => $e->getMessage()]);
+
             return redirect()->back()->with('error', 'Error fetching products');
         }
     }
-
 
     public function filterResults(Request $request)
     {
@@ -293,7 +289,7 @@ class FrontendController extends Controller
         $option = $request->input('option');
 
         // Validate if car brand, model, and year are provided
-        if (!$carBrand || !$carModel || !$carYear) {
+        if (! $carBrand || ! $carModel || ! $carYear) {
             return redirect()->back()->with('error', 'Please provide car brand, model, and year.');
         }
 
@@ -311,7 +307,7 @@ class FrontendController extends Controller
         $brand = $brandQuery->first();
 
         // Check if brand exists
-        if (!$brand) {
+        if (! $brand) {
             return redirect()->back()->with('error', 'Car brand, model, year, or option not found.');
         }
 
@@ -330,7 +326,6 @@ class FrontendController extends Controller
         // Return the view with the filtered data
         return view('frontend.partials.filter-results', compact('carName', 'categories', 'products', 'option'));
     }
-
 
     public function aboutUs()
     {
@@ -373,125 +368,123 @@ class FrontendController extends Controller
         return view('frontend.pages.product_detail', compact('product_detail', 'specifications'));
     }
 
-//    public function productGrids(){
-//        $products=Product::query();
-//
-//        if(!empty($_GET['category'])){
-//            $slug=explode(',',$_GET['category']);
-//            // dd($slug);
-//            $cat_ids=Category::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
-//            // dd($cat_ids);
-//            $products->whereIn('cat_id',$cat_ids);
-//            // return $products;
-//        }
-//        if(!empty($_GET['brand'])){
-//            $slugs=explode(',',$_GET['brand']);
-//            $brand_ids=Brand::select('id')->whereIn('slug',$slugs)->pluck('id')->toArray();
-//            return $brand_ids;
-//            $products->whereIn('brand_id',$brand_ids);
-//        }
-//        if(!empty($_GET['sortBy'])){
-//            if($_GET['sortBy']=='title'){
-//                $products=$products->where('status','active')->orderBy('title','ASC');
-//            }
-//            if($_GET['sortBy']=='price'){
-//                $products=$products->orderBy('price','ASC');
-//            }
-//        }
-//
-//        if(!empty($_GET['price'])){
-//            $price=explode('-',$_GET['price']);
-//            // return $price;
-//            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
-//            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
-//
-//            $products->whereBetween('price',$price);
-//        }
-//
-//        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-//        // Sort by number
-//        if(!empty($_GET['show'])){
-//            $products=$products->where('status','active')->paginate($_GET['show']);
-//        }
-//        else{
-//            $products=$products->where('status','active')->paginate(9);
-//        }
-//        // Sort by name , price, category
-//        $categories = Category::select('slug', 'title')
-//            ->whereIn('id', $products->pluck('cat_id'))
-//            ->get();
-//
-//
-//        // Get all distinct 'vitesse' options
-//        $vitesses = ProductOption::select('value')
-//            ->distinct()
-//            ->where('name', 'vitesse')
-//            ->get();
-//
-//        // Get all distinct 'lettrage' options
-//        $lettrages = ProductOption::select('value')
-//            ->distinct()
-//            ->where('name', 'lettrage')
-//            ->get();
-//
-//        // Get all distinct 'charge' options
-//        $charges = ProductOption::select('value')
-//            ->distinct()
-//            ->where('name', 'charge')
-//            ->get();
-//car_brand
-//        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products)->with('vitesses', $vitesses)->with('categories', $categories)->with('lettrages', $lettrages)->with('charges', $charges);
-//    }
-//    public function productLists(){
-//        $products=Product::query();
-//
-//        if(!empty($_GET['category'])){
-//            $slug=explode(',',$_GET['category']);
-//            // dd($slug);
-//            $cat_ids=Category::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
-//            // dd($cat_ids);
-//            $products->whereIn('cat_id',$cat_ids)->paginate;
-//            // return $products;
-//        }
-//        if(!empty($_GET['brand'])){
-//            $slugs=explode(',',$_GET['brand']);
-//            $brand_ids=Brand::select('id')->whereIn('slug',$slugs)->pluck('id')->toArray();
-//            return $brand_ids;
-//            $products->whereIn('brand_id',$brand_ids);
-//        }
-//        if(!empty($_GET['sortBy'])){
-//            if($_GET['sortBy']=='title'){
-//                $products=$products->where('status','active')->orderBy('title','ASC');
-//            }
-//            if($_GET['sortBy']=='price'){
-//                $products=$products->orderBy('price','ASC');
-//            }
-//        }
-//
-//        if(!empty($_GET['price'])){
-//            $price=explode('-',$_GET['price']);
-//            // return $price;
-//            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
-//            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
-//
-//            $products->whereBetween('price',$price);
-//        }
-//
-//        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-//        // Sort by number
-//        if(!empty($_GET['show'])){
-//            $products=$products->where('status','active')->paginate($_GET['show']);
-//        }
-//        else{
-//            $products=$products->where('status','active')->paginate(6);
-//        }
-//        // Sort by name , price, category
-//
-//
-//        return view('frontend.pages.product-lists')->with('products',$products)->with('recent_products',$recent_products);
-//    }
-
-
+    //    public function productGrids(){
+    //        $products=Product::query();
+    //
+    //        if(!empty($_GET['category'])){
+    //            $slug=explode(',',$_GET['category']);
+    //            // dd($slug);
+    //            $cat_ids=Category::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
+    //            // dd($cat_ids);
+    //            $products->whereIn('cat_id',$cat_ids);
+    //            // return $products;
+    //        }
+    //        if(!empty($_GET['brand'])){
+    //            $slugs=explode(',',$_GET['brand']);
+    //            $brand_ids=Brand::select('id')->whereIn('slug',$slugs)->pluck('id')->toArray();
+    //            return $brand_ids;
+    //            $products->whereIn('brand_id',$brand_ids);
+    //        }
+    //        if(!empty($_GET['sortBy'])){
+    //            if($_GET['sortBy']=='title'){
+    //                $products=$products->where('status','active')->orderBy('title','ASC');
+    //            }
+    //            if($_GET['sortBy']=='price'){
+    //                $products=$products->orderBy('price','ASC');
+    //            }
+    //        }
+    //
+    //        if(!empty($_GET['price'])){
+    //            $price=explode('-',$_GET['price']);
+    //            // return $price;
+    //            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
+    //            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
+    //
+    //            $products->whereBetween('price',$price);
+    //        }
+    //
+    //        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
+    //        // Sort by number
+    //        if(!empty($_GET['show'])){
+    //            $products=$products->where('status','active')->paginate($_GET['show']);
+    //        }
+    //        else{
+    //            $products=$products->where('status','active')->paginate(9);
+    //        }
+    //        // Sort by name , price, category
+    //        $categories = Category::select('slug', 'title')
+    //            ->whereIn('id', $products->pluck('cat_id'))
+    //            ->get();
+    //
+    //
+    //        // Get all distinct 'vitesse' options
+    //        $vitesses = ProductOption::select('value')
+    //            ->distinct()
+    //            ->where('name', 'vitesse')
+    //            ->get();
+    //
+    //        // Get all distinct 'lettrage' options
+    //        $lettrages = ProductOption::select('value')
+    //            ->distinct()
+    //            ->where('name', 'lettrage')
+    //            ->get();
+    //
+    //        // Get all distinct 'charge' options
+    //        $charges = ProductOption::select('value')
+    //            ->distinct()
+    //            ->where('name', 'charge')
+    //            ->get();
+    //car_brand
+    //        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products)->with('vitesses', $vitesses)->with('categories', $categories)->with('lettrages', $lettrages)->with('charges', $charges);
+    //    }
+    //    public function productLists(){
+    //        $products=Product::query();
+    //
+    //        if(!empty($_GET['category'])){
+    //            $slug=explode(',',$_GET['category']);
+    //            // dd($slug);
+    //            $cat_ids=Category::select('id')->whereIn('slug',$slug)->pluck('id')->toArray();
+    //            // dd($cat_ids);
+    //            $products->whereIn('cat_id',$cat_ids)->paginate;
+    //            // return $products;
+    //        }
+    //        if(!empty($_GET['brand'])){
+    //            $slugs=explode(',',$_GET['brand']);
+    //            $brand_ids=Brand::select('id')->whereIn('slug',$slugs)->pluck('id')->toArray();
+    //            return $brand_ids;
+    //            $products->whereIn('brand_id',$brand_ids);
+    //        }
+    //        if(!empty($_GET['sortBy'])){
+    //            if($_GET['sortBy']=='title'){
+    //                $products=$products->where('status','active')->orderBy('title','ASC');
+    //            }
+    //            if($_GET['sortBy']=='price'){
+    //                $products=$products->orderBy('price','ASC');
+    //            }
+    //        }
+    //
+    //        if(!empty($_GET['price'])){
+    //            $price=explode('-',$_GET['price']);
+    //            // return $price;
+    //            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
+    //            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
+    //
+    //            $products->whereBetween('price',$price);
+    //        }
+    //
+    //        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
+    //        // Sort by number
+    //        if(!empty($_GET['show'])){
+    //            $products=$products->where('status','active')->paginate($_GET['show']);
+    //        }
+    //        else{
+    //            $products=$products->where('status','active')->paginate(6);
+    //        }
+    //        // Sort by name , price, category
+    //
+    //
+    //        return view('frontend.pages.product-lists')->with('products',$products)->with('recent_products',$recent_products);
+    //    }
 
     public function productViewL(Request $request, $viewType = 'list')
     {
@@ -612,7 +605,7 @@ class FrontendController extends Controller
             'service_types' => $service_types,
             'shipping_weights' => $shipping_weights,
             'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes
+            'load_indexes' => $load_indexes,
         ]);
 
         // Pagination settings
@@ -688,7 +681,7 @@ class FrontendController extends Controller
             'service_types' => $service_types,
             'shipping_weights' => $shipping_weights,
             'speed_indexes' => $speed_indexes,
-            'load_indexes' => $load_indexes
+            'load_indexes' => $load_indexes,
         ]);
 
         $itemsPerPage = $request->get('show', 9);
@@ -749,7 +742,7 @@ class FrontendController extends Controller
             Log::info('Car info filter applied', [
                 'year' => $request->year,
                 'car_brand' => $request->car_brand,
-                'model' => $request->model
+                'model' => $request->model,
             ]);
         }
 
@@ -833,14 +826,14 @@ class FrontendController extends Controller
         // Filter by name or description
         if ($request->filled('search')) {
             $products->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                    ->orWhere('slug', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%')
-                    ->orWhere('summary', 'like', '%' . $request->search . '%')
-                    ->orWhere('price', 'like', '%' . $request->search . '%')
-                    ->orWhere('width', 'like', '%' . $request->search . '%')
-                    ->orWhere('aspect_ratio', 'like', '%' . $request->search . '%')
-                    ->orWhere('diameter', 'like', '%' . $request->search . '%');
+                $q->where('title', 'like', '%'.$request->search.'%')
+                    ->orWhere('slug', 'like', '%'.$request->search.'%')
+                    ->orWhere('description', 'like', '%'.$request->search.'%')
+                    ->orWhere('summary', 'like', '%'.$request->search.'%')
+                    ->orWhere('price', 'like', '%'.$request->search.'%')
+                    ->orWhere('width', 'like', '%'.$request->search.'%')
+                    ->orWhere('aspect_ratio', 'like', '%'.$request->search.'%')
+                    ->orWhere('diameter', 'like', '%'.$request->search.'%');
             });
             Log::info('Search filter applied', ['search' => $request->search]);
         }
@@ -882,86 +875,83 @@ class FrontendController extends Controller
         ]);
     }
 
+    //    public function productFilter(Request $request) {
+    //        $data = $request->all();
+    //        $urlParameters = [];
+    //
+    //        // Show filter
+    //        if (!empty($data['show'])) {
+    //            $urlParameters['show'] = $data['show'];
+    //        }
+    //
+    //        // Sort By filter
+    //        if (!empty($data['sortBy'])) {
+    //            $urlParameters['sortBy'] = $data['sortBy'];
+    //        }
+    //
+    //        // Category filter
+    //        if (!empty($data['category'])) {
+    //            $urlParameters['category'] = implode(',', $data['category']);
+    //        }
+    //
+    //        // Brand filter
+    //        if (!empty($data['brand'])) {
+    //            $urlParameters['brand'] = implode(',', $data['brand']);
+    //        }
+    //
+    //        // Price Range filter
+    //        if (!empty($data['price_range'])) {
+    //            $urlParameters['price'] = $data['price_range'];
+    //        }
+    //
+    //        // Boolean Option filters (e.g., runflat, xl_renforces, cloutable)
+    //        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
+    //        foreach ($booleanOptions as $optionName) {
+    //            if ($request->has("options.$optionName")) {
+    //                $urlParameters["options[$optionName]"] = 1;
+    //            }
+    //        }
+    //
+    //        // Non-Boolean Option filters (e.g., vitesse, lettrage, charge)
+    //        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
+    //        foreach ($nonBooleanOptions as $optionName) {
+    //            if ($request->filled("options.$optionName")) {
+    //                $urlParameters["options[$optionName]"] = $request->input("options.$optionName");
+    //                Log::info("$optionName filter applied", [$optionName => $request->input("options.$optionName")]);
+    //            }
+    //        }
+    //
+    //        // Build the URL query string
+    //        $queryString = http_build_query($urlParameters);
+    //
+    //        // Check if the request is for product grids or lists
+    //        if ($request->is('product-grids')) {
+    //            return redirect()->route('product-grids', '?' . $queryString);
+    //        } else {
+    //            return redirect()->route('product-lists', '?' . $queryString);
+    //        }
+    //    }
 
-
-//    public function productFilter(Request $request) {
-//        $data = $request->all();
-//        $urlParameters = [];
-//
-//        // Show filter
-//        if (!empty($data['show'])) {
-//            $urlParameters['show'] = $data['show'];
-//        }
-//
-//        // Sort By filter
-//        if (!empty($data['sortBy'])) {
-//            $urlParameters['sortBy'] = $data['sortBy'];
-//        }
-//
-//        // Category filter
-//        if (!empty($data['category'])) {
-//            $urlParameters['category'] = implode(',', $data['category']);
-//        }
-//
-//        // Brand filter
-//        if (!empty($data['brand'])) {
-//            $urlParameters['brand'] = implode(',', $data['brand']);
-//        }
-//
-//        // Price Range filter
-//        if (!empty($data['price_range'])) {
-//            $urlParameters['price'] = $data['price_range'];
-//        }
-//
-//        // Boolean Option filters (e.g., runflat, xl_renforces, cloutable)
-//        $booleanOptions = ['runflat', 'xl_renforces', 'cloutable'];
-//        foreach ($booleanOptions as $optionName) {
-//            if ($request->has("options.$optionName")) {
-//                $urlParameters["options[$optionName]"] = 1;
-//            }
-//        }
-//
-//        // Non-Boolean Option filters (e.g., vitesse, lettrage, charge)
-//        $nonBooleanOptions = ['vitesse', 'lettrage', 'charge'];
-//        foreach ($nonBooleanOptions as $optionName) {
-//            if ($request->filled("options.$optionName")) {
-//                $urlParameters["options[$optionName]"] = $request->input("options.$optionName");
-//                Log::info("$optionName filter applied", [$optionName => $request->input("options.$optionName")]);
-//            }
-//        }
-//
-//        // Build the URL query string
-//        $queryString = http_build_query($urlParameters);
-//
-//        // Check if the request is for product grids or lists
-//        if ($request->is('product-grids')) {
-//            return redirect()->route('product-grids', '?' . $queryString);
-//        } else {
-//            return redirect()->route('product-lists', '?' . $queryString);
-//        }
-//    }
-
-
-//    public function productSearch(Request $request){
-//        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-//        $products=Product::orwhere('title','like','%'.$request->search.'%')
-//                    ->orwhere('slug','like','%'.$request->search.'%')
-//                    ->orwhere('description','like','%'.$request->search.'%')
-//                    ->orwhere('summary','like','%'.$request->search.'%')
-//                    ->orwhere('price','like','%'.$request->search.'%')
-//                   ->orwhere('width','like','%'.$request->search.'%')
-//                     ->orwhere('aspect_ratio','like','%'.$request->search.'%')
-//                        ->orwhere('diameter','like','%'.$request->search.'%')
-//                        ->orwhere('year','like','%'.$request->search.'%')
-//                        ->orwhere('car_brand','like','%'.$request->search.'%')
-//                        ->orwhere('model','like','%'.$request->search.'%')
-//                        ->orwhere('option','like','%'.$request->search.'%')
-//                        ->orwhere('season','like','%'.$request->search.'%')
-//                    ->orderBy('id','DESC')
-//                    ->paginate(8);
-//
-//        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products);
-//    }
+    //    public function productSearch(Request $request){
+    //        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
+    //        $products=Product::orwhere('title','like','%'.$request->search.'%')
+    //                    ->orwhere('slug','like','%'.$request->search.'%')
+    //                    ->orwhere('description','like','%'.$request->search.'%')
+    //                    ->orwhere('summary','like','%'.$request->search.'%')
+    //                    ->orwhere('price','like','%'.$request->search.'%')
+    //                   ->orwhere('width','like','%'.$request->search.'%')
+    //                     ->orwhere('aspect_ratio','like','%'.$request->search.'%')
+    //                        ->orwhere('diameter','like','%'.$request->search.'%')
+    //                        ->orwhere('year','like','%'.$request->search.'%')
+    //                        ->orwhere('car_brand','like','%'.$request->search.'%')
+    //                        ->orwhere('model','like','%'.$request->search.'%')
+    //                        ->orwhere('option','like','%'.$request->search.'%')
+    //                        ->orwhere('season','like','%'.$request->search.'%')
+    //                    ->orderBy('id','DESC')
+    //                    ->paginate(8);
+    //
+    //        return view('frontend.pages.product-grids')->with('products',$products)->with('recent_products',$recent_products);
+    //    }
 
     public function productBrand(Request $request)
     {
@@ -999,7 +989,7 @@ class FrontendController extends Controller
                 'service_types' => $service_types,
                 'shipping_weights' => $shipping_weights,
                 'speed_indexes' => $speed_indexes,
-                'load_indexes' => $load_indexes
+                'load_indexes' => $load_indexes,
             ]);
         } else {
             return view('frontend.pages.product-lists')->with([
@@ -1008,11 +998,10 @@ class FrontendController extends Controller
                 'service_types' => $service_types,
                 'shipping_weights' => $shipping_weights,
                 'speed_indexes' => $speed_indexes,
-                'load_indexes' => $load_indexes
+                'load_indexes' => $load_indexes,
             ]);
         }
     }
-
 
     public function productSubCat(Request $request)
     {
@@ -1032,15 +1021,16 @@ class FrontendController extends Controller
     {
         $post = Post::query();
 
-        if (!empty($_GET['category'])) {
+        if (! empty($_GET['category'])) {
             $slug = explode(',', $_GET['category']);
             // dd($slug);
             $cat_ids = PostCategory::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
+
             return $cat_ids;
             $post->whereIn('post_cat_id', $cat_ids);
             // return $post;
         }
-        if (!empty($_GET['tag'])) {
+        if (! empty($_GET['tag'])) {
             $slug = explode(',', $_GET['tag']);
             // dd($slug);
             $tag_ids = PostTag::select('id')->whereIn('slug', $slug)->pluck('id')->toArray();
@@ -1049,13 +1039,14 @@ class FrontendController extends Controller
             // return $post;
         }
 
-        if (!empty($_GET['show'])) {
+        if (! empty($_GET['show'])) {
             $post = $post->where('status', 'active')->orderBy('id', 'DESC')->paginate($_GET['show']);
         } else {
             $post = $post->where('status', 'active')->orderBy('id', 'DESC')->paginate(9);
         }
         // $post=Post::where('status','active')->paginate(8);
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
         return view('frontend.pages.blog')->with('posts', $post)->with('recent_posts', $rcnt_post);
     }
 
@@ -1063,6 +1054,7 @@ class FrontendController extends Controller
     {
         $post = Post::getPostBySlug($slug);
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
         // return $post;
         return view('frontend.pages.blog-detail')->with('post', $post)->with('recent_posts', $rcnt_post);
     }
@@ -1071,13 +1063,14 @@ class FrontendController extends Controller
     {
         // return $request->all();
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
-        $posts = Post::orwhere('title', 'like', '%' . $request->search . '%')
-            ->orwhere('quote', 'like', '%' . $request->search . '%')
-            ->orwhere('summary', 'like', '%' . $request->search . '%')
-            ->orwhere('description', 'like', '%' . $request->search . '%')
-            ->orwhere('slug', 'like', '%' . $request->search . '%')
+        $posts = Post::orwhere('title', 'like', '%'.$request->search.'%')
+            ->orwhere('quote', 'like', '%'.$request->search.'%')
+            ->orwhere('summary', 'like', '%'.$request->search.'%')
+            ->orwhere('description', 'like', '%'.$request->search.'%')
+            ->orwhere('slug', 'like', '%'.$request->search.'%')
             ->orderBy('id', 'DESC')
             ->paginate(8);
+
         return view('frontend.pages.blog')->with('posts', $posts)->with('recent_posts', $rcnt_post);
     }
 
@@ -1085,36 +1078,38 @@ class FrontendController extends Controller
     {
         $data = $request->all();
         // return $data;
-        $catURL = "";
-        if (!empty($data['category'])) {
+        $catURL = '';
+        if (! empty($data['category'])) {
             foreach ($data['category'] as $category) {
                 if (empty($catURL)) {
-                    $catURL .= '&category=' . $category;
+                    $catURL .= '&category='.$category;
                 } else {
-                    $catURL .= ',' . $category;
+                    $catURL .= ','.$category;
                 }
             }
         }
 
-        $tagURL = "";
-        if (!empty($data['tag'])) {
+        $tagURL = '';
+        if (! empty($data['tag'])) {
             foreach ($data['tag'] as $tag) {
                 if (empty($tagURL)) {
-                    $tagURL .= '&tag=' . $tag;
+                    $tagURL .= '&tag='.$tag;
                 } else {
-                    $tagURL .= ',' . $tag;
+                    $tagURL .= ','.$tag;
                 }
             }
         }
+
         // return $tagURL;
         // return $catURL;
-        return redirect()->route('blog', $catURL . $tagURL);
+        return redirect()->route('blog', $catURL.$tagURL);
     }
 
     public function blogByCategory(Request $request)
     {
         $post = PostCategory::getBlogByCategory($request->slug);
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
         return view('frontend.pages.blog')->with('posts', $post->post)->with('recent_posts', $rcnt_post);
     }
 
@@ -1124,6 +1119,7 @@ class FrontendController extends Controller
         $post = Post::getBlogByTag($request->slug);
         // return $post;
         $rcnt_post = Post::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+
         return view('frontend.pages.blog')->with('posts', $post)->with('recent_posts', $rcnt_post);
     }
 
@@ -1139,9 +1135,11 @@ class FrontendController extends Controller
         if (Auth::attempt(['email' => $data['email'], 'password' => $data['password'], 'status' => 'active'])) {
             Session::put('user', $data['email']);
             request()->session()->flash('success', 'Successfully login');
+
             return redirect()->route('home');
         } else {
             request()->session()->flash('error', 'Invalid email and password pleas try again!');
+
             return redirect()->back();
         }
     }
@@ -1151,6 +1149,7 @@ class FrontendController extends Controller
         Session::forget('user');
         Auth::logout();
         request()->session()->flash('success', 'Logout successfully');
+
         return back();
     }
 
@@ -1211,15 +1210,13 @@ class FrontendController extends Controller
         return redirect()->route('verification.notice')->with('success', 'Successfully registered. Please check your email to verify your account.');
     }
 
-
-
     public function create(array $data)
     {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'status' => 'active'
+            'status' => 'active',
         ]);
     }
 
@@ -1228,18 +1225,19 @@ class FrontendController extends Controller
     {
         return view('auth.passwords.old-reset');
     }
+
     public function resetPassword(Request $request)
     {
         // Validate the request data
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6|confirmed',
-            'token' => 'required'
+            'token' => 'required',
         ]);
 
         // Check if the token is valid
         $user = \App\User::where('email', $request->email)->first();
-        if (!$user || !\Illuminate\Support\Facades\Password::tokenExists($user, $request->token)) {
+        if (! $user || ! \Illuminate\Support\Facades\Password::tokenExists($user, $request->token)) {
             return redirect()->back()->with('error', 'Invalid token or email.');
         }
 
@@ -1253,21 +1251,24 @@ class FrontendController extends Controller
         // Redirect to login page with success message
         return redirect()->route('login.form')->with('success', 'Your password has been reset successfully.');
     }
+
     public function subscribe(Request $request)
     {
-        if (!Newsletter::isSubscribed($request->email)) {
+        if (! Newsletter::isSubscribed($request->email)) {
             Newsletter::subscribePending($request->email);
             if (Newsletter::lastActionSucceeded()) {
                 request()->session()->flash('success', 'Subscribed! Please check your email');
+
                 return redirect()->route('home');
             } else {
                 Newsletter::getLastError();
+
                 return back()->with('error', 'Something went wrong! please try again');
             }
         } else {
             request()->session()->flash('error', 'Already Subscribed');
+
             return back();
         }
     }
-
 }

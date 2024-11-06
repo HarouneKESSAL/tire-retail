@@ -8,12 +8,14 @@
             <form method="post" action="{{route('brand.update', $brand->id)}}">
                 {{csrf_field()}}
                 @method('PATCH')
+
                 <div class="form-group">
-                    <label for="inputTitle" class="col-form-label">Titre <span class="text-danger">*</span></label>
-                    <input id="inputTitle" type="text" name="title" placeholder="Entrez le titre" value="{{old('title', $brand->title)}}" class="form-control">
-                    @error('title')
-                    <span class="text-danger">{{$message}}</span>
-                    @enderror
+                    <label for="inputCarName" class="col-sm-3 col-form-label">Nom de la Voiture <span class="text-danger">*</span></label>
+
+                        <input type="text" class="form-control" id="inputCarName" name="car_name" placeholder="Entrez le nom de la voiture" value="{{old('car_name', $brand->car_name)}}">
+                        @error('car_name')
+                        <span class="text-danger">{{$message}}</span>
+                        @enderror
                 </div>
 
                 <div class="form-group">

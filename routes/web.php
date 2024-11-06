@@ -1,23 +1,23 @@
 <?php
 
-use App\Http\Controllers\ProductOptionController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductReviewController;
+use App\Http\Controllers\WishlistController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\FrontendController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductReviewController;
-use App\Http\Controllers\PostCommentController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\PayPalController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\HomeController;
-use \UniSharp\LaravelFilemanager\Lfm;
+use UniSharp\LaravelFilemanager\Lfm;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,13 +34,12 @@ use \UniSharp\LaravelFilemanager\Lfm;
 Route::get('cache-clear', function () {
     Artisan::call('optimize:clear');
     request()->session()->flash('success', 'Successfully cache cleared.');
+
     return redirect()->back();
 })->name('cache.clear');
 
-
 // STORAGE LINKED ROUTE
 Route::get('storage-link', [AdminController::class, 'storageLink'])->name('storage.link');
-
 
 Auth::routes(['register' => false]);
 Auth::routes(['verify' => true]);
@@ -74,7 +73,6 @@ Route::get('product-detail/{slug}', [FrontendController::class, 'productDetail']
 Route::post('/filter-results', [FrontendController::class, 'filterResults'])->name('filter.results');
 Route::match(['get', 'post'], '/product/search', [FrontendController::class, 'productSearch'])->name('product.search');
 
-
 Route::get('/product-cat/{slug}', [FrontendController::class, 'productCat'])->name('product-cat');
 Route::get('/product-sub-cat/{slug}/{sub_slug}', [FrontendController::class, 'productSubCat'])->name('product-sub-cat');
 Route::get('/product-brand/{slug}', [FrontendController::class, 'productBrand'])->name('product-brand');
@@ -100,7 +98,6 @@ Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.or
 // Route::get('/user/chart',[AdminController::class, 'userPieChart'])->name('user.piechart');
 // Single route to handle both grid and list views using a viewType parameter
 Route::get('/products/{viewType}', [FrontendController::class, 'productView'])->name('product.view');
-
 
 Route::post('/filter', [FrontendController::class, 'productView'])->name('shop.filter');
 // Order Track
@@ -131,7 +128,6 @@ Route::get('payment', [PayPalController::class, 'payment'])->name('payment');
 Route::get('cancel', [PayPalController::class, 'cancel'])->name('payment.cancel');
 Route::get('payment/success', [PayPalController::class, 'success'])->name('payment.success');
 
-
 // Backend section start
 
 Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function () {
@@ -151,6 +147,8 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function
     // Category
     Route::resource('/category', 'CategoryController');
     // Product
+    Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
+    Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
     Route::resource('/product', 'ProductController');
     // Product Option
     Route::resource('product-options', 'ProductOptionController');
@@ -186,7 +184,6 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function
     Route::post('change-password', [AdminController::class, 'changPasswordStore'])->name('change.password');
 });
 
-
 // User section start
 Route::group(['prefix' => '/user', 'middleware' => ['user']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('user');
@@ -194,8 +191,8 @@ Route::group(['prefix' => '/user', 'middleware' => ['user']], function () {
     Route::get('/profile', [HomeController::class, 'profile'])->name('user-profile');
     Route::post('/profile/{id}', [HomeController::class, 'profileUpdate'])->name('user-profile-update');
     //  Order
-    Route::get('/order', "HomeController@orderIndex")->name('user.order.index');
-    Route::get('/order/show/{id}', "HomeController@orderShow")->name('user.order.show');
+    Route::get('/order', 'HomeController@orderIndex')->name('user.order.index');
+    Route::get('/order/show/{id}', 'HomeController@orderShow')->name('user.order.show');
     Route::delete('/order/delete/{id}', [HomeController::class, 'userOrderDelete'])->name('user.order.delete');
     // Product Review
     Route::get('/user-review', [HomeController::class, 'productReviewIndex'])->name('user.productreview.index');
@@ -214,6 +211,8 @@ Route::group(['prefix' => '/user', 'middleware' => ['user']], function () {
     Route::post('change-password', [HomeController::class, 'changPasswordStore'])->name('change.password');
 
 });
+
+
 
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     Lfm::routes();

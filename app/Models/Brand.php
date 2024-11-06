@@ -1,25 +1,19 @@
 <?php
 
 namespace App\Models;
-use App\Models\Product;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Brand extends Model
 {
     protected $fillable = [
-        'car_brand', 'car_model', 'car_year', 'slug', 'status', 'option' // Add option here
+        'car_brand', 'car_model', 'car_year', 'slug', 'status', 'option','car_name'
     ];
 
-    public function getFullNameAttribute(): string
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return "{$this->car_brand} {$this->car_model} ({$this->car_year})";
+        return $this->hasMany('App\Models\Product', 'brand_id', 'id')->where('status', 'active');
     }
-
-       public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany('App\Models\Product','brand_id','id')->where('status','active');
-    }
-
 
     public static function getProductByBrand($slug)
     {

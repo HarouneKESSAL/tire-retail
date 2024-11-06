@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateShippingsTable extends Migration
+class AddCarNameToBrandsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateShippingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('shippings', function (Blueprint $table) {
-            $table->id();
-            $table->string('type');
-            $table->decimal('price');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamps();
+        Schema::table('brands', function (Blueprint $table) {
+            $table->string('car_name')->nullable()->after('id'); // Adjust 'name' to the column after which you want to place 'car_name'
         });
     }
 
@@ -29,6 +25,8 @@ class CreateShippingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shippings');
+        Schema::table('brands', function (Blueprint $table) {
+            $table->dropColumn('car_name');
+        });
     }
 }

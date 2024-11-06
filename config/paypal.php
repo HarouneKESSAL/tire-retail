@@ -5,28 +5,28 @@
  */
 
 return [
-    'mode'    => env('PAYPAL_MODE', 'sandbox'), // Can only be 'sandbox' Or 'live'. If empty or invalid, 'live' will be used.
+    'mode' => env('PAYPAL_MODE', 'sandbox'), // Can only be 'sandbox' Or 'live'. If empty or invalid, 'live' will be used.
     'sandbox' => [
         'username' => env('PAYPAL_SANDBOX_API_USERNAME', ''),
         'password' => env('PAYPAL_SANDBOX_API_PASSWORD', ''),
-        'client_id'         => env('PAYPAL_CLIENT_ID'),
-        'client_secret'     => env('PAYPAL_CLIENT_SECRET'),
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
         'secret' => 'EKHL-Wz0l1lQq0cCF6ALVctgPufNS6vBLB_247UX',
         'app_id' => 'APP-80W284485P519543T',
     ],
 
     'live' => [
-        'username'    => env('PAYPAL_LIVE_API_USERNAME', ''),
-        'password'    => env('PAYPAL_LIVE_API_PASSWORD', ''),
-        'secret'      => env('PAYPAL_LIVE_API_SECRET', ''),
+        'username' => env('PAYPAL_LIVE_API_USERNAME', ''),
+        'password' => env('PAYPAL_LIVE_API_PASSWORD', ''),
+        'secret' => env('PAYPAL_LIVE_API_SECRET', ''),
         'certificate' => env('PAYPAL_LIVE_API_CERTIFICATE', ''),
-        'app_id'      => '', // Used for Adaptive Payments API
+        'app_id' => '', // Used for Adaptive Payments API
     ],
 
     'payment_action' => 'Sale', // Can only be 'Sale', 'Authorization' or 'Order'
-    'currency'       => env('PAYPAL_CURRENCY', 'USD'),
-    'billing_type'   => 'MerchantInitiatedBilling',
-    'notify_url'     => '', // Change this accordingly for your application.
-    'locale'         => '', // force gateway language  i.e. it_IT, es_ES, en_US ... (for express checkout only)
-    'validate_ssl'   => true, // Validate SSL when creating api client.
+    'currency' => env('PAYPAL_CURRENCY', 'USD'),
+    'billing_type' => 'MerchantInitiatedBilling',
+    'notify_url' => '', // Change this accordingly for your application.
+    'locale' => '', // force gateway language  i.e. it_IT, es_ES, en_US ... (for express checkout only)
+    'validate_ssl' => true, // Validate SSL when creating api client.
 ];

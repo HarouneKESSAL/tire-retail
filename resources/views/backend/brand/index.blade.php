@@ -40,7 +40,7 @@
                         @foreach($brands as $brand)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$brand->getFullNameAttribute()}}</td>
+                                <td>{{$brand->car_name}}</td>
                                 <td>{{$brand->option}}</td>
                                 <td>{{$brand->slug}}</td>
                                 <td>
